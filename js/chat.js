@@ -64,6 +64,15 @@ function dispatchChatEvent(eventName, detail = {}) {
     document.dispatchEvent(new CustomEvent(eventName, { detail }));
 }
 
+function closeAllDropdowns() {
+    document.querySelectorAll('[aria-expanded="true"]').forEach((trigger) => {
+        trigger.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelectorAll('.top-bar-dropdown, .input-action-menu').forEach((menu) => {
+        menu.classList.add('hidden');
+    });
+}
+
 function renderTurnFromEvents(events = [], { messageId = `replay_${Date.now()}`, autoScroll = false } = {}) {
     if (!Array.isArray(events) || events.length === 0) return null;
 
@@ -355,19 +364,42 @@ function createBotMessagePlaceholder(messageId) {
 
 // Helper to extract code from object and strip markdown code block formatting
 function extractCodeFromObject(obj) {
-    const potentialKeys = ['raw', 'code', 'content', 'text', 'output'];
-    for (const key of potentialKeys) {
-        if (obj[key]) {
-            let val = obj[key];
-            // If it's a markdown code block, strip the backticks and language
-            const codeBlockMatch = val.match(/^```[a-zA-Z0-9]*\n([\s\S]*?)```$/);
-            if (codeBlockMatch) {
-                return codeBlockMatch[1].trim();
-            }
-            return val;
-        }
+    if (!obj || typeof obj !== 'object') {
+        return String(obj ?? '');
     }
-    return JSON.stringify(obj, null, 2);
+
+    const potentialKeys = ['raw', 'code', 'content', 'text', 'output'];
+    const languageHint = obj.lang || obj.language || (obj.type === 'code' ? obj.format || '' : '');
+
+    const wrapWithFence = (codeString, lang = languageHint) => {
+        const fenceLang = typeof lang === 'string' && lang.length ? lang.trim() : '';
+        const normalized = typeof codeString === 'string' ? codeString : JSON.stringify(codeString, null, 2);
+        const trimmed = normalized.endsWith('\n') ? normalized.trimEnd() : normalized;
+        return `\`\`\`${fenceLang}\n${trimmed}\n\`\`\``;
+    };
+
+    for (const key of potentialKeys) {
+        if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+
+        const value = obj[key];
+        if (value == null) continue;
+
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            if (trimmed.startsWith('```')) {
+                return trimmed;
+            }
+            return wrapWithFence(trimmed);
+        }
+
+        if (typeof value === 'object') {
+            return wrapWithFence(JSON.stringify(value, null, 2), 'json');
+        }
+
+        return wrapWithFence(String(value));
+    }
+
+    return wrapWithFence(obj.type === 'code' ? JSON.stringify(obj, null, 2) : String(obj));
 }
 
 function populateBotMessage(data) {
@@ -430,8 +462,13 @@ function populateBotMessage(data) {
         const streamId = `${messageId}-${ownerName}`;
         const formattedContent = streaming
             ? messageFormatter.formatStreaming(content, streamId)
-            : messageFormatter.format(content);
+            : messageFormatter.format(content, { inlineArtifacts: true });
+
         innerContentDiv.innerHTML = formattedContent;
+
+        if (!streaming) {
+            messageFormatter.applyInlineEnhancements?.(innerContentDiv);
+        }
 
         if (typeof hljs !== 'undefined') {
             innerContentDiv.querySelectorAll('pre code').forEach((block) => {
@@ -923,6 +960,11 @@ export const chatModule = {
         window.unifiedPreviewHandler = unifiedPreviewHandler;
 
         this.startNewConversation();
+
+        // Preload sessions in background for instant context window display
+        if (contextHandler && typeof contextHandler.preloadSessions === 'function') {
+            contextHandler.preloadSessions();
+        }
     },
 
     startNewConversation({ preserveAgentType = true } = {}) {
@@ -940,6 +982,7 @@ export const chatModule = {
         messageFormatter.pendingContent.clear();
 
         contextHandler?.clearSelectedContext?.();
+        contextHandler?.invalidateCache?.(); // Invalidate session cache for fresh data
         fileAttachmentHandler?.clearAttachedFiles?.();
         window.todo?.toggleWindow(false);
 
@@ -1021,7 +1064,10 @@ export const chatModule = {
             shouldResendWithHistory = false;
         }
 
-        if (selectedSessions.length > 0) payload.context = JSON.stringify(selectedSessions);
+        // Send context_session_ids (array of session IDs) - backend queries Supabase for full data
+        if (selectedSessions.length > 0) {
+            payload.context_session_ids = selectedSessions.map(session => session.session_id);
+        }
         if (attachedFiles.length > 0) payload.files = attachedFiles.map(f => ({ name: f.name, type: f.type, path: f.path, content: f.content, isText: f.isText }));
 
         try {

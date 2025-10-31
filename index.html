@@ -47,7 +47,21 @@
 
     <!-- Top Bar (Simplified) -->
     <div class="top-bar">
-      <button id="new-chat-btn" class="top-bar-btn"><i class="fas fa-plus"></i></button>
+      <div class="top-bar-action">
+        <button id="new-chat-btn" class="top-bar-btn" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-plus"></i>
+        </button>
+        <div id="new-chat-menu" class="top-bar-dropdown hidden" role="menu">
+          <button class="dropdown-item" data-dropdown-action="new-chat" role="menuitem">
+            <i class="fas fa-comments"></i>
+            <span>New chat</span>
+          </button>
+          <button class="dropdown-item" data-dropdown-action="new-task" role="menuitem">
+            <i class="fas fa-list-check"></i>
+            <span>New task</span>
+          </button>
+        </div>
+      </div>
       <button id="hamburger-btn" class="top-bar-btn"><i class="fas fa-bars"></i></button>
     </div>
 
@@ -64,30 +78,28 @@
 
     <!-- Bottom UI Area -->
     <div id="bottom-ui-container">
-      <div id="tools-menu" class="hidden">
-        <button class="tool-option active" data-agent="aios">
-          <span class="checkbox-icon"><i class="fas fa-check-square icon-checked"></i><i class="far fa-square icon-unchecked"></i></span>
-          <i class="fas fa-atom icon-main"></i><span>AI-OS</span>
-        </button>
-        <button class="tool-option" data-agent="deepsearch">
-          <span class="checkbox-icon"><i class="fas fa-check-square icon-checked"></i><i class="far fa-square icon-unchecked"></i></span>
-          <i class="fas fa-search-plus icon-main"></i><span>DeepSearch</span>
-        </button>
-      </div>
       <div class="floating-input-wrapper">
         <div id="file-previews-container"></div>
         <div class="floating-input-container" id="floating-input-container">
-          <button id="attach-file-btn" class="input-action-btn circular-btn"><i class="fas fa-paperclip"></i></button>
+          <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i></button>
+          <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
+            <button type="button" class="input-action-menu-item" data-menu-action="memory" role="menuitem" aria-pressed="false">
+              <i class="fas fa-brain"></i>
+              <span>Memory</span>
+            </button>
+            <button type="button" class="input-action-menu-item" data-menu-action="attach" role="menuitem">
+              <i class="fas fa-paperclip"></i>
+              <span>Attach file</span>
+            </button>
+            <button type="button" class="input-action-menu-item" data-menu-action="sessions" role="menuitem">
+              <i class="fas fa-comments"></i>
+              <span>Chats</span>
+            </button>
+          </div>
           <textarea id="floating-input" class="floating-input" placeholder="Ask anything..." rows="1"></textarea>
           <button id="send-message" class="input-action-btn circular-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
         <input type="file" id="file-input" style="display: none;" multiple />
-      </div>
-      <div class="bottom-nav">
-        <button class="bottom-nav-btn" data-action="memory" title="Memory"><i class="fa-solid fa-brain"></i></button>
-        <button class="bottom-nav-btn" data-action="tools" title="Tools"><i class="fas fa-wrench"></i></button>
-        <button class="bottom-nav-btn" data-action="context" title="Sessions"><i class="fa-solid fa-network-wired"></i></button>
-        <button class="bottom-nav-btn" data-action="tasks" title="Tasks"><i class="fa-solid fa-list-check"></i></button>
       </div>
     </div>
   </div>
@@ -332,64 +344,115 @@
     function bindUIEvents() {
       const hamburgerBtn = document.getElementById('hamburger-btn');
       const newChatBtn = document.getElementById('new-chat-btn');
-      const bottomNavBtns = document.querySelectorAll('.bottom-nav-btn');
+      const newChatMenu = document.getElementById('new-chat-menu');
+      const attachMenuTrigger = document.getElementById('attach-file-btn');
+      const inputActionMenu = document.getElementById('input-action-menu');
+      const memoryMenuItem = inputActionMenu?.querySelector('[data-menu-action="memory"]');
       const sendBtn = document.getElementById('send-message');
       const input = document.getElementById('floating-input');
-      
-      const toolsMenu = document.getElementById('tools-menu');
-      const toolOptions = document.querySelectorAll('.tool-option');
 
-      hamburgerBtn.addEventListener('click', () => window.aios.openSidebar());
-      newChatBtn.addEventListener('click', () => window.chat.clearChat());
-      
-      bottomNavBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const action = btn.dataset.action;
+      const closeDropdowns = () => {
+        newChatBtn?.setAttribute('aria-expanded', 'false');
+        attachMenuTrigger?.setAttribute('aria-expanded', 'false');
+        newChatMenu?.classList.add('hidden');
+        inputActionMenu?.classList.add('hidden');
+      };
 
-          const wasActive = btn.classList.contains('active');
-          closeAllModalsAndMenus();
-
-          if (!wasActive) {
-            btn.classList.add('active');
-
-            switch (action) {
-              case 'tasks': window.todo.toggleWindow(true, btn); break;
-              case 'context': window.contextHandler.toggleWindow(true, btn); break;
-              case 'tools': toolsMenu.classList.remove('hidden'); break;
-            }
-          }
-        });
-      });
-
-      function closeAllModalsAndMenus() {
-        toolsMenu.classList.add('hidden');
-        window.todo.toggleWindow(false);
-        window.contextHandler.toggleWindow(false);
-        bottomNavBtns.forEach(b => {
-          b.classList.remove('active');
-        });
+      function closeFloatingWindows() {
+        window.todo?.toggleWindow(false);
+        window.contextHandler?.toggleWindow(false);
       }
 
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('#bottom-ui-container')) {
+      function closeAllModalsAndMenus() {
+        closeFloatingWindows();
+        closeDropdowns();
+      }
 
-          closeAllModalsAndMenus();
+      hamburgerBtn?.addEventListener('click', () => window.aios.openSidebar());
+
+      newChatBtn?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isExpanded = newChatBtn.getAttribute('aria-expanded') === 'true';
+        closeDropdowns();
+        if (!isExpanded) {
+          newChatBtn.setAttribute('aria-expanded', 'true');
+          newChatMenu?.classList.remove('hidden');
         }
       });
 
-      sendBtn.addEventListener('click', () => {
+      newChatMenu?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const item = event.target.closest('.dropdown-item');
+        if (!item) return;
+
+        const action = item.dataset.dropdownAction;
+        closeDropdowns();
+        if (action === 'new-chat') {
+          window.chat?.clearChat();
+        } else if (action === 'new-task') {
+          closeFloatingWindows();
+          window.todo?.toggleWindow(true);
+        }
+      });
+
+      attachMenuTrigger?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isExpanded = attachMenuTrigger.getAttribute('aria-expanded') === 'true';
+        closeDropdowns();
+        if (!isExpanded) {
+          attachMenuTrigger.setAttribute('aria-expanded', 'true');
+          inputActionMenu?.classList.remove('hidden');
+        }
+      });
+
+      memoryMenuItem?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const current = window.chat?.getConfig?.().memory;
+        window.chat?.setMemoryEnabled?.(!current);
+        memoryMenuItem.classList.toggle('active', !current);
+        memoryMenuItem.setAttribute('aria-pressed', (!current).toString());
+      });
+
+      inputActionMenu?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const item = event.target.closest('.input-action-menu-item');
+        if (!item) return;
+
+        const action = item.dataset.menuAction;
+        if (action === 'attach') {
+          closeDropdowns();
+          window.fileAttachmentHandler?.openFilePicker?.();
+        } else if (action === 'sessions') {
+          closeDropdowns();
+          closeFloatingWindows();
+          window.contextHandler?.toggleWindow(true);
+        } else if (action === 'memory') {
+          // handled above, but keep menu open for toggle feedback
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#bottom-ui-container')) {
+          closeAllModalsAndMenus();
+        }
+        if (!e.target.closest('.top-bar-action')) {
+          newChatBtn?.setAttribute('aria-expanded', 'false');
+          newChatMenu?.classList.add('hidden');
+        }
+      });
+
+      sendBtn?.addEventListener('click', () => {
         window.chat.handleSendMessage();
       });
 
-      input.addEventListener('keypress', (e) => {
+      input?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           window.chat.handleSendMessage();
         }
       });
 
-      input.addEventListener('input', () => {
+      input?.addEventListener('input', () => {
         input.style.height = 'auto';
         input.style.height = `${input.scrollHeight}px`;
       });

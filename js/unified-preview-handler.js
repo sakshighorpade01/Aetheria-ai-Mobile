@@ -122,8 +122,12 @@ class UnifiedPreviewHandler {
                 .map((interaction) => {
                     const user = interaction.user_input || interaction.input?.input_content || '';
                     const assistant = interaction.llm_output || interaction.output?.output_text || '';
-                    const userBlock = user ? `<div class="interaction user-interaction"><strong>User:</strong> ${messageFormatter.format(user)}</div>` : '';
-                    const assistantBlock = assistant ? `<div class="interaction assistant-interaction"><strong>Assistant:</strong> ${messageFormatter.format(assistant)}</div>` : '';
+                    const userBlock = user
+                        ? `<div class="interaction user-interaction"><strong>User:</strong> ${messageFormatter.format(user, { inlineArtifacts: true })}</div>`
+                        : '';
+                    const assistantBlock = assistant
+                        ? `<div class="interaction assistant-interaction"><strong>Assistant:</strong> ${messageFormatter.format(assistant, { inlineArtifacts: true })}</div>`
+                        : '';
                     return `<div class="interaction-block">${userBlock}${assistantBlock}</div>`;
                 })
                 .join('');
@@ -140,6 +144,8 @@ class UnifiedPreviewHandler {
                 </div>
             `;
         }).join('');
+
+        messageFormatter.applyInlineEnhancements?.(this.contextContent);
     }
 
     renderFiles(files = []) {
@@ -154,7 +160,9 @@ class UnifiedPreviewHandler {
             const iconClass = this.fileAttachmentHandler?.getFileIcon?.(file.name) || 'fas fa-file';
             const previewContent = file.isMedia
                 ? this.renderMediaPreview(file)
-                : (file.content ? `<pre class="file-content-preview">${messageFormatter.format(file.content)}</pre>` : '<p>No preview available.</p>');
+                : (file.content
+                    ? `<pre class="file-content-preview">${messageFormatter.format(file.content, { inlineArtifacts: true })}</pre>`
+                    : '<p>No preview available.</p>');
 
             return `
                 <div class="file-preview-item">
@@ -172,6 +180,8 @@ class UnifiedPreviewHandler {
                 </div>
             `;
         }).join('');
+
+        messageFormatter.applyInlineEnhancements?.(this.filesContent);
     }
 
     renderMediaPreview(file) {
@@ -188,7 +198,9 @@ class UnifiedPreviewHandler {
         if (file.type === 'application/pdf') {
             return `<iframe src="${src}" class="pdf-preview"></iframe>`;
         }
-        return file.content ? `<pre class="file-content-preview">${messageFormatter.format(file.content)}</pre>` : '<p>No preview available.</p>';
+        return file.content
+            ? `<pre class="file-content-preview">${messageFormatter.format(file.content, { inlineArtifacts: true })}</pre>`
+            : '<p>No preview available.</p>';
     }
 }
 

@@ -14,12 +14,12 @@
 
 /* Base class for ALL message bubbles */
 .message {
-    padding: 12px 16px;
-    border-radius: 16px;
+    padding: 0;
+    border-radius: 0;
     line-height: 1.6;
     font-size: 0.95rem;
     word-break: break-word;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
     text-align: left;
     animation: messageIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: -moz-fit-content;
@@ -33,24 +33,24 @@
 
 /* User Message Styling */
 .user-message {
-    background-color: var(--message-user-bg);
+    background: transparent;
     color: var(--message-user-text);
-    border-radius: 16px 16px 0 16px;
+    border-radius: 0;
     align-self: flex-end;
 }
 
 /* Bot Message Styling */
 .bot-message {
-    background-color: var(--message-bot-bg);
+    background: transparent;
     color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Rounded on all corners */
+    border: none;
+    border-radius: 0;
     align-self: flex-start;
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0; /* Padding is handled by inner containers */
-    overflow: hidden;
+    padding: 0;
+    overflow: visible;
     width: auto;
     max-width: 100%;
 }
@@ -58,10 +58,10 @@
 /* --- NEW/ADAPTED DESKTOP STYLES --- */
 
 .thinking-indicator {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border-color);
-    background: rgba(var(--accent-color-rgb), 0.05);
-    transition: all 0.3s ease;
+    padding: 6px 0;
+    border-bottom: none;
+    background: transparent;
+    transition: color 0.3s ease;
 }
 
 .thinking-indicator.steps-done {
@@ -72,7 +72,7 @@
 }
 
 .thinking-indicator.steps-done:hover {
-    background-color: rgba(var(--accent-color-rgb), 0.1);
+    color: var(--accent-color);
 }
 
 .thinking-steps-container {
@@ -128,45 +128,45 @@
     opacity: 1;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid var(--border-color);
 }
 
 .content-block {
-    margin-bottom: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
 }
 
 .content-block-header {
-    background-color: var(--hover-bg);
-    padding: 4px 12px;
+    background: transparent;
+    padding: 0;
     font-size: 0.8em;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--text-secondary);
+    margin-bottom: 4px;
 }
 
 .dark-mode .content-block-header {
-    background-color: var(--neutral-800);
+    background: transparent;
 }
 
 .inner-content {
-    padding: 12px;
+    padding: 0;
 }
 
 .tool-log-entry {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px;
-    background-color: var(--hover-bg);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border-color);
+    padding: 8px 0;
+    background: transparent;
+    border-radius: 0;
+    margin-bottom: 4px;
+    border: none;
 }
 
 .dark-mode .tool-log-entry {
-    background-color: var(--neutral-800);
+    background: transparent;
 }
 
 .tool-log-icon {

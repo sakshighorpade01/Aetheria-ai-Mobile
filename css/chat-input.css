@@ -5,15 +5,14 @@
 /* --- Main Input Container --- */
 .floating-input-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
     max-width: var(--input-container-max-width);
-    background-color: var(--window-bg);
+    background-color: transparent;
     border-radius: 16px;
-    box-shadow: 0 8px 32px var(--shadow-color);
-    border: 1px solid var(--border-color);
+    box-shadow: none;
     padding: 0;
     z-index: var(--z-input-container);
     display: flex;
@@ -41,16 +40,15 @@
 
 /* --- Chat Mode (Bottom Positioned) --- */
 .floating-input-container.chat-mode {
-    bottom: 20px;
+    bottom: 40px;
     transform: translateX(-50%);
     transition: all var(--anim-normal) var(--easing-standard);
 }
 
 /* --- Input Container with Files Attached --- */
 .floating-input-container.has-files {
-    background: rgba(var(--accent-color-rgb), 0.02);
-    border-color: rgba(var(--accent-color-rgb), 0.2);
-    box-shadow: 0 8px 32px var(--shadow-color), 0 0 0 1px rgba(var(--accent-color-rgb), 0.1);
+    background: transparent;
+    box-shadow: none;
 }
 
 .floating-input-container.hidden {
@@ -335,4 +333,33 @@
 /* --- Input Toolbar --- */
 .input-toolbar {
     display: flex;
-    justifyruary? wait time }
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.input-toolbar button,
+.input-toolbar .toolbar-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.input-toolbar button:hover,
+.input-toolbar .toolbar-btn:hover {
+    background: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+.input-toolbar button:focus-visible,
+.input-toolbar .toolbar-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}

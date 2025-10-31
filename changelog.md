@@ -2,6 +2,52 @@
 
 > Ongoing record of the PWA migration effort. Each entry captures the work completed, open follow‑ups, and key references for deeper context.
 
+## 2025-11-01
+
+### ✅ Completed
+- **Session preloading fix**
+  - Fixed missing `contextHandler.preloadSessions()` call in `chat.js` initialization that prevented background loading of previous chat sessions.
+  - Sessions now load automatically 2.5 seconds after app start, making context window display instant when user opens it.
+  - Resolves issue where previous chat sessions weren't appearing in the context window.
+- **Session data structure fix (Critical)**
+  - Fixed schema mismatch between backend and frontend session data structures.
+  - Backend returns `session.runs` but frontend expected `session.memory.runs`, causing crashes when viewing session details.
+  - Updated `context-handler.js` to support both formats: `session.runs` (actual Supabase schema) and `session.memory.runs` (legacy format).
+  - Now properly extracts user/assistant messages from `run.input.input_content` and `run.content` fields.
+  - Filters top-level runs only (excludes child runs with `parent_run_id`).
+  - Session list now shows actual message counts instead of "0 messages".
+  - Session titles now extracted from first user message in runs.
+- **Context session transmission fix (Critical - Data Loss)**
+  - **Root Cause**: PWA was sending `payload.context = JSON.stringify(selectedSessions)` (full session objects)
+  - **Backend Expects**: `payload.context_session_ids` (array of session IDs)
+  - **Impact**: Backend couldn't process context, causing data loss in multi-turn conversations
+  - **Fix**: Changed to `payload.context_session_ids = selectedSessions.map(s => s.session_id)`
+  - Backend now properly queries Supabase for historical context using session IDs
+- **Session selection format fix (Critical)**
+  - Changed `getSelectedSessionsData()` to return full session objects instead of interactions
+  - Matches Electron implementation where backend needs `session_id` to query full data
+  - Fixes context not being included in agent requests
+- **Session chips UI implementation**
+  - Added `renderSessionChips()` to display selected sessions as chips in context files bar
+  - Added `createSessionChip()` to create individual session chips with remove buttons
+  - Added `removeSelectedSession()` to handle chip removal
+  - Added `updateContextFilesBarVisibility()` to show/hide context bar based on content
+  - Session chips now show first 25 characters of first user message
+  - Integrated with "Use Selected" button and `clearSelectedContext()`
+- **Cache invalidation implementation**
+  - Added `invalidateCache()` method to context handler
+  - Called on new conversation start to ensure fresh session data
+  - Prevents stale session list when user creates new conversations
+  - Matches Electron behavior for cache management
+
+### ⏭️ Next Up
+1. **Test session loading**
+   - Verify sessions load in background and appear in context window
+   - Test session selection and replay functionality
+2. **Continue migration implementation**
+   - Proceed with remaining Phase 3 tasks from MIGRATION_PLAN.md
+   - Focus on inline artifact rendering and enhanced message formatting
+
 ## 2025-10-31
 
 ### ✅ Completed

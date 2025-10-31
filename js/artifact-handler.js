@@ -33,68 +33,53 @@ class ArtifactHandler {
         container.querySelector('#download-artifact-btn').addEventListener('click', () => this.downloadArtifact());
     }
 
-    createArtifact(content, type) {
-        const id = `artifact-${this.currentId++}`;
-        
-        // Ensure content is always a string
+    createArtifact(content, type, artifactId = null) {
+        const id = artifactId || `artifact-${this.currentId++}`;
+
         let stringContent = content;
         if (typeof content === 'object' && content !== null) {
             try {
                 stringContent = JSON.stringify(content, null, 2);
-            } catch (e) {
+            } catch (error) {
                 stringContent = '[object Object]';
             }
         } else if (typeof content !== 'string') {
             stringContent = String(content);
         }
-        
+
         this.artifacts.set(id, { content: stringContent, type });
         return id;
     }
 
     showArtifact(content, type, artifactId = null) {
-        this.currentArtifactId = artifactId || this.createArtifact(content, type);
-        
+        this.currentArtifactId = artifactId || this.createArtifact(content, type, artifactId);
+
         const container = document.getElementById('artifact-container');
         const contentDiv = container.querySelector('#artifact-content');
         const titleDiv = container.querySelector('#artifact-title');
 
         contentDiv.innerHTML = '';
-        titleDiv.textContent = type === 'mermaid' ? 'Mermaid Diagram' : `Code: ${type}`;
 
-        // Get the artifact content (which should now always be a string)
         const artifact = this.artifacts.get(this.currentArtifactId);
         const displayContent = artifact ? artifact.content : (typeof content === 'string' ? content : JSON.stringify(content, null, 2));
 
-        if (type === 'mermaid') {
-            const mermaidDiv = document.createElement('div');
-            mermaidDiv.className = 'mermaid';
-            mermaidDiv.textContent = displayContent;
-            contentDiv.appendChild(mermaidDiv);
-            setTimeout(() => mermaid.init(undefined, mermaidDiv), 0);
-
-            const zoomControls = document.createElement('div');
-            zoomControls.className = 'mermaid-controls';
-            zoomControls.innerHTML = `<button class="zoom-in-btn" title="Zoom In"><i class="fas fa-plus"></i></button><button class="zoom-out-btn" title="Zoom Out"><i class="fas fa-minus"></i></button><button class="zoom-reset-btn" title="Reset Zoom"><i class="fas fa-search"></i></button>`;
-            contentDiv.appendChild(zoomControls);
-
-            let currentZoom = 1;
-            mermaidDiv.style.transform = 'scale(1)';
-            mermaidDiv.style.transformOrigin = 'center center';
-            zoomControls.querySelector('.zoom-in-btn').addEventListener('click', () => { currentZoom = Math.min(currentZoom + 0.1, 2); mermaidDiv.style.transform = `scale(${currentZoom})`; });
-            zoomControls.querySelector('.zoom-out-btn').addEventListener('click', () => { currentZoom = Math.max(currentZoom - 0.1, 0.5); mermaidDiv.style.transform = `scale(${currentZoom})`; });
-            zoomControls.querySelector('.zoom-reset-btn').addEventListener('click', () => { currentZoom = 1; mermaidDiv.style.transform = 'scale(1)'; });
-        } else {
-            const pre = document.createElement('pre');
-            const code = document.createElement('code');
-            code.className = `language-${type}`;
-            code.textContent = displayContent;
-            pre.appendChild(code);
-            contentDiv.appendChild(pre);
-            hljs.highlightElement(code);
+        switch (type) {
+            case 'image':
+                titleDiv.textContent = 'Image Artifact';
+                this.renderImageArtifact(contentDiv, displayContent);
+                break;
+            case 'mermaid':
+                titleDiv.textContent = 'Mermaid Diagram';
+                this.renderMermaidArtifact(contentDiv, displayContent);
+                break;
+            default:
+                titleDiv.textContent = type === 'browser_view' ? 'Interactive Browser' : `Code: ${type}`;
+                this.renderCodeArtifact(contentDiv, displayContent, type);
         }
 
         container.classList.remove('hidden');
+        container.dataset.activeArtifactId = this.currentArtifactId;
+        container.dataset.activeArtifactType = type;
         return this.currentArtifactId;
     }
 
@@ -102,11 +87,76 @@ class ArtifactHandler {
         const container = document.getElementById('artifact-container');
         container.classList.add('hidden');
         this.currentArtifactId = null;
+        delete container.dataset.activeArtifactId;
+        delete container.dataset.activeArtifactType;
     }
 
     reopenArtifact(artifactId) {
         const artifact = this.artifacts.get(artifactId);
         if (artifact) this.showArtifact(artifact.content, artifact.type, artifactId);
+    }
+
+    renderImageArtifact(container, content) {
+        const src = typeof content === 'string' && content.startsWith('data:')
+            ? content
+            : `data:image/png;base64,${content}`;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'artifact-image-wrapper';
+
+        const img = document.createElement('img');
+        img.className = 'artifact-image';
+        img.alt = 'Generated artifact image';
+        img.src = src;
+        img.loading = 'lazy';
+
+        wrapper.appendChild(img);
+        container.appendChild(wrapper);
+    }
+
+    renderMermaidArtifact(container, content) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mermaid-artifact-wrapper';
+
+        const panContainer = document.createElement('div');
+        panContainer.className = 'mermaid-pan-container';
+
+        const mermaidDiv = document.createElement('div');
+        mermaidDiv.className = 'mermaid';
+        mermaidDiv.removeAttribute?.('data-processed');
+        mermaidDiv.textContent = content;
+
+        panContainer.appendChild(mermaidDiv);
+        wrapper.appendChild(panContainer);
+        container.appendChild(wrapper);
+
+        const runMermaid = () => {
+            if (typeof window === 'undefined' || !window.mermaid) return;
+            if (typeof window.mermaid.run === 'function') {
+                window.mermaid.run({ nodes: [mermaidDiv] });
+            } else if (typeof window.mermaid.init === 'function') {
+                window.mermaid.init(undefined, [mermaidDiv]);
+            }
+        };
+
+        requestAnimationFrame(runMermaid);
+    }
+
+    renderCodeArtifact(container, content, language) {
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        code.className = `language-${language || 'plaintext'}`;
+        code.textContent = content;
+        pre.appendChild(code);
+        container.appendChild(pre);
+
+        if (typeof hljs !== 'undefined' && typeof hljs.highlightElement === 'function') {
+            try {
+                hljs.highlightElement(code);
+            } catch (_) {
+                /* no-op */
+            }
+        }
     }
 
     async copyArtifactContent() {

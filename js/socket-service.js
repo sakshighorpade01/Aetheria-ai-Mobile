@@ -4,7 +4,10 @@
 import { supabase } from './supabase-client.js';
 
 // The backend URL is centralized here.
-const BACKEND_URL = 'http://localhost:8765';
+const BACKEND_HOST = typeof window !== 'undefined' && window.location?.hostname
+    ? window.location.hostname
+    : 'localhost';
+const BACKEND_URL = `http://${BACKEND_HOST}:8765`;
 let socket = null;
 
 // Store callbacks for different events.

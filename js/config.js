@@ -5,7 +5,9 @@ const config = {
     // Backend connection settings
     backend: {
         // URL for the Python backend running in Docker
-        url: 'http://localhost:8765',
+        url: (typeof window !== 'undefined' && window.location?.origin)
+            ? `${window.location.protocol}//${window.location.hostname}:8765`
+            : 'http://localhost:8765',
         
         // Maximum number of reconnection attempts
         maxReconnectAttempts: 50,

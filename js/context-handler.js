@@ -4,7 +4,10 @@ import { supabase } from './supabase-client.js';
 import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 
-const API_PROXY_URL = 'http://localhost:8765';
+const API_PROXY_HOST = typeof window !== 'undefined' && window.location?.hostname
+    ? window.location.hostname
+    : 'localhost';
+const API_PROXY_URL = `http://${API_PROXY_HOST}:8765`;
 
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
@@ -275,11 +278,28 @@ class ContextHandler {
         sessionItem.className = 'session-item';
         sessionItem.dataset.sessionId = session.session_id;
 
+        // Support both session.runs and session.memory.runs structures
+        const runs = session.runs || session.memory?.runs || [];
+
         let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-        if (session.memory?.runs?.length > 0) {
-            const firstUserRun = session.memory.runs.find(run => run.role === 'user' && run.content && run.content.trim() !== '');
-            if (firstUserRun) {
-                let rawTitle = firstUserRun.content;
+        if (runs.length > 0) {
+            // Try to find first user message from runs
+            let firstUserMessage = null;
+            for (const run of runs) {
+                // Check if run has input content (new format)
+                if (run.input && run.input.input_content) {
+                    firstUserMessage = run.input.input_content;
+                    break;
+                }
+                // Check if run is a user role message (legacy format)
+                if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                    firstUserMessage = run.content;
+                    break;
+                }
+            }
+
+            if (firstUserMessage) {
+                let rawTitle = firstUserMessage;
                 const marker = 'Current message:';
                 const index = rawTitle.lastIndexOf(marker);
                 if (index !== -1) {
@@ -294,7 +314,7 @@ class ContextHandler {
 
         const creationDate = new Date(session.created_at * 1000);
         const formattedDate = creationDate.toLocaleDateString() + ' ' + creationDate.toLocaleTimeString();
-        const messageCount = session.memory?.runs?.length || 0;
+        const messageCount = runs.length;
 
         sessionItem.innerHTML = this.getSessionItemHTML(session, sessionName, formattedDate, messageCount);
 
@@ -339,6 +359,7 @@ class ContextHandler {
             const selectedData = this.getSelectedSessionsData();
             if (selectedData.length > 0) {
                 this.selectedContextSessions = selectedData;
+                this.renderSessionChips(); // Add chips to context bar
                 this.toggleWindow(false);
                 this.showNotification(`${selectedData.length} session(s) selected as context`, 'info');
             }
@@ -368,14 +389,8 @@ class ContextHandler {
             }
         });
 
-        return this.loadedSessions
-            .filter(session => selectedIds.has(session.session_id))
-            .map(session => ({
-                interactions: session.memory.runs.map(run => ({
-                    user_input: run.role === 'user' ? run.content : '',
-                    llm_output: run.role === 'assistant' ? run.content : ''
-                }))
-            }));
+        // Return full session objects (Electron format) - backend needs session_id to query data
+        return this.loadedSessions.filter(session => selectedIds.has(session.session_id));
     }
 
     showSessionDetails(sessionId) {
@@ -390,12 +405,26 @@ class ContextHandler {
 
         const view = template.content.cloneNode(true);
 
+        // Support both session.runs and session.memory.runs structures
+        const runs = session.runs || session.memory?.runs || [];
+
         const titleElement = view.querySelector('.session-header h3');
         if (titleElement) {
-            const firstUserRun = session.memory.runs.find(run => run.role === 'user' && run.content && run.content.trim() !== '');
+            let firstUserMessage = null;
+            for (const run of runs) {
+                if (run.input && run.input.input_content) {
+                    firstUserMessage = run.input.input_content;
+                    break;
+                }
+                if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                    firstUserMessage = run.content;
+                    break;
+                }
+            }
+
             let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-            if (firstUserRun) {
-                let rawTitle = firstUserRun.content;
+            if (firstUserMessage) {
+                let rawTitle = firstUserMessage;
                 const marker = 'Current message:';
                 const index = rawTitle.lastIndexOf(marker);
                 if (index !== -1) {
@@ -412,26 +441,66 @@ class ContextHandler {
         const conversationContainer = view.querySelector('.conversation-messages');
         if (!conversationContainer) return;
 
-        session.memory.runs.forEach(run => {
-            const isUser = run.role === 'user';
-            const content = isUser ? run.content : run.content;
-            
-            if (!content || !content.trim()) return;
+        // Check if session has runs data
+        if (!Array.isArray(runs) || runs.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-state';
+            emptyMessage.innerHTML = '<p>This session has no conversation history.</p>';
+            conversationContainer.appendChild(emptyMessage);
+        } else {
+            // Filter only top-level runs (no parent_run_id)
+            const topLevelRuns = runs.filter(run => !run.parent_run_id);
 
-            let messageContent = content;
-            if (isUser) {
-                const marker = 'Current message:';
-                const index = content.lastIndexOf(marker);
-                if (index !== -1) {
-                    messageContent = content.substring(index + marker.length).trim();
+            topLevelRuns.forEach(run => {
+                // Handle new format: run.input.input_content and run.content
+                const userInput = run.input?.input_content || '';
+                const assistantOutput = run.content || '';
+
+                // Add user message if exists
+                if (userInput && userInput.trim()) {
+                    let messageContent = userInput;
+                    const marker = 'Current message:';
+                    const index = messageContent.lastIndexOf(marker);
+                    if (index !== -1) {
+                        messageContent = messageContent.substring(index + marker.length).trim();
+                    }
+
+                    const userMsgDiv = document.createElement('div');
+                    userMsgDiv.className = 'message user-message';
+                    userMsgDiv.innerHTML = messageFormatter.format(messageContent, { inlineArtifacts: true });
+                    conversationContainer.appendChild(userMsgDiv);
                 }
-            }
 
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            msgDiv.innerHTML = messageFormatter.format(messageContent);
-            conversationContainer.appendChild(msgDiv);
-        });
+                // Add assistant message if exists
+                if (assistantOutput && assistantOutput.trim()) {
+                    const botMsgDiv = document.createElement('div');
+                    botMsgDiv.className = 'message bot-message';
+                    botMsgDiv.innerHTML = messageFormatter.format(assistantOutput, { inlineArtifacts: true });
+                    conversationContainer.appendChild(botMsgDiv);
+                }
+
+                // Legacy format support: run.role and run.content
+                if (!userInput && !assistantOutput && run.role && run.content) {
+                    const isUser = run.role === 'user';
+                    let messageContent = run.content;
+
+                    if (isUser) {
+                        const marker = 'Current message:';
+                        const index = messageContent.lastIndexOf(marker);
+                        if (index !== -1) {
+                            messageContent = messageContent.substring(index + marker.length).trim();
+                        }
+                    }
+
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                    msgDiv.innerHTML = messageFormatter.format(messageContent, { inlineArtifacts: true });
+                    conversationContainer.appendChild(msgDiv);
+                }
+            });
+        }
+
+        messageFormatter.applyInlineEnhancements?.(conversationContainer);
 
         this.elements.detailView.innerHTML = '';
         this.elements.detailView.appendChild(view);
@@ -447,6 +516,7 @@ class ContextHandler {
         this.elements.listView?.querySelectorAll('.session-item.selected').forEach(item => item.classList.remove('selected'));
         this.selectedContextSessions = [];
         this.updateSelectionUI();
+        this.renderSessionChips(); // Clear session chips from context bar
     }
 
     showNotification(message, type = 'info', duration = 3000) {
@@ -472,6 +542,106 @@ class ContextHandler {
 
     getSelectedSessions() {
         return this.selectedContextSessions;
+    }
+
+    /**
+     * Invalidate cache when a new conversation is created
+     * This ensures fresh data on next open
+     */
+    invalidateCache() {
+        console.log('[ContextHandler] Cache invalidated');
+        this.loadingState = 'idle';
+        this.loadedSessions = [];
+        this.loadError = null;
+    }
+
+    /**
+     * Render session chips in the context files bar
+     */
+    renderSessionChips() {
+        const contextFilesBar = document.getElementById('context-files-bar');
+        const contextFilesContent = document.querySelector('.context-files-content');
+        
+        if (!contextFilesBar || !contextFilesContent) return;
+
+        // Remove existing session chips
+        contextFilesContent.querySelectorAll('.session-chip').forEach(chip => chip.remove());
+
+        // Add new session chips
+        this.selectedContextSessions.forEach((session, index) => {
+            this.createSessionChip(session, index);
+        });
+
+        this.updateContextFilesBarVisibility();
+    }
+
+    /**
+     * Create a single session chip
+     */
+    createSessionChip(session, index) {
+        const contextFilesContent = document.querySelector('.context-files-content');
+        if (!contextFilesContent) return;
+
+        const chip = document.createElement('div');
+        chip.className = 'session-chip';
+        
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-comments session-chip-icon';
+        
+        const title = document.createElement('span');
+        title.className = 'session-chip-title';
+        
+        const runs = session.runs || session.memory?.runs || [];
+        const topLevelRuns = runs.filter(run => !run.parent_run_id);
+        const firstMessage = topLevelRuns[0]?.input?.input_content || `Session ${index + 1}`;
+        title.textContent = firstMessage.substring(0, 25) + (firstMessage.length > 25 ? '...' : '');
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'session-chip-remove';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.title = 'Remove session';
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.removeSelectedSession(index);
+        });
+        
+        chip.appendChild(icon);
+        chip.appendChild(title);
+        chip.appendChild(removeBtn);
+        
+        contextFilesContent.appendChild(chip);
+    }
+
+    /**
+     * Remove a selected session by index
+     */
+    removeSelectedSession(index) {
+        if (index > -1 && index < this.selectedContextSessions.length) {
+            this.selectedContextSessions.splice(index, 1);
+            this.renderSessionChips();
+        }
+    }
+
+    /**
+     * Update context files bar visibility
+     */
+    updateContextFilesBarVisibility() {
+        const contextFilesBar = document.getElementById('context-files-bar');
+        const inputContainer = document.getElementById('floating-input-container');
+        
+        if (!contextFilesBar || !inputContainer) return;
+
+        const hasFiles = window.fileAttachmentHandler && window.fileAttachmentHandler.attachedFiles && window.fileAttachmentHandler.attachedFiles.length > 0;
+        const hasSessions = this.selectedContextSessions.length > 0;
+        const hasContent = hasFiles || hasSessions;
+
+        if (hasContent) {
+            contextFilesBar.classList.remove('hidden');
+            inputContainer.classList.add('has-files');
+        } else {
+            contextFilesBar.classList.add('hidden');
+            inputContainer.classList.remove('has-files');
+        }
     }
 }
 

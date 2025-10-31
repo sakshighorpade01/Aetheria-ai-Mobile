@@ -30,11 +30,6 @@ class FileAttachmentHandler {
     this.previewContentArea = document.getElementById('preview-content-area');
     this.closePreviewBtn = this.previewModal?.querySelector('.close-preview-btn');
 
-    this.attachButton?.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.fileInput.click();
-    });
-
     this.fileInput?.addEventListener('change', (event) => {
       this.handleFileSelection(event);
     });
@@ -45,6 +40,10 @@ class FileAttachmentHandler {
             this.hidePreview();
         }
     });
+  }
+
+  openFilePicker() {
+    this.fileInput?.click();
   }
 
   async uploadFileToSupabase(file) {
