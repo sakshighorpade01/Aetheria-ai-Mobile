@@ -1,0 +1,338 @@
+/* =================================================================
+ * UNIFIED FLOATING INPUT COMPONENT
+ * ================================================================= */
+
+/* --- Main Input Container --- */
+.floating-input-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    max-width: var(--input-container-max-width);
+    background-color: var(--window-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    padding: 0;
+    z-index: var(--z-input-container);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all var(--anim-normal) var(--easing-standard);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- Centered Input State (No Messages) --- */
+.floating-input-container.centered {
+    bottom: 50%;
+    transform: translateX(-50%) translateY(50%);
+}
+
+/* --- Welcome Mode (Centered) --- */
+.floating-input-container.welcome-mode {
+    bottom: 50%;
+    transform: translateX(-50%) translateY(50%);
+    transition: all var(--anim-normal) var(--easing-standard);
+}
+
+/* --- Chat Mode (Bottom Positioned) --- */
+.floating-input-container.chat-mode {
+    bottom: 20px;
+    transform: translateX(-50%);
+    transition: all var(--anim-normal) var(--easing-standard);
+}
+
+/* --- Input Container with Files Attached --- */
+.floating-input-container.has-files {
+    background: rgba(var(--accent-color-rgb), 0.02);
+    border-color: rgba(var(--accent-color-rgb), 0.2);
+    box-shadow: 0 8px 32px var(--shadow-color), 0 0 0 1px rgba(var(--accent-color-rgb), 0.1);
+}
+
+.floating-input-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(0.95);
+    transition: opacity var(--anim-fast) var(--easing-standard), transform var(--anim-fast) var(--easing-standard), visibility 0s var(--anim-fast);
+}
+
+/* --- Smooth transition between centered and bottom positions --- */
+.floating-input-container:not(.centered) {
+    transition: all var(--anim-normal) var(--easing-standard);
+}
+
+.floating-input-container.centered {
+    transition: all var(--anim-normal) var(--easing-standard);
+}
+
+/* --- Text Input Area --- */
+.floating-input {
+    flex-grow: 1;
+    border: none;
+    box-shadow: none;
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 20px;
+    resize: none;
+    background-color: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+    max-height: var(--input-max-height);
+    font-size: 0.95rem;
+    min-height: var(--input-min-height);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Input styling when files are attached --- */
+.floating-input-container.has-files .floating-input {
+    border-radius: 0;
+}
+
+.floating-input-container.has-files .attached-files-bar + .floating-input {
+    border-top: none;
+}
+
+.floating-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: none;
+}
+
+/* --- Horizontal Context and Files Bar --- */
+.context-files-bar {
+    padding: 12px 16px 8px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(var(--accent-color-rgb), 0.02);
+    border-radius: 16px 16px 0 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--anim-normal) var(--easing-standard), padding var(--anim-normal) var(--easing-standard);
+}
+
+.context-files-bar:not(.hidden) {
+    max-height: 200px;
+}
+
+.context-files-bar.hidden {
+    padding: 0 16px;
+    border-bottom: none;
+}
+
+.context-files-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+/* --- File Chips --- */
+.file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--window-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    transition: all var(--anim-fast) var(--easing-standard);
+    cursor: pointer;
+    max-width: 200px;
+}
+
+.file-chip:hover {
+    border-color: var(--accent-color);
+    background: var(--hover-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-chip-icon {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.file-chip-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.file-chip-remove {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--anim-fast) var(--easing-standard);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+}
+
+.file-chip-remove:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* --- Upload Status Text Animation --- */
+.upload-status-text {
+    position: relative;
+    display: inline-block;
+    animation: textShimmer 2.5s ease-in-out infinite;
+    background: linear-gradient(90deg,
+            var(--accent-color) 0%,
+            rgba(var(--accent-color-rgb), 0.7) 25%,
+            var(--accent-color) 50%,
+            rgba(var(--accent-color-rgb), 0.7) 75%,
+            var(--accent-color) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* --- Glassmorphism Animations --- */
+@keyframes glassmorphPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    50% {
+        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@keyframes glassmorphPulseDark {
+
+    0%,
+    100% {
+        transform: scale(1);
+        background: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        background: rgba(0, 0, 0, 0.35);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+}
+
+@keyframes textShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* --- File Chip States with Glassmorphism --- */
+.file-chip.uploading,
+.file-chip.reading {
+    position: relative;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    animation: glassmorphPulse 2s ease-in-out infinite;
+}
+
+.dark-mode .file-chip.uploading,
+.dark-mode .file-chip.reading {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    animation: glassmorphPulseDark 2s ease-in-out infinite;
+}
+
+.file-chip.failed {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.file-chip.failed .file-chip-icon {
+    color: #ef4444;
+}
+
+/* --- Session Chips (similar to file chips) --- */
+.session-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--elevated-bg);
+    border: 1px solid var(--accent-color);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    transition: all var(--anim-fast) var(--easing-standard);
+    cursor: pointer;
+    max-width: 250px;
+}
+
+.session-chip:hover {
+    background: var(--accent-muted);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-chip-icon {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.session-chip-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    flex: 1;
+}
+
+.session-chip-remove {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--anim-fast) var(--easing-standard);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+}
+
+.session-chip-remove:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* --- Input Toolbar --- */
+.input-toolbar {
+    display: flex;
+    justifyruary? wait time }

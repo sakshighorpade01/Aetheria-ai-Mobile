@@ -1,0 +1,510 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3    Copyright 2019 Google Inc. All Rights Reserved.
+4
+5     Licensed under the Apache License, Version 2.0 (the "License");
+6     you may not use this file except in compliance with the License.
+7     You may obtain a copy of the License at
+8
+9         http://www.apache.org/licenses/LICENSE-2.0
+10
+11     Unless required by applicable law or agreed to in writing, software
+12     distributed under the License is distributed on an "AS IS" BASIS,
+13     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14     See the License for the specific language governing permissions and
+15     limitations under the License.
+16-->
+17<!--
+18 The "package" attribute is rewritten by the Gradle build with the value of applicationId.
+19     It is still required here, as it is used to derive paths, for instance when referring
+20     to an Activity by ".MyActivity" instead of the full name. If more Activities are added to the
+21     application, the package attribute will need to reflect the correct path in order to use
+22     the abbreviated format.
+23-->
+24<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+25    package="app.vercel.aios_mobile_app.twa"
+26    android:versionCode="5"
+27    android:versionName="4" >
+28
+29    <uses-sdk
+30        android:minSdkVersion="21"
+31        android:targetSdkVersion="35" />
+32
+33    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+33-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:26:9-80
+33-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:26:26-78
+34    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+34-->[com.google.androidbrowserhelper:locationdelegation:1.1.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\6215e13210b05cc5715af15b5940fb9f\transformed\locationdelegation-1.1.2\AndroidManifest.xml:7:5-79
+34-->[com.google.androidbrowserhelper:locationdelegation:1.1.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\6215e13210b05cc5715af15b5940fb9f\transformed\locationdelegation-1.1.2\AndroidManifest.xml:7:22-76
+35    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+35-->[com.google.androidbrowserhelper:locationdelegation:1.1.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\6215e13210b05cc5715af15b5940fb9f\transformed\locationdelegation-1.1.2\AndroidManifest.xml:8:5-81
+35-->[com.google.androidbrowserhelper:locationdelegation:1.1.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\6215e13210b05cc5715af15b5940fb9f\transformed\locationdelegation-1.1.2\AndroidManifest.xml:8:22-78
+36
+37    <queries>
+37-->[com.google.androidbrowserhelper:androidbrowserhelper:2.6.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5053e02be90783e54992393be394bb70\transformed\androidbrowserhelper-2.6.2\AndroidManifest.xml:22:5-30:15
+38        <intent>
+38-->[com.google.androidbrowserhelper:androidbrowserhelper:2.6.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5053e02be90783e54992393be394bb70\transformed\androidbrowserhelper-2.6.2\AndroidManifest.xml:23:9-29:18
+39            <action android:name="android.intent.action.VIEW" />
+39-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:139:17-68
+39-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:139:25-66
+40
+41            <category android:name="android.intent.category.BROWSABLE" />
+41-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:141:17-77
+41-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:141:27-75
+42
+43            <data android:scheme="https" />
+43-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:142:17-145:19
+43-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:142:23-45
+44        </intent>
+45        <intent>
+45-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:13:9-15:18
+46            <action android:name="com.android.vending.billing.InAppBillingService.BIND" />
+46-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:14:13-91
+46-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:14:21-88
+47        </intent>
+48        <intent>
+48-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:16:9-18:18
+49            <action android:name="com.google.android.apps.play.billingtestcompanion.BillingOverrideService.BIND" />
+49-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:17:13-116
+49-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:17:21-113
+50        </intent>
+51    </queries>
+52
+53    <uses-permission android:name="com.android.vending.BILLING" />
+53-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:10:5-67
+53-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:10:22-64
+54
+55    <permission
+55-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+56        android:name="app.vercel.aios_mobile_app.twa.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+56-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+57        android:protectionLevel="signature" />
+57-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+58
+59    <uses-permission android:name="app.vercel.aios_mobile_app.twa.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- Although the *SdkVersion is captured in gradle build files, this is required for non gradle builds -->
+59-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+59-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+60    <!-- <uses-sdk android:minSdkVersion="14"/> -->
+61    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+61-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:24:5-79
+61-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:24:22-76
+62    <uses-permission android:name="android.permission.INTERNET" />
+62-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:25:5-67
+62-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:25:22-64
+63
+64    <application
+64-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:35:5-218:19
+65        android:name="app.vercel.aios_mobile_app.twa.Application"
+65-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:36:9-35
+66        android:allowBackup="true"
+66-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:37:9-35
+67        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+67-->[androidx.core:core:1.13.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\a5429f7b20c607b890f08b5283ad4ec0\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+68        android:extractNativeLibs="true"
+69        android:icon="@mipmap/ic_launcher"
+69-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:38:9-43
+70        android:label="@string/appName"
+70-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:39:9-40
+71        android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+71-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:41:9-105
+72        android:supportsRtl="true"
+72-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:43:9-35
+73        android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+73-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:44:9-68
+74        <meta-data
+74-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:46:9-48:58
+75            android:name="asset_statements"
+75-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:47:13-44
+76            android:resource="@string/assetStatements" />
+76-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:48:13-55
+77        <meta-data
+77-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:51:13-53:58
+78            android:name="web_manifest_url"
+78-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:52:17-48
+79            android:value="@string/webManifestUrl" />
+79-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:53:17-55
+80        <meta-data
+80-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:56:9-58:52
+81            android:name="twa_generator"
+81-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:57:13-41
+82            android:value="@string/generatorApp" />
+82-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:58:13-49
+83
+84        <activity android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity" >
+84-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:65:13-69:24
+84-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:65:23-104
+85            <meta-data
+85-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:66:13-68:53
+86                android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
+86-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:67:17-83
+87                android:value="@string/launchUrl" />
+87-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:68:17-50
+88        </activity>
+89        <activity
+89-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:72:9-151:20
+90            android:name="app.vercel.aios_mobile_app.twa.LauncherActivity"
+90-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:72:19-50
+91            android:alwaysRetainTaskState="true"
+91-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:73:13-49
+92            android:exported="true"
+92-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:75:13-36
+93            android:label="@string/launcherName" >
+93-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:74:13-49
+94            <meta-data
+94-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:76:13-77:53
+95                android:name="android.support.customtabs.trusted.DEFAULT_URL"
+95-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:76:24-85
+96                android:value="@string/launchUrl" />
+96-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:77:17-50
+97            <meta-data
+97-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:79:13-81:58
+98                android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
+98-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:80:17-83
+99                android:resource="@color/colorPrimary" />
+99-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:81:17-55
+100            <meta-data
+100-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:85:13-87:62
+101                android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR_DARK"
+101-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:86:17-88
+102                android:resource="@color/colorPrimaryDark" />
+102-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:87:17-59
+103            <meta-data
+103-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:89:13-91:61
+104                android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR"
+104-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:90:17-87
+105                android:resource="@color/navigationColor" />
+105-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:91:17-58
+106            <meta-data
+106-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:93:13-95:65
+107                android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR_DARK"
+107-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:94:17-92
+108                android:resource="@color/navigationColorDark" />
+108-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:95:17-62
+109            <meta-data
+109-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:97:13-99:68
+110                android:name="androix.browser.trusted.NAVIGATION_BAR_DIVIDER_COLOR"
+110-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:98:17-84
+111                android:resource="@color/navigationDividerColor" />
+111-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:99:17-65
+112            <meta-data
+112-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:101:13-103:72
+113                android:name="androix.browser.trusted.NAVIGATION_BAR_DIVIDER_COLOR_DARK"
+113-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:102:17-89
+114                android:resource="@color/navigationDividerColorDark" />
+114-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:103:17-69
+115            <meta-data
+115-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:105:13-106:54
+116                android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
+116-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:105:24-95
+117                android:resource="@drawable/splash" />
+117-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:106:17-52
+118            <meta-data
+118-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:108:13-109:60
+119                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
+119-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:108:24-104
+120                android:resource="@color/backgroundColor" />
+120-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:109:17-58
+121            <meta-data
+121-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:111:13-112:71
+122                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
+122-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:111:24-105
+123                android:value="@integer/splashScreenFadeOutDuration" />
+123-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:112:17-69
+124            <meta-data
+124-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:114:13-115:60
+125                android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
+125-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:114:24-97
+126                android:value="@string/providerAuthority" />
+126-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:115:17-58
+127            <meta-data
+127-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:117:13-97
+128                android:name="android.app.shortcuts"
+128-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:117:24-60
+129                android:resource="@xml/shortcuts" />
+129-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:117:61-94
+130            <meta-data
+130-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:119:13-120:56
+131                android:name="android.support.customtabs.trusted.FALLBACK_STRATEGY"
+131-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:119:24-91
+132                android:value="@string/fallbackType" />
+132-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:120:17-53
+133            <meta-data
+133-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:126:13-127:54
+134                android:name="android.support.customtabs.trusted.SCREEN_ORIENTATION"
+134-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:126:24-92
+135                android:value="@string/orientation" />
+135-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:127:17-52
+136
+137            <intent-filter>
+137-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:133:13-136:29
+138                <action android:name="android.intent.action.MAIN" />
+138-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:134:17-69
+138-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:134:25-66
+139
+140                <category android:name="android.intent.category.LAUNCHER" />
+140-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:135:17-77
+140-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:135:27-74
+141            </intent-filter>
+142            <intent-filter android:autoVerify="true" >
+142-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:138:13-146:29
+142-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:138:28-53
+143                <action android:name="android.intent.action.VIEW" />
+143-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:139:17-68
+143-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:139:25-66
+144
+145                <category android:name="android.intent.category.DEFAULT" />
+145-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:140:17-76
+145-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:140:27-73
+146                <category android:name="android.intent.category.BROWSABLE" />
+146-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:141:17-77
+146-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:141:27-75
+147
+148                <data
+148-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:142:17-145:19
+149                    android:host="@string/hostName"
+149-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:143:21-52
+150                    android:scheme="https" />
+150-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:142:23-45
+151            </intent-filter>
+152        </activity>
+153        <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity" />
+153-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:153:9-90
+153-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:153:19-87
+154        <activity
+154-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:155:9-156:62
+155            android:name="com.google.androidbrowserhelper.trusted.WebViewFallbackActivity"
+155-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:155:19-97
+156            android:configChanges="orientation|screenSize" />
+156-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:156:13-59
+157
+158        <provider
+158-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:158:9-166:20
+159            android:name="androidx.core.content.FileProvider"
+159-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:159:13-62
+160            android:authorities="@string/providerAuthority"
+160-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:160:13-60
+161            android:exported="false"
+161-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:162:13-37
+162            android:grantUriPermissions="true" >
+162-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:161:13-47
+163            <meta-data
+163-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:163:13-165:53
+164                android:name="android.support.FILE_PROVIDER_PATHS"
+164-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:164:17-67
+165                android:resource="@xml/filepaths" />
+165-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:165:17-50
+166        </provider>
+167
+168        <service
+168-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:168:9-183:19
+169            android:name="app.vercel.aios_mobile_app.twa.DelegationService"
+169-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:169:13-46
+170            android:enabled="@bool/enableNotification"
+170-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:170:13-55
+171            android:exported="@bool/enableNotification" >
+171-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:171:13-56
+172            <meta-data
+172-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:174:17-176:73
+173                android:name="android.support.customtabs.trusted.SMALL_ICON"
+173-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:175:21-81
+174                android:resource="@drawable/ic_notification_icon" />
+174-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:176:21-70
+175
+176            <intent-filter>
+176-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:179:13-182:29
+177                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE" />
+177-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:180:17-105
+177-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:180:25-103
+178
+179                <category android:name="android.intent.category.DEFAULT" />
+179-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:140:17-76
+179-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:140:27-73
+180            </intent-filter>
+181        </service>
+182
+183        <activity android:name="com.google.androidbrowserhelper.trusted.NotificationPermissionRequestActivity" />
+183-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:186:13-118
+183-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:186:23-115
+184        <activity android:name="com.google.androidbrowserhelper.locationdelegation.PermissionRequestActivity" />
+184-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:190:13-191:89
+184-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:190:23-123
+185        <activity
+185-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:194:9-207:20
+186            android:name="com.google.androidbrowserhelper.playbilling.provider.PaymentActivity"
+186-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:195:13-96
+187            android:configChanges="keyboardHidden|keyboard|orientation|screenLayout|screenSize"
+187-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:197:13-96
+188            android:exported="true"
+188-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:198:13-36
+189            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+189-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:196:13-72
+190            <intent-filter>
+190-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:200:13-202:29
+191                <action android:name="org.chromium.intent.action.PAY" />
+191-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:201:17-73
+191-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:201:25-70
+192            </intent-filter>
+193
+194            <meta-data
+194-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:204:13-206:67
+195                android:name="org.chromium.default_payment_method_name"
+195-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:205:17-72
+196                android:value="https://play.google.com/billing" />
+196-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:206:17-64
+197        </activity>
+198
+199        <!-- This service checks who calls it at runtime. -->
+200        <service
+200-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:210:9-216:19
+201            android:name="com.google.androidbrowserhelper.playbilling.provider.PaymentService"
+201-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:211:13-95
+202            android:exported="true" >
+202-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:212:13-36
+203            <intent-filter>
+203-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:213:13-215:29
+204                <action android:name="org.chromium.intent.action.IS_READY_TO_PAY" />
+204-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:214:17-85
+204-->C:\Users\saksh\Desktop\AI-OS\AI-OS-new\AI-OS-Mobile-App\android-build\app\src\main\AndroidManifest.xml:214:25-82
+205            </intent-filter>
+206        </service>
+207
+208        <meta-data
+208-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:22:9-24:37
+209            android:name="com.google.android.play.billingclient.version"
+209-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:23:13-73
+210            android:value="7.1.1" />
+210-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:24:13-34
+211
+212        <activity
+212-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:26:9-30:75
+213            android:name="com.android.billingclient.api.ProxyBillingActivity"
+213-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:27:13-78
+214            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+214-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:28:13-96
+215            android:exported="false"
+215-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:29:13-37
+216            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+216-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:30:13-72
+217        <activity
+217-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:31:9-35:75
+218            android:name="com.android.billingclient.api.ProxyBillingActivityV2"
+218-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:32:13-80
+219            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+219-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:33:13-96
+220            android:exported="false"
+220-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:34:13-37
+221            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+221-->[com.android.billingclient:billing:7.1.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\1dcabcea90c9508775a51aeea5d7fca7\transformed\billing-7.1.1\AndroidManifest.xml:35:13-72
+222        <activity
+222-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\57bacb9ef58048c0e6f8321d8067096b\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+223            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+223-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\57bacb9ef58048c0e6f8321d8067096b\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+224            android:exported="false"
+224-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\57bacb9ef58048c0e6f8321d8067096b\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+225            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+225-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\57bacb9ef58048c0e6f8321d8067096b\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+226
+227        <meta-data
+227-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\af1250092db6525f6762c9b32f91bede\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
+228            android:name="com.google.android.gms.version"
+228-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\af1250092db6525f6762c9b32f91bede\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
+229            android:value="@integer/google_play_services_version" />
+229-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\af1250092db6525f6762c9b32f91bede\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
+230
+231        <provider
+231-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+232            android:name="androidx.startup.InitializationProvider"
+232-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+233            android:authorities="app.vercel.aios_mobile_app.twa.androidx-startup"
+233-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+234            android:exported="false" >
+234-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+235            <meta-data
+235-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+236                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+236-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+237                android:value="androidx.startup" />
+237-->[androidx.emoji2:emoji2:1.3.0] C:\Users\saksh\.gradle\caches\8.11.1\transforms\5cb7738f5242d8c4e38c8ffa2b265b31\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+238            <meta-data
+238-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\4bc52031417e9743197e36b704fe409f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+239                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+239-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\4bc52031417e9743197e36b704fe409f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+240                android:value="androidx.startup" />
+240-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\saksh\.gradle\caches\8.11.1\transforms\4bc52031417e9743197e36b704fe409f\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+241            <meta-data
+241-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+242                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+242-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+243                android:value="androidx.startup" />
+243-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+244        </provider>
+245
+246        <service
+246-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:28:9-34:19
+247            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+247-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:29:13-103
+248            android:exported="false" >
+248-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:30:13-37
+249            <meta-data
+249-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:31:13-33:39
+250                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+250-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:32:17-94
+251                android:value="cct" />
+251-->[com.google.android.datatransport:transport-backend-cct:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\85bc3f8cc97bd85b10d760e1ca7886a3\transformed\transport-backend-cct-3.1.8\AndroidManifest.xml:33:17-36
+252        </service>
+253        <service
+253-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:26:9-30:19
+254            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+254-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:27:13-117
+255            android:exported="false"
+255-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:28:13-37
+256            android:permission="android.permission.BIND_JOB_SERVICE" >
+256-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:29:13-69
+257        </service>
+258
+259        <receiver
+259-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:32:9-34:40
+260            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+260-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:33:13-132
+261            android:exported="false" />
+261-->[com.google.android.datatransport:transport-runtime:3.1.8] C:\Users\saksh\.gradle\caches\8.11.1\transforms\390580f802b798735a90189ae7e85163\transformed\transport-runtime-3.1.8\AndroidManifest.xml:34:13-37
+262        <receiver
+262-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+263            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+263-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+264            android:directBootAware="false"
+264-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+265            android:enabled="true"
+265-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+266            android:exported="true"
+266-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+267            android:permission="android.permission.DUMP" >
+267-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+268            <intent-filter>
+268-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+269                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+269-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+269-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+270            </intent-filter>
+271            <intent-filter>
+271-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+272                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+272-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+272-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+273            </intent-filter>
+274            <intent-filter>
+274-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+275                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+275-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+275-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+276            </intent-filter>
+277            <intent-filter>
+277-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+278                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+278-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+278-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\saksh\.gradle\caches\8.11.1\transforms\bb4a0d32d1b17a1dcea0cf71d2bde5e0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+279            </intent-filter>
+280        </receiver>
+281    </application>
+282
+283</manifest>

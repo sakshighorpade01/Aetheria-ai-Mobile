@@ -1,0 +1,4 @@
+#Tue Jul 29 22:03:33 IST 2025
+base.0=C\:\\Users\\saksh\\Desktop\\AI-OS\\AI-OS-new\\AI-OS-Mobile-App\\android-build\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

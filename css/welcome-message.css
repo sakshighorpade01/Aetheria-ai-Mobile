@@ -1,0 +1,207 @@
+/* =================================================================
+ * WELCOME MESSAGE COMPONENT STYLES
+ * ================================================================= */
+
+/*
+ * This module contains styles for the welcome message display
+ * that appears when no chat messages are present.
+ * 
+ * Dependencies: chat-variables.css, design-system.css
+ * Used by: Welcome message component
+ */
+
+/* --- Welcome Container --- */
+.welcome-container {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: var(--z-welcome-message, 998);
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity var(--anim-normal) var(--easing-standard),
+        transform var(--anim-normal) var(--easing-standard);
+}
+
+.welcome-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -50%) scale(0.95);
+    transition: opacity var(--anim-fast) var(--easing-standard),
+        transform var(--anim-fast) var(--easing-standard),
+        visibility 0s var(--anim-fast);
+}
+
+.welcome-container.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* --- Welcome Content --- */
+.welcome-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    animation: welcomeFadeIn 0.6s ease-out;
+}
+
+/* --- Welcome Heading --- */
+.welcome-heading {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: var(--font-semibold, 600);
+    color: var(--text-color);
+    margin: 0;
+    line-height: var(--leading-tight, 1.25);
+    letter-spacing: var(--tracking-tight, -0.025em);
+    font-family: var(--font-sans);
+}
+
+/* Add a subtle gradient effect for the heading */
+.welcome-heading {
+    background: linear-gradient(135deg, var(--text-color) 0%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Fallback for browsers that don't support background-clip: text */
+    color: var(--text-color);
+}
+
+/* Fallback for browsers without gradient text support */
+@supports not (-webkit-background-clip: text) {
+    .welcome-heading {
+        background: none;
+        color: var(--text-color);
+    }
+}
+
+/* --- Welcome Secondary Heading --- */
+.welcome-secondary-heading {
+    font-size: var(--text-xl, 1.25rem);
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: var(--font-medium, 500);
+    line-height: var(--leading-relaxed, 1.625);
+    opacity: 0.9;
+}
+
+/* --- Animations --- */
+@keyframes welcomeFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .welcome-container {
+        padding: 1.5rem;
+        max-width: 90%;
+    }
+
+    .welcome-heading {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+    }
+
+    .welcome-secondary-heading {
+        font-size: var(--text-lg, 1.125rem);
+    }
+
+    .welcome-content {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-container {
+        padding: 1rem;
+    }
+
+    .welcome-heading {
+        font-size: clamp(1.25rem, 7vw, 2rem);
+        line-height: var(--leading-snug, 1.375);
+    }
+
+    .welcome-secondary-heading {
+        font-size: var(--text-base, 1rem);
+    }
+}
+
+/* --- High Contrast Mode Support --- */
+@media (prefers-contrast: high) {
+    .welcome-heading {
+        background: none;
+        color: var(--text-color);
+        -webkit-text-fill-color: unset;
+    }
+
+    .welcome-secondary-heading {
+        opacity: 1;
+        color: var(--text-color);
+    }
+}
+
+/* --- Reduced Motion Support --- */
+@media (prefers-reduced-motion: reduce) {
+    .welcome-container {
+        transition: opacity 0.1s ease;
+    }
+
+    .welcome-content {
+        animation: none;
+    }
+
+    @keyframes welcomeFadeIn {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* --- Dark Mode Adjustments --- */
+.dark-mode .welcome-heading {
+    background: linear-gradient(135deg, var(--text-color) 0%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dark-mode .welcome-secondary-heading {
+    color: var(--text-secondary);
+    opacity: 0.95;
+}
+
+/* --- Focus and Accessibility --- */
+.welcome-container:focus-within {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 4px;
+    border-radius: 8px;
+}
+
+/* --- Print Styles --- */
+@media print {
+    .welcome-container {
+        position: static;
+        transform: none;
+        page-break-inside: avoid;
+    }
+
+    .welcome-heading {
+        background: none;
+        color: black;
+        -webkit-text-fill-color: unset;
+    }
+}

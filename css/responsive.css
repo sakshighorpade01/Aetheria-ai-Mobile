@@ -1,0 +1,154 @@
+/* css/responsive.css */
+
+/* --- Default state for mobile elements (hidden on desktop) --- */
+.mobile-nav {
+    display: none;
+}
+
+/* --- Activate mobile styles ONLY when the .mobile-view class is on the body --- */
+
+/* Hide Desktop-Specific UI */
+body.mobile-view .taskbar,
+body.mobile-view .window-controls {
+    display: none !important;
+}
+
+/* Show and Style Mobile Navigation */
+body.mobile-view .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--background-color-dark);
+    border-top: 1px solid var(--border-color);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+}
+
+body.mobile-view .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-color-secondary);
+    font-size: 12px;
+    flex-grow: 1;
+    height: 100%;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+body.mobile-view .mobile-nav-btn i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+body.mobile-view .mobile-nav-btn.active {
+    color: var(--primary-color);
+}
+
+/* Adjust Main App Layout for Mobile */
+body.mobile-view .app-container {
+    padding-bottom: 60px; /* Avoid overlap with mobile nav */
+    height: 100vh;
+    overflow: hidden;
+}
+
+body.mobile-view .main-view {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Chat View Adjustments */
+body.mobile-view #chat-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    display: flex; /* Ensure it's a flex container */
+}
+
+body.mobile-view #floating-input-container {
+    width: 100%;
+    left: 0;
+    bottom: 60px; /* Position above mobile nav */
+    border-radius: 0;
+    border-top: 1px solid var(--border-color);
+}
+
+body.mobile-view .chat-messages {
+    padding: 10px 10px 80px 10px;
+}
+
+/* Settings (AIOS) View Adjustments */
+body.mobile-view #floating-window {
+    position: absolute;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+    border-radius: 0;
+    border: none;
+    max-height: none;
+    display: flex; /* Ensure it's visible */
+}
+
+body.mobile-view .split-layout {
+    flex-direction: column;
+}
+
+body.mobile-view .tabs-sidebar {
+    flex-direction: row;
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid var(--border-color);
+    border-right: none;
+}
+
+body.mobile-view .tab-btn {
+    flex-grow: 1;
+}
+
+body.mobile-view .tab-btn span {
+    display: none;
+}
+
+/* To-Do List View Adjustments */
+body.mobile-view #to-do-list-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+    display: flex; /* Ensure it's visible */
+    flex-direction: column;
+}
+
+/* Modal and Panel Adjustments */
+body.mobile-view #context-window,
+body.mobile-view #selected-context-viewer,
+body.mobile-view #file-preview-sidebar {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 0;
+    border-left: none;
+    max-width: none;
+}
+
+body.mobile-view .modal {
+    width: 90%;
+}

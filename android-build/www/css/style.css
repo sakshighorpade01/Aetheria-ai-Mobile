@@ -1,0 +1,81 @@
+/* css/style.css (Updated for Notifications and Layout) */
+
+/* Import the foundational styles for the application */
+@import url('design-system.css');
+@import url('mobile.css');
+@import url('modals.css');
+
+/* --- Main Application Body Styles --- */
+body {
+    background: var(--bg-color);
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 75% 75%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+}
+
+/* --- Connection Status --- */
+.connection-error {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: var(--error-500);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+    animation: fadeIn 0.3s ease;
+}
+
+/* --- Animated Notifications Container (Updated Position & Animation) --- */
+.notification-container {
+    position: fixed;
+    top: 70px; /* Below transparent header */
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.notification {
+    background-color: var(--elevated-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-lg);
+    pointer-events: all;
+    font-size: var(--text-sm);
+    max-width: 24rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    /* New slide-in-from-right animation */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Notification types */
+.notification.error { border-left-color: var(--error-500); }
+.notification.success { border-left-color: var(--success-500); }
+.notification.warning { border-left-color: var(--warning-500); }
+.notification.info { border-left-color: var(--accent-color); } /* For info messages */
+
+/* --- Utility Classes --- */
+.hidden { display: none !important; }
+
+/* --- Keyframes --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

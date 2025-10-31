@@ -1,0 +1,283 @@
+/* notifications.css - Unified Notification System with Glassmorphism */
+
+/* Container */
+.unified-notification-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: 400px;
+}
+
+/* Base Notification */
+.unified-notification {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    min-width: 300px;
+    max-width: 400px;
+    pointer-events: all;
+    overflow: hidden;
+
+    /* Glassmorphism Effect */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+    /* Animation */
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode .unified-notification {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Show Animation */
+.unified-notification.show {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+/* Hide Animation */
+.unified-notification.hide {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+}
+
+/* Hover Effect */
+.unified-notification:hover {
+    transform: translateX(0) scale(1.02);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* Icon */
+.notification-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* Content */
+.notification-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notification-message {
+    color: var(--text-color);
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Close Button */
+.notification-close {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    padding: 0;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.dark-mode .notification-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Progress Bar */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    transform-origin: left;
+}
+
+@keyframes progress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Type Variants */
+.notification-success {
+    border-left: 4px solid var(--success-500, #10b981);
+}
+
+.notification-success .notification-icon {
+    color: var(--success-500, #10b981);
+}
+
+.notification-success .notification-progress {
+    background: var(--success-500, #10b981);
+}
+
+.notification-error {
+    border-left: 4px solid var(--error-500, #ef4444);
+}
+
+.notification-error .notification-icon {
+    color: var(--error-500, #ef4444);
+}
+
+.notification-error .notification-progress {
+    background: var(--error-500, #ef4444);
+}
+
+.notification-warning {
+    border-left: 4px solid var(--warning-500, #f59e0b);
+}
+
+.notification-warning .notification-icon {
+    color: var(--warning-500, #f59e0b);
+}
+
+.notification-warning .notification-progress {
+    background: var(--warning-500, #f59e0b);
+}
+
+.notification-info {
+    border-left: 4px solid var(--accent-color, #3b82f6);
+}
+
+.notification-info .notification-icon {
+    color: var(--accent-color, #3b82f6);
+}
+
+.notification-info .notification-progress {
+    background: var(--accent-color, #3b82f6);
+}
+
+.notification-connection {
+    border-left: 4px solid #8b5cf6;
+}
+
+.notification-connection .notification-icon {
+    color: #8b5cf6;
+}
+
+/* Retry Button */
+.notification-retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: var(--text-color);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-retry-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.dark-mode .notification-retry-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .notification-retry-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .unified-notification-container {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        max-width: none;
+    }
+
+    .unified-notification {
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .unified-notification {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+
+    .unified-notification.show {
+        transform: none;
+    }
+
+    .unified-notification.hide {
+        transform: none;
+    }
+
+    .unified-notification:hover {
+        transform: none;
+    }
+
+    .notification-progress {
+        animation: none !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .unified-notification {
+        border: 2px solid currentColor;
+        background: var(--window-bg);
+        backdrop-filter: none;
+    }
+}
+
+/* Accessibility - Focus Styles */
+.notification-close:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.notification-retry-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}

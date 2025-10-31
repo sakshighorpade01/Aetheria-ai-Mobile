@@ -1,0 +1,27 @@
+# Dockerfile.sandbox
+# This defines the environment where user code will run.
+
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install common tools needed by the agent
+# git is needed for 'git clone', curl for downloading files, etc.
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3-pip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user for security.
+# Running code as root inside a container is a major security risk.
+RUN useradd -m -s /bin/bash sandboxuser
+
+# Switch to the non-root user
+USER sandboxuser
+WORKDIR /home/sandboxuser
+
+# Final check
+CMD ["/bin/bash"]

@@ -1,0 +1,186 @@
+<!-- aios.html -->
+<div id="settings-view" class="floating-window">
+  <div class="window-header">
+    <div class="window-title">
+      <button class="back-button" id="close-aios" aria-label="Back">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <span>Settings</span>
+    </div>
+  </div>
+
+  <div class="window-content">
+    <div class="split-layout">
+      <!-- Tabs Area -->
+      <div class="tabs-sidebar">
+        <button class="tab-btn active" data-tab="profile"><i class="fas fa-user"></i><span>Profile</span></button>
+        <button class="tab-btn" data-tab="account"><i class="fas fa-cog"></i><span>Account</span></button>
+        <button class="tab-btn" data-tab="theme"><i class="fas fa-adjust"></i><span>Theme</span></button>
+        <button class="tab-btn" data-tab="about"><i class="fas fa-info-circle"></i><span>About</span></button>
+        <button class="tab-btn" data-tab="support"><i class="fas fa-question-circle"></i><span>Support</span></button>
+      </div>
+
+      <!-- Content Area -->
+      <div class="tab-content-area">
+        <!-- Profile Tab -->
+        <div class="tab-content active" id="profile-tab">
+          <h3 class="tab-heading">Profile Information</h3>
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" placeholder="Enter your full name" aria-label="Full Name">
+            </div>
+            <div class="form-group">
+              <label for="nickname">Nickname</label>
+              <input type="text" id="nickname" placeholder="Enter your preferred name" aria-label="Nickname">
+            </div>
+            <div class="form-group">
+              <label for="occupation">Occupation</label>
+              <input type="text" id="occupation" placeholder="Enter your occupation" aria-label="Occupation">
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Account Tab -->
+        <div class="tab-content" id="account-tab">
+          <h3 class="tab-heading">Account Settings</h3>
+
+          <!-- Logged Out State -->
+          <div id="account-logged-out" class="auth-state">
+            <div class="auth-tabs">
+              <button class="auth-tab-btn active" data-auth-tab="login">Login</button>
+              <button class="auth-tab-btn" data-auth-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="Enter your email" required>
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+              </div>
+              <div id="login-error" class="auth-error"></div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="auth-form">
+              <div class="form-group">
+                <label for="signupName">Name</label>
+                <input type="text" id="signupName" placeholder="Enter your name" required>
+              </div>
+              <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" placeholder="Enter your email" required>
+              </div>
+              <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" placeholder="Create a password" required>
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+              </div>
+              <div id="signup-error" class="auth-error"></div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Logged In State -->
+          <div id="account-logged-in" class="auth-state hidden">
+            <div class="form-group">
+              <label for="userName">Name</label>
+              <div class="user-info-display" id="userName">User Name</div>
+            </div>
+            <div class="form-group">
+              <label for="userEmail">Email ID</label>
+              <div class="email-display" id="userEmail">user@example.com</div>
+            </div>
+
+            <!-- === NEW INTEGRATIONS SECTION START === -->
+            <div class="integrations-section">
+              <h4 class="section-subheading">Integrations</h4>
+
+              <!-- GitHub Integration Item -->
+              <div class="integration-item">
+                <div class="integration-info">
+                  <i class="fab fa-github"></i>
+                  <span>GitHub</span>
+                </div>
+                <button class="connect-btn" id="connect-github-btn" data-provider="github">
+                  <i class="fas fa-link icon-connect"></i>
+                  <i class="fas fa-check icon-connected" style="display: none;"></i>
+                  <span class="btn-text">Connect</span>
+                </button>
+              </div>
+
+              <!-- Google Integration Item -->
+              <div class="integration-item">
+                <div class="integration-info">
+                  <i class="fab fa-google"></i>
+                  <span>Google</span>
+                </div>
+                <button class="connect-btn" id="connect-google-btn" data-provider="google">
+                  <i class="fas fa-link icon-connect"></i>
+                  <i class="fas fa-check icon-connected" style="display: none;"></i>
+                  <span class="btn-text">Connect</span>
+                </button>
+              </div>
+            </div>
+            <!-- === NEW INTEGRATIONS SECTION END === -->
+
+            <div class="account-actions">
+              <button class="btn btn-secondary" id="logout-btn" aria-label="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Log out</span>
+              </button>
+              <button class="btn btn-danger" id="delete-account-btn" aria-label="Delete Account">
+                <i class="fas fa-trash-alt"></i>
+                <span>Delete account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme Tab -->
+        <div class="tab-content" id="theme-tab">
+          <h3 class="tab-heading">Theme Settings</h3>
+          <div class="form-group">
+            <label for="theme-options">Appearance</label>
+            <div class="theme-selector" id="theme-options">
+              <button class="theme-option" data-theme="light">
+                <i class="fas fa-sun"></i> Light
+              </button>
+              <button class="theme-option active" data-theme="dark">
+                <i class="fas fa-moon"></i> Dark
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- About Tab -->
+        <div class="tab-content" id="about-tab">
+          <h3 class="tab-heading">About</h3>
+          <p>A modern mobile application for managing your account and preferences. Built for optimal performance and user experience.</p>
+        </div>
+
+        <!-- Support Tab -->
+        <div class="tab-content" id="support-tab">
+          <h3 class="tab-heading">Support</h3>
+          <p>Contact support or access documentation here.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

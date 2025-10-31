@@ -1,0 +1,275 @@
+/* css/chat.css (Adapted from Desktop Version) */
+
+/* --- Wrapper for user message and context button --- */
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 85%;
+}
+
+.user-message-wrapper {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+/* Base class for ALL message bubbles */
+.message {
+    padding: 12px 16px;
+    border-radius: 16px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: left;
+    animation: messageIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: -moz-fit-content;
+    width: fit-content;
+}
+
+@keyframes messageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* User Message Styling */
+.user-message {
+    background-color: var(--message-user-bg);
+    color: var(--message-user-text);
+    border-radius: 16px 16px 0 16px;
+    align-self: flex-end;
+}
+
+/* Bot Message Styling */
+.bot-message {
+    background-color: var(--message-bot-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Rounded on all corners */
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0; /* Padding is handled by inner containers */
+    overflow: hidden;
+    width: auto;
+    max-width: 100%;
+}
+
+/* --- NEW/ADAPTED DESKTOP STYLES --- */
+
+.thinking-indicator {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(var(--accent-color-rgb), 0.05);
+    transition: all 0.3s ease;
+}
+
+.thinking-indicator.steps-done {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.thinking-indicator.steps-done:hover {
+    background-color: rgba(var(--accent-color-rgb), 0.1);
+}
+
+.thinking-steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.thinking-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.step-icon {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+}
+
+.fa-spin {
+    animation: fa-spin 1.5s linear infinite;
+}
+
+.summary-text {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.summary-chevron {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-secondary);
+}
+
+.bot-message.expanded .summary-chevron {
+    transform: rotate(180deg);
+}
+
+.detailed-logs {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.4s ease, padding-top 0.4s ease;
+    margin-top: 0;
+    padding: 0 16px;
+}
+
+.bot-message.expanded .detailed-logs {
+    max-height: 1500px;
+    opacity: 1;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.content-block {
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.content-block-header {
+    background-color: var(--hover-bg);
+    padding: 4px 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.dark-mode .content-block-header {
+    background-color: var(--neutral-800);
+}
+
+.inner-content {
+    padding: 12px;
+}
+
+.tool-log-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background-color: var(--hover-bg);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.dark-mode .tool-log-entry {
+    background-color: var(--neutral-800);
+}
+
+.tool-log-icon {
+    color: var(--accent-color);
+    font-size: 1rem;
+}
+
+.tool-log-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-log-owner {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.tool-log-action {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.tool-log-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+.tool-log-status.in-progress {
+    color: var(--warning-700);
+    background-color: var(--warning-100);
+}
+
+.dark-mode .tool-log-status.in-progress {
+    color: var(--warning-100);
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.tool-log-status.completed {
+    color: var(--success-700);
+    background-color: var(--success-100);
+}
+
+.dark-mode .tool-log-status.completed {
+    color: var(--success-100);
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+.message-content {
+    padding: 12px 16px;
+}
+
+/* --- End of new styles --- */
+
+/* Context button styling */
+.user-message-context-button {
+    background-color: var(--elevated-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-top: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-message-context-button:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* Inner Content Formatting */
+.bot-message pre, .user-message pre {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    margin: 8px 0;
+}
+
+.bot-message code, .user-message code {
+    background-color: var(--code-bg);
+    color: var(--text-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.92rem;
+}
+
+/* Responsive Adjustment */
+@media (max-width: 600px) {
+    .message-wrapper {
+        max-width: 90%;
+    }
+}

@@ -1,0 +1,62 @@
+flower          | 2025-10-31 20:45:44.380 | [I 251031 15:15:44 mixins:228] Connected to redis://redis:6379/0
+flower          | 2025-10-31 20:45:44.380 | [I 251031 15:15:44 mixins:228] Connected to redis://redis:6379/0
+flower          | 2025-10-31 20:45:45.503 | [W 251031 15:15:45 inspector:44] Inspect method active_queues failed
+flower          | 2025-10-31 20:45:45.503 | [W 251031 15:15:45 inspector:44] Inspect method active_queues failed
+flower          | 2025-10-31 20:45:45.504 | [W 251031 15:15:45 inspector:44] Inspect method stats failed
+flower          | 2025-10-31 20:45:45.504 | [W 251031 15:15:45 inspector:44] Inspect method stats failed
+flower          | 2025-10-31 20:45:45.507 | [W 251031 15:15:45 inspector:44] Inspect method scheduled failed
+flower          | 2025-10-31 20:45:45.507 | [W 251031 15:15:45 inspector:44] Inspect method active failed
+flower          | 2025-10-31 20:45:45.507 | [W 251031 15:15:45 inspector:44] Inspect method scheduled failed
+flower          | 2025-10-31 20:45:45.507 | [W 251031 15:15:45 inspector:44] Inspect method active failed
+flower          | 2025-10-31 20:45:45.510 | [W 251031 15:15:45 inspector:44] Inspect method conf failed
+flower          | 2025-10-31 20:45:45.511 | [W 251031 15:15:45 inspector:44] Inspect method reserved failed
+flower          | 2025-10-31 20:45:45.510 | [W 251031 15:15:45 inspector:44] Inspect method conf failed
+flower          | 2025-10-31 20:45:45.511 | [W 251031 15:15:45 inspector:44] Inspect method reserved failed
+flower          | 2025-10-31 20:45:45.512 | [W 251031 15:15:45 inspector:44] Inspect method registered failed
+flower          | 2025-10-31 20:45:45.512 | [W 251031 15:15:45 inspector:44] Inspect method registered failed
+flower          | 2025-10-31 20:45:45.515 | [W 251031 15:15:45 inspector:44] Inspect method revoked failed
+flower          | 2025-10-31 20:45:45.515 | [W 251031 15:15:45 inspector:44] Inspect method revoked failed
+web             | 2025-10-31 20:45:54.855 | INFO:sockets:Dependencies (ConnectionManager, RedisClient) injected into sockets module.
+web             | 2025-10-31 20:45:54.855 | WARNING:factory:GitHub OAuth credentials not set. GitHub integration will be disabled.
+web             | 2025-10-31 20:45:54.855 | INFO:factory:Google OAuth provider registered.
+web             | 2025-10-31 20:45:54.855 | INFO:factory:Vercel OAuth provider registered.
+web             | 2025-10-31 20:45:54.856 | INFO:factory:Supabase OAuth provider registered.
+web             | 2025-10-31 20:45:54.855 | INFO:sockets:Dependencies (ConnectionManager, RedisClient) injected into sockets module.
+web             | 2025-10-31 20:45:54.855 | WARNING:factory:GitHub OAuth credentials not set. GitHub integration will be disabled.
+web             | 2025-10-31 20:45:54.855 | INFO:factory:Google OAuth provider registered.
+web             | 2025-10-31 20:45:54.855 | INFO:factory:Vercel OAuth provider registered.
+web             | 2025-10-31 20:45:54.856 | INFO:factory:Supabase OAuth provider registered.
+web             | 2025-10-31 20:45:54.869 | INFO:sockets:Client connected: nlMbQArBUqrB0nPfAAAB
+web             | 2025-10-31 20:45:54.869 | INFO:sockets:Client connected: nlMbQArBUqrB0nPfAAAB
+web             | 2025-10-31 20:51:30.793 | server=localhost:8765//socket.io/ client=172.18.0.1:60446 socket shutdown error: [Errno 9] Bad file descriptorINFO:sockets:Client disconnected: nlMbQArBUqrB0nPfAAAB
+web             | 2025-10-31 20:51:30.793 | server=localhost:8765//socket.io/ client=172.18.0.1:60446 socket shutdown error: [Errno 9] Bad file descriptorINFO:sockets:Client disconnected: nlMbQArBUqrB0nPfAAAB
+web             | 2025-10-31 20:51:35.504 | INFO:sockets:Client connected: TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:51:35.504 | INFO:sockets:Client connected: TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:52:03.267 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
+web             | 2025-10-31 20:52:03.267 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
+web             | 2025-10-31 20:52:03.271 | INFO:session_service:Creating new session shell in Redis for conversation_id: conv_1761924095049
+web             | 2025-10-31 20:52:03.271 | INFO:session_service:Creating new session shell in Redis for conversation_id: conv_1761924095049
+web             | 2025-10-31 20:52:03.272 | INFO:sockets:Spawned agent run for conversation: conv_1761924095049
+web             | 2025-10-31 20:52:03.272 | INFO:sockets:Spawned agent run for conversation: conv_1761924095049
+web             | 2025-10-31 20:52:03.272 | [AGENT_RUNNER] START RUN: message_id=msg_1761924122133, sid=TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:52:03.272 | [AGENT_RUNNER] START RUN: message_id=msg_1761924122133, sid=TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:52:03.273 | [AGENT_RUNNER] Created realtime_tool_config: {'socketio': 'SocketIO', 'sid': 'str', 'message_id': 'str', 'redis_client': 'Redis'}
+web             | 2025-10-31 20:52:03.272 | INFO:agent_runner:[AGENT_RUNNER] START RUN: message_id=msg_1761924122133, sid=TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:52:03.273 | INFO:agent_runner:[AGENT_RUNNER] Created realtime_tool_config with keys: ['socketio', 'sid', 'message_id', 'redis_client']
+web             | 2025-10-31 20:52:03.272 | INFO:agent_runner:[AGENT_RUNNER] START RUN: message_id=msg_1761924122133, sid=TLPJvTG5v7v_lBJNAAAD
+web             | 2025-10-31 20:52:03.273 | INFO:agent_runner:[AGENT_RUNNER] Created realtime_tool_config with keys: ['socketio', 'sid', 'message_id', 'redis_client']
+web             | 2025-10-31 20:52:03.273 | [AGENT_RUNNER] Created realtime_tool_config: {'socketio': 'SocketIO', 'sid': 'str', 'message_id': 'str', 'redis_client': 'Redis'}
+web             | 2025-10-31 20:52:03.280 | ERROR:agent_runner:Agent run failed for conversation conv_1761924095049: get_llm_os() got an unexpected keyword argument 'calculator'
+web             | 2025-10-31 20:52:03.280 | Traceback (most recent call last):
+web             | 2025-10-31 20:52:03.280 |   File "/app/agent_runner.py", line 103, in run_agent_and_stream
+web             | 2025-10-31 20:52:03.280 |     agent = get_llm_os(
+web             | 2025-10-31 20:52:03.280 |             ^^^^^^^^^^^
+web             | 2025-10-31 20:52:03.280 | TypeError: get_llm_os() got an unexpected keyword argument 'calculator'
+web             | 2025-10-31 20:52:03.280 | 
+web             | 2025-10-31 20:52:03.280 | ERROR:agent_runner:Agent run failed for conversation conv_1761924095049: get_llm_os() got an unexpected keyword argument 'calculator'
+web             | 2025-10-31 20:52:03.280 | Traceback (most recent call last):
+web             | 2025-10-31 20:52:03.280 |   File "/app/agent_runner.py", line 103, in run_agent_and_stream
+web             | 2025-10-31 20:52:03.280 |     agent = get_llm_os(
+web             | 2025-10-31 20:52:03.280 |             ^^^^^^^^^^^
+web             | 2025-10-31 20:52:03.280 | TypeError: get_llm_os() got an unexpected keyword argument 'calculator'
+web             | 2025-10-31 20:52:03.280 | 

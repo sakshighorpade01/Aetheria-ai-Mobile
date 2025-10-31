@@ -1,0 +1,325 @@
+/* The main container is no longer a floating window, but the content of the sidebar */
+.floating-window {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.window-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background-color: var(--elevated-bg);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.window-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.125rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--text-color);
+    background-color: var(--hover-bg);
+}
+
+
+.window-content {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+}
+
+.split-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tabs-sidebar {
+    width: 100%;
+    background-color: var(--elevated-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem;
+    display: flex;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.tab-btn i {
+    font-size: 1.25rem;
+}
+
+.tab-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+}
+
+.tab-btn.active {
+    background-color: var(--accent-muted);
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.tab-content-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-heading {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    transition: border 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.form-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.theme-selector {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    background-color: var(--input-bg);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+}
+
+.theme-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.theme-option:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+}
+
+.theme-option.active {
+    background-color: var(--card-bg);
+    color: var(--accent-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.auth-tab-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.auth-tab-btn:hover {
+    color: var(--text-color);
+}
+
+.auth-tab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.auth-error {
+    color: var(--error-500);
+    font-size: var(--text-sm);
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+    min-height: 1.2em;
+}
+
+.account-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.integrations-section {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.section-subheading {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.integration-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.integration-item:last-child {
+    border-bottom: none;
+}
+
+.integration-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.integration-info i {
+    font-size: 20px;
+    color: var(--text-secondary);
+}
+
+.integration-info span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.connect-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--elevated-bg);
+    color: var(--accent-color);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.connect-btn:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+}
+
+.connect-btn.connected {
+    background-color: var(--success-50);
+    border-color: var(--success-500);
+    color: var(--success-700);
+}
+
+.dark-mode .connect-btn.connected {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: var(--success-700);
+    color: var(--success-100);
+}
+
+.connect-btn.connected:hover {
+    background-color: var(--error-50);
+    border-color: var(--error-500);
+    color: var(--error-700);
+}

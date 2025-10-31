@@ -1,0 +1,401 @@
+/* =================================================================
+ * CONTEXT & SESSION HISTORY WINDOWS
+ * ================================================================= */
+
+/* --- Main Context Window --- */
+.context-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1100px;
+    height: 90vh;
+    background: var(--window-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px var(--shadow-color);
+    z-index: var(--z-context-window);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.context-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.context-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.close-context-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.close-context-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.context-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+/* --- Session List View --- */
+.session-item {
+    background: var(--elevated-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    padding: 16px 18px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+}
+
+.session-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+.dark-mode .session-item:hover {
+    border-color: var(--neutral-700);
+    background: var(--neutral-800);
+}
+.session-content {
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.session-content h3 {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    transition: color 0.2s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.session-meta {
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.session-meta .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.session-meta .meta-item i {
+    width: 12px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+/* --- Session Selection Controls --- */
+.selection-controls {
+    grid-column: 1 / -1;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+
+.selection-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.selection-actions.hidden {
+    display: none;
+}
+
+.selected-count {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.use-selected-btn,
+.clear-selection-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.use-selected-btn {
+    background: var(--accent-color);
+    color: white;
+}
+
+.clear-selection-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.use-selected-btn:hover {
+    background: var(--accent-hover);
+}
+
+.clear-selection-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.session-select {
+    padding-top: 2px;
+}
+
+.session-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.checkbox-label {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: var(--window-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label i.fa-check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 12px;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.session-item:hover .checkbox-label {
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .checkbox-label {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .checkbox-label i.fa-check {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.session-item.selected {
+    border-color: var(--accent-color);
+    background-color: var(--accent-muted);
+}
+
+.dark-mode .session-item.selected {
+    background-color: rgba(60, 80, 220, 0.15);
+    border-color: var(--primary-700);
+}
+
+/* --- Session Detail View (Unified History) --- */
+.session-details-view .conversation-messages {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 16px 24px;
+    box-shadow: none;
+}
+
+/* =================================================================
+ * UNIFIED CONTEXT/FILE VIEWER (POPUP)
+ * ================================================================= */
+
+.selected-context-viewer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 90%;
+    max-width: 700px;
+    height: 85vh;
+    background: var(--window-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xl);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    z-index: var(--z-selected-context-viewer);
+}
+
+.selected-context-viewer.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.context-viewer-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.context-viewer-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.context-viewer-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--elevated-bg);
+}
+
+.viewer-tab {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.viewer-tab:hover {
+    color: var(--text-color);
+    background: var(--hover-bg);
+}
+
+.viewer-tab.active {
+    color: var(--accent-color);
+    background: var(--accent-muted);
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.viewer-tab i {
+    font-size: 0.9rem;
+}
+
+.context-viewer-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.context-preview-content,
+.files-preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.close-viewer-btn {
+    background: none;
+    border: none;
+    color: var(--icon-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.close-viewer-btn:hover {
+    color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+/* Session Header for Detail View */
+.session-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--icon-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.back-button:hover {
+    color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+.back-button i {
+    font-size: 0.8rem;
+}
+
+.session-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}

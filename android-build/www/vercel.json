@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ai-os-yjbb.onrender.com/api/:path*"
+    },
+    {
+      "source": "/login/:path*",
+      "destination": "https://ai-os-yjbb.onrender.com/login/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://ai-os-yjbb.onrender.com/socket.io/:path*"
+    }
+  ]
+}

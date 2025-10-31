@@ -1,0 +1,353 @@
+/* css/mobile.css (Updated for seamless background and no borders) */
+
+/* --- Base Layout --- */
+body, html {
+    overflow: hidden;
+    height: 100%;
+    background-color: var(--bg-color);
+    font-family: var(--font-sans);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* --- Top Bar (Fixed Header) --- */
+.top-bar {
+    flex-shrink: 0;
+    height: 60px;
+    width: 100%;
+    background-color: var(--elevated-bg);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    border-bottom: none;
+}
+
+.top-bar-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease, color 0.2s ease;
+}
+
+.top-bar-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+}
+
+/* --- Sidebar --- */
+#sidebar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 350px;
+    height: 100%;
+    background-color: var(--bg-color);
+    z-index: 1200;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebar-container.open {
+    transform: translateX(0);
+}
+
+#sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- Main Content (The Scrollable Area) --- */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--elevated-bg);
+}
+
+/* --- Chat Messages Container --- */
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem 1rem;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+/* --- Bottom UI Area (Fixed Footer) --- */
+#bottom-ui-container {
+    flex-shrink: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: var(--elevated-bg);
+    border-top: none;
+    /* THIS IS THE CRITICAL ANCHOR FOR THE POPUP MENU */
+    position: relative; 
+}
+
+/* --- Bottom Navigation --- */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+    padding: 0 0.5rem;
+}
+
+.bottom-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+}
+
+.bottom-nav-btn.active {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* --- Floating Input --- */
+.floating-input-wrapper {
+    padding: 0.75rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+
+.floating-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.floating-input {
+    width: 100%;
+    min-height: 52px;
+    max-height: 200px;
+    border-radius: 1.75rem;
+    background-color: var(--elevated-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 55px;
+    font-size: 1rem;
+    color: var(--text-color);
+    resize: none;
+    line-height: 1.5;
+}
+
+/* --- Input Action Buttons --- */
+.input-action-btn.circular-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#attach-file-btn {
+    left: 6px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+#send-message {
+    right: 6px;
+    background-color: var(--primary-500);
+    color: white;
+}
+
+/* --- File Previews --- */
+#file-previews-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px 8px 8px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.file-preview-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--elevated-bg);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.file-preview-item .file-name {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-secondary);
+}
+
+.file-preview-item .file-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.file-preview-item .preview-file-btn,
+.file-preview-item .remove-file-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.file-preview-item .preview-file-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+.file-preview-item .remove-file-btn {
+    font-size: 1.5rem;
+}
+
+.file-preview-item .remove-file-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--error-500);
+}
+
+.file-preview-item .file-status {
+    width: 20px;
+    text-align: center;
+}
+
+.file-preview-item .file-status .success-icon {
+    color: var(--success-500);
+}
+
+.file-preview-item .file-status .error-icon {
+    color: var(--error-500);
+}
+
+/* --- File Preview Modal --- */
+#file-preview-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.preview-modal-content {
+    position: relative;
+    background-color: var(--elevated-bg);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-xl);
+    padding: 1rem;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.close-preview-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: white;
+    color: black;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#preview-content-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#preview-content-area img,
+#preview-content-area video {
+    max-width: 85vw;
+    max-height: 80vh;
+    border-radius: 0.5rem;
+    object-fit: contain;
+}
+
+#preview-content-area audio {
+    width: 100%;
+    min-width: 300px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

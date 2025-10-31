@@ -1,0 +1,61 @@
+# Migration Changelog
+
+> Ongoing record of the PWA migration effort. Each entry captures the work completed, open follow‑ups, and key references for deeper context.
+
+## 2025-10-31
+
+### ✅ Completed
+- **Local backend integration (Task 3.7 continuation)**
+  - Enabled Flask CORS for `/api/*` so the PWA can hit the Docker backend from `localhost`/`192.168.*` origins without browser rejections.
+  - Realigned the PWA `chatConfig` tool flags (`enable_browser`, `enable_supabase`, etc.) with Electron’s payload to satisfy `get_llm_os()` parameters.
+  - Smoke-tested socket + REST flows against `http://localhost:8765` with Supabase-authenticated requests.
+- **Section 1 groundwork (previous session)**
+  - Auth/back-end dependency audit captured in `task.md` Section 1.1.
+  - Feature parity notes consolidated in `FEATURE_COMPARISON.md` for high-level tracking.
+- **Baseline documentation**
+  - Created `baseline_checklist.md` to log environment, UI, console/network state before large refactors.
+- **CSS foundations port (Section 2.1)**
+  - Copied modular chat styles from `AI-OS/css/` into `css/`: `chat-variables.css`, `chat-layout.css`, `chat-messages.css`, `chat-context.css`, `chat-input.css`, `notifications.css`, `welcome-message.css`.
+  - Updated `index.html` to load modular CSS before existing consolidated sheets for predictable cascade.
+  - Added missing `id="floating-input-container"` hook so new JS utilities can locate the element reliably.
+- **Shared JS utilities (start of Section 2.2)**
+  - Reimplemented `ConversationStateManager` as a browser-friendly module in `js/conversation-state-manager.js`.
+  - Began wiring plan for `FloatingWindowManager`, `NotificationService`, `WelcomeDisplay`, and `UserProfileService` (sourced from Electron) with mobile-safe shims.
+- **Utility integrations (Section 2.2 / 7.1 / 7.3)**
+  - Ported `floating-window-manager.js`, `notification-service.js`, `welcome-display.js`, and `user-profile-service.js` into the PWA build with Supabase/localStorage fallbacks.
+  - Updated `chat.js` to initialize the new services, dispatch `messageAdded` / `conversationCleared` events, and register floating windows for context/tasks panes.
+  - Swapped `context-handler.js` and `to-do-list.js` toast usage over to the shared `NotificationService` and registered their floating windows for welcome-screen awareness.
+- **Chat controller parity (Section 3.2 & 3.4)**
+  - Ported the Electron `ShuffleMenuController`, wiring memory/tasks toggles and DeepSearch/AI-OS agent selection to the new chat configuration store.
+  - Synced bottom navigation, tasks modal, and shuffle menu states via shared events and API (`setTasksVisibility`, `setMemoryEnabled`, `setAgentType`).
+  - Added DOM-backed `extractConversationHistory()` and enhanced `handleSendMessage()` to retry with prior messages after socket errors, mirroring desktop error recovery.
+- **Conversation lifecycle & connection handling (Section 3.3 & 3.4.c)**
+  - Implemented `startNewConversation()` parity: clears UI, resets context/file caches, re-centers the input, and emits lifecycle events for welcome display + conversation state manager.
+  - Introduced socket connection state tracking with notification feedback, reconnection messaging, and guarded sends when offline.
+- **Chat rendering + ancillary integrations (Section 3.5–3.7)**
+  - Added `renderTurnFromEvents()` for historical turn replay and exposed it globally for context handler reuse.
+  - Initialized `FloatingWindowManager`, `WelcomeDisplay`, `ConversationStateManager`, and `UnifiedPreviewHandler` within the PWA chat bootstrap; registered context/tasks/AIOS floating panes.
+  - Wired backend `status`/sandbox events into the UI with styled log output; deferred browser automation execution on mobile (surface instructions only).
+- **Backend architecture survey (2025-10-31 PM)**
+  - Documented Flask/Socket.IO + Redis + Supabase stack in `CODEBASE_ANALYSIS.md`, highlighting session management, agent streaming, and OAuth flows.
+  - Updated `task.md`, `FEATURE_COMPARISON.md`, and `baseline_checklist.md` to reflect Redis-backed session handling, Supabase JWT refresh requirements, and backend status expectations.
+- **Structural prep**
+  - Ensured welcome container markup exists in `index.html` for `WelcomeDisplay` integration.
+  - Documented PWA environment differences (lack of native notifications) in conversation.
+
+### ⏭️ Next Up
+1. **Chat controller parity**
+   - Integrate shuffle menu + task/memory toggles, and finish refactoring `handleSendMessage()` error recovery with conversation history support.
+   - Wire new events into downstream modules (context replay, welcome display, notifications) for full parity with Electron.
+2. **Notification strategy (later phase)**
+   - Decide between Web Notifications API + SW push or keeping the in-app toast system—per user request, defer until migrations complete.
+3. **Documentation & tracking**
+   - Keep `task.md` Section 2/7 progress markers in sync with implementation milestones.
+   - Capture baseline before/after screenshots in `/assets/baseline/` when ready for regression testing.
+
+### 📚 References
+- `task.md` – authoritative migration plan with subtask details.
+- `baseline_checklist.md` – environment & behaviour logging template.
+- `FEATURE_COMPARISON.md` – Electron vs PWA feature parity matrix.
+- `AI-OS/css/` & `AI-OS/js/` – source files for parity checks during ports.
+- `index.html`, `chat.html`, `css/chat-*.css`, `js/chat.js` – current PWA integration points.

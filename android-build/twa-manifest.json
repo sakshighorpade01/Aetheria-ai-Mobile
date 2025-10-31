@@ -1,0 +1,53 @@
+{
+  "packageId": "app.vercel.aios_mobile_app.twa",
+  "host": "aios-mobile-app.vercel.app",
+  "name": "Aetheria AI",
+  "launcherName": "Aetheria",
+  "display": "standalone",
+  "themeColor": "#333333",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#1A1A1A",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://aios-mobile-app.vercel.app/assets/icon.png?v=2",
+  "maskableIconUrl": "https://aios-mobile-app.vercel.app/assets/icon.png?v=2",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "C:\\Users\\saksh\\Desktop\\AI-OS\\AI-OS-new\\AI-OS-Mobile-App\\android-build\\android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "4",
+  "appVersionCode": 5,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://aios-mobile-app.vercel.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": {
+      "enabled": true
+    },
+    "locationDelegation": {
+      "enabled": true
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://aios-mobile-app.vercel.app/",
+  "minSdkVersion": 21,
+  "orientation": "default",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "appVersion": "4"
+}

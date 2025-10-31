@@ -1,0 +1,5 @@
+# sandbox_manager/requirements.txt
+fastapi
+uvicorn
+docker
+pydantic
