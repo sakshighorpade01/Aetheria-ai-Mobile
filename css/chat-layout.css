@@ -17,23 +17,23 @@
  */
 
 :root {
-    /* Improved layout variables */
-    --chat-container-width: 52%; /* Increased from 55% */
-    --chat-container-left: 50%; /* Centered from 52.5% */
-    --chat-max-width: 900px; /* Increased from 800px */
-    --message-max-width: 95%; /* Increased from 85% */
-    --input-container-max-width: 900px; /* Increased from 800px */
+    /* Compact layout variables */
+    --chat-container-width: 48%;
+    --chat-container-left: 50%;
+    --chat-max-width: 760px;
+    --message-max-width: 88%;
+    --input-container-max-width: 760px;
 }
 
 /* --- Main Chat Container --- */
 .chat-container {
     position: fixed;
-    top: 5px;
+    top: 0;
     left: var(--chat-container-left);
     width: var(--chat-container-width);
     transform: translateX(-50%) scale(1);
-    height: calc(100% - 100px);
-    padding: 10px;
+    height: calc(100% - 72px);
+    padding: 6px 8px 0;
     z-index: var(--z-chat-container);
     transition: opacity var(--anim-fast) var(--easing-standard), transform var(--anim-fast) var(--easing-standard), visibility 0s 0s;
     opacity: 1;
@@ -63,7 +63,7 @@
     max-width: var(--chat-max-width);
     width: 100%;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 14px 0;
     pointer-events: auto;
 }
 
