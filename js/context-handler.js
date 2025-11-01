@@ -100,7 +100,9 @@ class ContextHandler {
         this.backgroundLoadTimer = setTimeout(() => {
             this.backgroundLoadTimer = null;
             this.loadSessionsInBackground().catch((err) => {
-                console.error('Background session preload failed:', err);
+                console.warn('Background session preload failed (this is normal if backend is unavailable):', err.message);
+                // Don't show error notification for background preload failures
+                // User will see error only when they actually open the sessions window
             });
         }, this.preloadDelay);
     }
@@ -145,11 +147,29 @@ class ContextHandler {
 
                 const response = await fetch(`${API_PROXY_URL}/api/sessions`, {
                     headers: { Authorization: `Bearer ${session.access_token}` },
+                    signal: AbortSignal.timeout(15000) // 15 second timeout
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || `Failed to load sessions (status ${response.status}).`);
+                    let errorMessage = '';
+                    
+                    if (response.status === 503) {
+                        errorMessage = 'Backend service is temporarily unavailable. Please try again in a few moments.';
+                    } else if (response.status === 500) {
+                        errorMessage = 'Server error occurred. Please try again later.';
+                    } else if (response.status === 401 || response.status === 403) {
+                        errorMessage = 'Authentication failed. Please log in again.';
+                    } else {
+                        try {
+                            const errorText = await response.text();
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.error || errorData.message || errorText;
+                        } catch {
+                            errorMessage = `Failed to load sessions (status ${response.status}).`;
+                        }
+                    }
+                    
+                    throw new Error(errorMessage);
                 }
 
                 const sessions = await response.json();
@@ -163,7 +183,19 @@ class ContextHandler {
 
                 return this.loadedSessions;
             } catch (err) {
-                this.loadError = err?.message || 'An unexpected error occurred.';
+                console.error('Failed to load sessions:', err);
+                
+                // Handle different error types
+                if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+                    this.loadError = 'Request timed out. The backend may be slow or unavailable. Please try again.';
+                } else if (err.message.includes('Failed to fetch') || err.message.includes('Network')) {
+                    this.loadError = 'Network error. Please check your internet connection and try again.';
+                } else if (err.message.includes('offline')) {
+                    this.loadError = 'You appear to be offline. Please check your internet connection.';
+                } else {
+                    this.loadError = err?.message || 'An unexpected error occurred while loading sessions.';
+                }
+                
                 this.loadingState = 'error';
                 if (this.isWindowOpen) {
                     this.renderErrorState();
@@ -222,13 +254,31 @@ class ContextHandler {
         this.elements.detailView?.classList.add('hidden');
 
         const message = this.loadError || 'Unable to load previous sessions.';
+        
+        // Determine icon based on error type
+        let icon = 'fa-exclamation-circle';
+        if (message.includes('unavailable') || message.includes('503')) {
+            icon = 'fa-server';
+        } else if (message.includes('offline') || message.includes('Network')) {
+            icon = 'fa-wifi-slash';
+        } else if (message.includes('timeout')) {
+            icon = 'fa-clock';
+        } else if (message.includes('Authentication')) {
+            icon = 'fa-lock';
+        }
+        
         this.elements.listView.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-circle"></i>
+            <div class="empty-state error-state">
+                <i class="fas ${icon}"></i>
                 <p>${message}</p>
                 <button class="retry-load-btn" type="button">
                     <i class="fas fa-sync-alt"></i> Retry
                 </button>
+                ${message.includes('unavailable') ? `
+                    <p class="error-hint">
+                        <small>The backend service may be starting up or under maintenance. This usually resolves in a few minutes.</small>
+                    </p>
+                ` : ''}
             </div>
         `;
 
