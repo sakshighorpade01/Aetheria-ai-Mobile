@@ -462,6 +462,71 @@
         input.style.height = `${input.scrollHeight}px`;
       });
     }
+
+    // Register Service Worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('[PWA] Service Worker registered successfully:', registration.scope);
+            
+            // Check for updates periodically
+            setInterval(() => {
+              registration.update();
+            }, 60000); // Check every minute
+            
+            // Handle service worker updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker available, show update notification
+                  console.log('[PWA] New version available! Refresh to update.');
+                  // Optionally show a notification to the user
+                  if (window.NotificationService) {
+                    // Use your existing notification service if available
+                  }
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('[PWA] Service Worker registration failed:', error);
+          });
+      });
+
+      // Handle PWA install prompt
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('[PWA] Install prompt available');
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Optionally show your own install button/banner here
+        // You can add a custom UI element to trigger the install
+        window.showInstallPromotion = () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('[PWA] User accepted the install prompt');
+              } else {
+                console.log('[PWA] User dismissed the install prompt');
+              }
+              deferredPrompt = null;
+            });
+          }
+        };
+      });
+
+      // Track successful installation
+      window.addEventListener('appinstalled', () => {
+        console.log('[PWA] App was installed successfully');
+        deferredPrompt = null;
+      });
+    }
   </script>
 </body>
 </html>

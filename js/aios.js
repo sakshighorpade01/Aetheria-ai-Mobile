@@ -3,9 +3,8 @@
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
-const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168');
-// This BACKEND_URL is for the popup window, NOT for the initial fetch.
-const BACKEND_URL = IS_LOCAL ? 'http://localhost:8765' : 'https://ai-os-yjbb.onrender.com';
+// Backend URL for OAuth integrations and API calls - using deployed Render backend
+const BACKEND_URL = 'https://aios-web.onrender.com';
 
 export class AIOS {
     constructor() {

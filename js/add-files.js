@@ -3,7 +3,8 @@
 import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
-const API_PROXY_URL = ''; // Use Vercel proxy
+// Backend URL for file upload API - using deployed Render backend
+const API_PROXY_URL = 'https://aios-web.onrender.com';
 
 class FileAttachmentHandler {
   constructor() {

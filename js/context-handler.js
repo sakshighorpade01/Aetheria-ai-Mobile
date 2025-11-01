@@ -4,10 +4,8 @@ import { supabase } from './supabase-client.js';
 import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 
-const API_PROXY_HOST = typeof window !== 'undefined' && window.location?.hostname
-    ? window.location.hostname
-    : 'localhost';
-const API_PROXY_URL = `http://${API_PROXY_HOST}:8765`;
+// Backend API URL for session management - using deployed Render backend
+const API_PROXY_URL = 'https://aios-web.onrender.com';
 
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
