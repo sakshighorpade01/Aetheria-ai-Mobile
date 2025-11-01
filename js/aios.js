@@ -39,30 +39,18 @@ export class AIOS {
             profilePhoto: document.getElementById('profile-photo'),
             profileIconDefault: document.getElementById('profile-icon-default'),
             
-            // New profile header elements
-            profileHeader: document.getElementById('profile-header'),
-            profileAvatar: document.getElementById('profile-avatar'),
-            profileAvatarFallback: document.getElementById('profile-avatar-fallback'),
-            profileName: document.getElementById('profile-name'),
-            profileEmail: document.getElementById('profile-email'),
-            
-            // Login prompt
-            loginPrompt: document.getElementById('login-prompt'),
-            openAuthModalBtn: document.getElementById('open-auth-modal-btn'),
-            
-            // Auth modal
-            authModal: document.getElementById('auth-modal'),
-            closeAuthModalBtn: document.querySelector('.close-auth-modal-btn'),
-            
-            // Account menu section
-            accountMenuSection: document.getElementById('account-menu-section'),
-            logoutSection: document.getElementById('logout-section'),
-            
             settingsMenuItems: document.querySelectorAll('.settings-menu-item'),
             settingsPanels: document.querySelectorAll('.settings-full-panel'),
             backButtons: document.querySelectorAll('.back-to-menu-btn'),
 
             logoutBtn: document.getElementById('logout-btn'),
+            userEmail: document.getElementById('userEmail'),
+            userName: document.getElementById('userName'),
+            userNameDisplay: document.getElementById('userName-display'),
+            userEmailDisplay: document.getElementById('userEmail-display'),
+            profileAvatarLarge: document.getElementById('profile-avatar-large'),
+            accountLoggedOut: document.getElementById('account-logged-out'),
+            accountLoggedIn: document.getElementById('account-logged-in'),
 
             authTabs: document.querySelectorAll('.auth-tab-btn'),
             loginForm: document.getElementById('login-form'),
@@ -71,8 +59,6 @@ export class AIOS {
             signupError: document.getElementById('signup-error'),
 
             themeOptions: document.querySelectorAll('.theme-option'),
-            themeStatus: document.getElementById('theme-status'),
-            integrationsStatus: document.getElementById('integrations-status'),
 
             githubConnectBtn: document.getElementById('connect-github-btn'),
             googleConnectBtn: document.getElementById('connect-google-btn'),
@@ -94,24 +80,6 @@ export class AIOS {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#profile-menu-btn') && !e.target.closest('#profile-dropdown')) {
                 this.closeProfileMenu();
-            }
-        });
-        
-        // Open auth modal
-        this.elements.openAuthModalBtn?.addEventListener('click', () => {
-            this.closeProfileMenu();
-            this.openAuthModal();
-        });
-        
-        // Close auth modal
-        this.elements.closeAuthModalBtn?.addEventListener('click', () => {
-            this.closeAuthModal();
-        });
-        
-        // Close modal on backdrop click
-        this.elements.authModal?.addEventListener('click', (e) => {
-            if (e.target === this.elements.authModal) {
-                this.closeAuthModal();
             }
         });
 
@@ -161,10 +129,7 @@ export class AIOS {
         this.elements.googleSignUpBtn?.addEventListener('click', () => this.handleGoogleSignIn());
 
         supabase.auth.onAuthStateChange((_event, session) => {
-            // Only update UI if initialization is complete
-            if (this.initialized) {
-                this.updateAuthUI(session?.user);
-            }
+            this.updateAuthUI(session?.user);
         });
     }
 
@@ -176,39 +141,11 @@ export class AIOS {
 
     updateThemeUI() {
         const isDark = document.body.classList.contains('dark-mode');
-        
-        // Check if themeOptions exists and has elements
-        if (this.elements.themeOptions && this.elements.themeOptions.length > 0) {
-            this.elements.themeOptions.forEach(option => {
-                const theme = option.dataset.theme;
-                const active = (isDark && theme === 'dark') || (!isDark && theme === 'light');
-                option.classList.toggle('active', active);
-            });
-        }
-        
-        // Update theme status text and icon
-        if (this.elements.themeStatus) {
-            this.elements.themeStatus.textContent = isDark ? 'Dark mode' : 'Light mode';
-        }
-        
-        // Update theme icon
-        const themeIcon = document.querySelector('.theme-icon i');
-        if (themeIcon) {
-            themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-        }
-    }
-    
-    openAuthModal() {
-        this.elements.authModal?.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    closeAuthModal() {
-        this.elements.authModal?.classList.add('hidden');
-        document.body.style.overflow = '';
-        // Clear any errors
-        if (this.elements.loginError) this.elements.loginError.textContent = '';
-        if (this.elements.signupError) this.elements.signupError.textContent = '';
+        this.elements.themeOptions.forEach(option => {
+            const theme = option.dataset.theme;
+            const active = (isDark && theme === 'dark') || (!isDark && theme === 'light');
+            option.classList.toggle('active', active);
+        });
     }
 
     toggleProfileMenu() {
@@ -289,7 +226,7 @@ export class AIOS {
         } else {
             this.showNotification('Logged in successfully!', 'success');
             this.elements.loginForm.reset();
-            this.closeAuthModal();
+            this.closeProfileMenu();
         }
     }
 
@@ -329,64 +266,35 @@ export class AIOS {
 
     async updateAuthUI(user) {
         const isAuthenticated = !!user;
-        
-        // Toggle profile header and login prompt
-        this.elements.profileHeader?.classList.toggle('hidden', !isAuthenticated);
-        this.elements.loginPrompt?.classList.toggle('hidden', isAuthenticated);
-        
-        // Toggle account menu sections
-        this.elements.accountMenuSection?.classList.toggle('hidden', !isAuthenticated);
-        this.elements.logoutSection?.classList.toggle('hidden', !isAuthenticated);
+        this.elements.accountLoggedIn?.classList.toggle('hidden', !isAuthenticated);
+        this.elements.accountLoggedOut?.classList.toggle('hidden', isAuthenticated);
 
         if (isAuthenticated) {
             const userName = user.user_metadata?.name || user.user_metadata?.full_name || 'User';
             const userEmail = user.email;
             
-            // Update profile header
-            if (this.elements.profileName) {
-                this.elements.profileName.textContent = userName;
+            // Update all user info displays
+            this.elements.userEmail.textContent = userEmail;
+            this.elements.userName.textContent = userName;
+            
+            // Update profile header card
+            if (this.elements.userNameDisplay) {
+                this.elements.userNameDisplay.textContent = userName;
             }
-            if (this.elements.profileEmail) {
-                this.elements.profileEmail.textContent = userEmail;
+            if (this.elements.userEmailDisplay) {
+                this.elements.userEmailDisplay.textContent = userEmail;
             }
             
-            // Update profile avatar
-            this.updateProfileAvatar(user);
-            
-            // Update top bar profile photo
+            // Update profile photo in top bar
             this.updateProfilePhoto(user);
             
-            // Update integration status
-            this.updateIntegrationStatus();
+            // Update profile avatar in header card
+            this.updateProfileAvatarLarge(user);
         } else {
             // Clear profile photo when logged out
             this.clearProfilePhoto();
-            this.clearProfileAvatar();
-        }
-    }
-    
-    updateProfileAvatar(user) {
-        const photoUrl = user.user_metadata?.avatar_url || 
-                        user.user_metadata?.picture || 
-                        user.user_metadata?.photo_url;
-        
-        if (photoUrl && this.elements.profileAvatar) {
-            this.elements.profileAvatar.src = photoUrl;
-            this.elements.profileAvatar.classList.remove('hidden');
-            
-            // Add error handler in case image fails to load
-            this.elements.profileAvatar.onerror = () => {
-                this.clearProfileAvatar();
-            };
-        } else {
-            this.clearProfileAvatar();
-        }
-    }
-    
-    clearProfileAvatar() {
-        if (this.elements.profileAvatar) {
-            this.elements.profileAvatar.classList.add('hidden');
-            this.elements.profileAvatar.src = '';
+            this.clearProfileAvatarLarge();
+            this.updateIntegrationStatus(); // safe to clear buttons
         }
     }
 
@@ -511,9 +419,6 @@ export class AIOS {
         if (!session) {
             this.updateButtonUI(this.elements.githubConnectBtn, false);
             this.updateButtonUI(this.elements.googleConnectBtn, false);
-            if (this.elements.integrationsStatus) {
-                this.elements.integrationsStatus.textContent = 'Connect external services';
-            }
             return;
         }
 
@@ -531,16 +436,6 @@ export class AIOS {
             const { integrations } = await response.json();
             this.updateButtonUI(this.elements.githubConnectBtn, integrations.includes('github'));
             this.updateButtonUI(this.elements.googleConnectBtn, integrations.includes('google'));
-            
-            // Update integrations status subtitle
-            if (this.elements.integrationsStatus) {
-                const count = integrations.length;
-                if (count === 0) {
-                    this.elements.integrationsStatus.textContent = 'Connect external services';
-                } else {
-                    this.elements.integrationsStatus.textContent = `${count} service${count > 1 ? 's' : ''} connected`;
-                }
-            }
         } catch (error) {
             console.error("Error fetching integration status:", error);
         }
@@ -551,12 +446,6 @@ export class AIOS {
         const textSpan = button.querySelector('.btn-text');
         const connectIcon = button.querySelector('.icon-connect');
         const connectedIcon = button.querySelector('.icon-connected');
-
-        // Check if child elements exist before trying to update them
-        if (!textSpan || !connectIcon || !connectedIcon) {
-            console.warn('Integration button child elements not found yet');
-            return;
-        }
 
         if (isConnected) {
             button.dataset.action = 'disconnect';
@@ -661,9 +550,8 @@ export class AIOS {
                     console.log('OAuth callback successful, user signed in:', data.session.user);
                     this.showNotification('Successfully signed in with Google!', 'success');
                     
-                    // Close the auth modal and profile menu after successful login
+                    // Close the profile menu after successful login
                     setTimeout(() => {
-                        this.closeAuthModal();
                         this.closeProfileMenu();
                     }, 1500);
                 }
