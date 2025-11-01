@@ -45,25 +45,19 @@ export class AIOS {
             profileAvatarFallback: document.getElementById('profile-avatar-fallback'),
             profileName: document.getElementById('profile-name'),
             profileEmail: document.getElementById('profile-email'),
-
+            
             // Login prompt
             loginPrompt: document.getElementById('login-prompt'),
             openAuthModalBtn: document.getElementById('open-auth-modal-btn'),
-
+            
             // Auth modal
             authModal: document.getElementById('auth-modal'),
             closeAuthModalBtn: document.querySelector('.close-auth-modal-btn'),
-
+            
             // Account menu section
             accountMenuSection: document.getElementById('account-menu-section'),
             logoutSection: document.getElementById('logout-section'),
             
-            // Legacy account section elements (for backward compatibility)
-            accountLoggedOut: document.getElementById('account-logged-out'),
-            accountLoggedIn: document.getElementById('account-logged-in'),
-            userName: document.getElementById('userName'),
-            userEmail: document.getElementById('userEmail'),
-
             settingsMenuItems: document.querySelectorAll('.settings-menu-item'),
             settingsPanels: document.querySelectorAll('.settings-full-panel'),
             backButtons: document.querySelectorAll('.back-to-menu-btn'),
@@ -167,7 +161,10 @@ export class AIOS {
         this.elements.googleSignUpBtn?.addEventListener('click', () => this.handleGoogleSignIn());
 
         supabase.auth.onAuthStateChange((_event, session) => {
-            this.updateAuthUI(session?.user);
+            // Only update UI if initialization is complete
+            if (this.initialized) {
+                this.updateAuthUI(session?.user);
+            }
         });
     }
 
@@ -179,11 +176,15 @@ export class AIOS {
 
     updateThemeUI() {
         const isDark = document.body.classList.contains('dark-mode');
-        this.elements.themeOptions.forEach(option => {
-            const theme = option.dataset.theme;
-            const active = (isDark && theme === 'dark') || (!isDark && theme === 'light');
-            option.classList.toggle('active', active);
-        });
+        
+        // Check if themeOptions exists and has elements
+        if (this.elements.themeOptions && this.elements.themeOptions.length > 0) {
+            this.elements.themeOptions.forEach(option => {
+                const theme = option.dataset.theme;
+                const active = (isDark && theme === 'dark') || (!isDark && theme === 'light');
+                option.classList.toggle('active', active);
+            });
+        }
         
         // Update theme status text and icon
         if (this.elements.themeStatus) {
@@ -329,15 +330,11 @@ export class AIOS {
     async updateAuthUI(user) {
         const isAuthenticated = !!user;
         
-        // Toggle profile header and login prompt (new UI)
+        // Toggle profile header and login prompt
         this.elements.profileHeader?.classList.toggle('hidden', !isAuthenticated);
         this.elements.loginPrompt?.classList.toggle('hidden', isAuthenticated);
-
-        // Toggle legacy account sections (dropdown forms)
-        this.elements.accountLoggedOut?.classList.toggle('hidden', isAuthenticated);
-        this.elements.accountLoggedIn?.classList.toggle('hidden', !isAuthenticated);
-
-        // Toggle account menu sections (new UI)
+        
+        // Toggle account menu sections
         this.elements.accountMenuSection?.classList.toggle('hidden', !isAuthenticated);
         this.elements.logoutSection?.classList.toggle('hidden', !isAuthenticated);
 
@@ -346,19 +343,16 @@ export class AIOS {
             const userEmail = user.email;
             
             // Update profile header
-            const profileNameEl = this.elements.profileName || this.elements.userName;
-            if (profileNameEl) {
-                profileNameEl.textContent = userName;
+            if (this.elements.profileName) {
+                this.elements.profileName.textContent = userName;
             }
-
-            const profileEmailEl = this.elements.profileEmail || this.elements.userEmail;
-            if (profileEmailEl) {
-                profileEmailEl.textContent = userEmail;
+            if (this.elements.profileEmail) {
+                this.elements.profileEmail.textContent = userEmail;
             }
-
+            
             // Update profile avatar
             this.updateProfileAvatar(user);
-
+            
             // Update top bar profile photo
             this.updateProfilePhoto(user);
             
@@ -557,6 +551,12 @@ export class AIOS {
         const textSpan = button.querySelector('.btn-text');
         const connectIcon = button.querySelector('.icon-connect');
         const connectedIcon = button.querySelector('.icon-connected');
+
+        // Check if child elements exist before trying to update them
+        if (!textSpan || !connectIcon || !connectedIcon) {
+            console.warn('Integration button child elements not found yet');
+            return;
+        }
 
         if (isConnected) {
             button.dataset.action = 'disconnect';
