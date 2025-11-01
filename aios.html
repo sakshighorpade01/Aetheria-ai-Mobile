@@ -1,132 +1,184 @@
 <!-- aios.html -->
 <div id="settings-view" class="profile-settings-panel">
-  <!-- Account Section (Primary - Always Shown First) -->
-  <div class="settings-section account-section active" data-section="account">
-          <h3 class="section-heading">Account</h3>
-
-          <!-- Logged Out State -->
-          <div id="account-logged-out" class="auth-state">
-            <div class="auth-tabs">
-              <button class="auth-tab-btn active" data-auth-tab="login">Login</button>
-              <button class="auth-tab-btn" data-auth-tab="signup">Sign Up</button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="login-form" class="auth-form active">
-              <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" placeholder="Enter your email" required>
-              </div>
-              <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password" required>
-              </div>
-              <div id="login-error" class="auth-error"></div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Login</button>
-              </div>
-              <div class="auth-divider">
-                <span>or</span>
-              </div>
-              <div class="form-actions">
-                <button type="button" id="google-signin-btn" class="btn btn-google">
-                  <i class="fab fa-google"></i>
-                  <span>Continue with Google</span>
-                </button>
-              </div>
-            </form>
-
-            <!-- Sign Up Form -->
-            <form id="signup-form" class="auth-form">
-              <div class="form-group">
-                <label for="signupName">Name</label>
-                <input type="text" id="signupName" placeholder="Enter your name" required>
-              </div>
-              <div class="form-group">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" placeholder="Enter your email" required>
-              </div>
-              <div class="form-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" placeholder="Create a password" required>
-              </div>
-              <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-              </div>
-              <div id="signup-error" class="auth-error"></div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-              </div>
-              <div class="auth-divider">
-                <span>or</span>
-              </div>
-              <div class="form-actions">
-                <button type="button" id="google-signup-btn" class="btn btn-google">
-                  <i class="fab fa-google"></i>
-                  <span>Sign up with Google</span>
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Logged In State -->
-          <div id="account-logged-in" class="auth-state hidden">
-            <div class="form-group">
-              <label for="userName">Name</label>
-              <div class="user-info-display" id="userName">User Name</div>
-            </div>
-            <div class="form-group">
-              <label for="userEmail">Email ID</label>
-              <div class="email-display" id="userEmail">user@example.com</div>
-            </div>
-
-            <div class="account-actions">
-              <button class="btn btn-secondary" id="logout-btn" aria-label="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Log out</span>
-              </button>
-            </div>
-          </div>
+  <!-- Profile Header (Shows when logged in) -->
+  <div id="profile-header" class="profile-header hidden">
+    <div class="profile-avatar-container">
+      <img id="profile-avatar" class="profile-avatar" src="" alt="Profile" />
+      <div id="profile-avatar-fallback" class="profile-avatar-fallback">
+        <i class="fas fa-user"></i>
+      </div>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name" id="profile-name">User Name</div>
+      <div class="profile-email" id="profile-email">user@example.com</div>
+    </div>
   </div>
 
-  <!-- Other Sections Menu -->
-  <div class="settings-menu-divider"></div>
+  <!-- Login Prompt (Shows when logged out) -->
+  <div id="login-prompt" class="login-prompt">
+    <div class="login-prompt-content">
+      <div class="login-prompt-icon">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <h3 class="login-prompt-title">Welcome to Aetheria AI</h3>
+      <p class="login-prompt-text">Sign in to access your account and personalize your experience</p>
+      <button class="btn btn-primary" id="open-auth-modal-btn">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Sign In</span>
+      </button>
+    </div>
+  </div>
 
-  <!-- Integrations Section -->
-  <button class="settings-menu-item" data-section="integrations">
-    <i class="fas fa-plug"></i>
-    <span>Integrations</span>
-    <i class="fas fa-chevron-right item-arrow"></i>
-  </button>
+  <!-- Settings Menu -->
+  <div class="settings-menu">
+    <!-- Account Section (Only visible when logged in) -->
+    <div id="account-menu-section" class="menu-section hidden">
+      <div class="menu-section-label">Account</div>
+      <button class="settings-menu-item" data-section="profile">
+        <div class="menu-item-icon">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="menu-item-content">
+          <span class="menu-item-title">Profile Settings</span>
+          <span class="menu-item-subtitle">Manage your personal information</span>
+        </div>
+        <i class="fas fa-chevron-right menu-item-arrow"></i>
+      </button>
+      <button class="settings-menu-item" data-section="integrations">
+        <div class="menu-item-icon">
+          <i class="fas fa-plug"></i>
+        </div>
+        <div class="menu-item-content">
+          <span class="menu-item-title">Integrations</span>
+          <span class="menu-item-subtitle" id="integrations-status">Connect external services</span>
+        </div>
+        <i class="fas fa-chevron-right menu-item-arrow"></i>
+      </button>
+    </div>
 
-  <!-- Profile Section -->
-  <button class="settings-menu-item" data-section="profile">
-    <i class="fas fa-user"></i>
-    <span>Profile</span>
-    <i class="fas fa-chevron-right item-arrow"></i>
-  </button>
+    <!-- Preferences Section -->
+    <div class="menu-section">
+      <div class="menu-section-label">Preferences</div>
+      <button class="settings-menu-item" data-section="theme">
+        <div class="menu-item-icon theme-icon">
+          <i class="fas fa-moon"></i>
+        </div>
+        <div class="menu-item-content">
+          <span class="menu-item-title">Appearance</span>
+          <span class="menu-item-subtitle" id="theme-status">Dark mode</span>
+        </div>
+        <i class="fas fa-chevron-right menu-item-arrow"></i>
+      </button>
+    </div>
 
-  <!-- Theme Section -->
-  <button class="settings-menu-item" data-section="theme">
-    <i class="fas fa-adjust"></i>
-    <span>Theme</span>
-    <i class="fas fa-chevron-right item-arrow"></i>
-  </button>
+    <!-- Help & Info Section -->
+    <div class="menu-section">
+      <div class="menu-section-label">Help & Information</div>
+      <button class="settings-menu-item" data-section="about">
+        <div class="menu-item-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="menu-item-content">
+          <span class="menu-item-title">About</span>
+          <span class="menu-item-subtitle">App info and version</span>
+        </div>
+        <i class="fas fa-chevron-right menu-item-arrow"></i>
+      </button>
+      <button class="settings-menu-item" data-section="support">
+        <div class="menu-item-icon">
+          <i class="fas fa-life-ring"></i>
+        </div>
+        <div class="menu-item-content">
+          <span class="menu-item-title">Support</span>
+          <span class="menu-item-subtitle">Get help and contact us</span>
+        </div>
+        <i class="fas fa-chevron-right menu-item-arrow"></i>
+      </button>
+    </div>
 
-  <!-- About Section -->
-  <button class="settings-menu-item" data-section="about">
-    <i class="fas fa-info-circle"></i>
-    <span>About</span>
-    <i class="fas fa-chevron-right item-arrow"></i>
-  </button>
+    <!-- Logout Button (Only visible when logged in) -->
+    <div id="logout-section" class="logout-section hidden">
+      <button class="btn btn-logout" id="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+</div>
 
-  <!-- Support Section -->
-  <button class="settings-menu-item" data-section="support">
-    <i class="fas fa-question-circle"></i>
-    <span>Support</span>
-    <i class="fas fa-chevron-right item-arrow"></i>
-  </button>
+<!-- Authentication Modal -->
+<div id="auth-modal" class="modal-overlay hidden">
+  <div class="auth-modal-content">
+    <button class="close-auth-modal-btn" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="auth-modal-header">
+      <h2 class="auth-modal-title">Welcome to Aetheria AI</h2>
+      <p class="auth-modal-subtitle">Sign in to continue</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" data-auth-tab="login">Sign In</button>
+      <button class="auth-tab-btn" data-auth-tab="signup">Sign Up</button>
+    </div>
+
+    <div class="auth-forms">
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <div id="login-error" class="auth-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        
+        <div class="auth-divider">
+          <span>or continue with</span>
+        </div>
+        
+        <button type="button" id="google-signin-btn" class="btn btn-google btn-block">
+          <i class="fab fa-google"></i>
+          <span>Google</span>
+        </button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" class="auth-form">
+        <div class="form-group">
+          <label for="signupName">Name</label>
+          <input type="text" id="signupName" placeholder="Enter your name" required>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+        </div>
+        <div id="signup-error" class="auth-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        
+        <div class="auth-divider">
+          <span>or continue with</span>
+        </div>
+        
+        <button type="button" id="google-signup-btn" class="btn btn-google btn-block">
+          <i class="fab fa-google"></i>
+          <span>Google</span>
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- Full Screen Panels for Each Section -->
