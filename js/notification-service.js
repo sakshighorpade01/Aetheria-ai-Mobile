@@ -11,8 +11,8 @@ const ICON_MAP = {
 class NotificationService {
   constructor({ container } = {}) {
     this.container = container || null;
-    this.maxVisible = 5;
-    this.defaultDuration = 5000;
+    this.maxVisible = 3; // Reduced for minimalist top-center design
+    this.defaultDuration = 4000; // Slightly shorter for better UX
     this.notifications = new Map();
 
     this.ensureContainer();

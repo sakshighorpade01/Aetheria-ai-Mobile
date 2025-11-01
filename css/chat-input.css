@@ -5,7 +5,7 @@
 /* --- Main Input Container --- */
 .floating-input-container {
     position: fixed;
-    bottom: 40px;
+    bottom: var(--input-bottom-offset, 56px);
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
@@ -40,7 +40,7 @@
 
 /* --- Chat Mode (Bottom Positioned) --- */
 .floating-input-container.chat-mode {
-    bottom: 40px;
+    bottom: var(--input-bottom-offset, 56px);
     transform: translateX(-50%);
     transition: all var(--anim-normal) var(--easing-standard);
 }

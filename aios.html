@@ -1,52 +1,8 @@
 <!-- aios.html -->
-<div id="settings-view" class="floating-window">
-  <div class="window-header">
-    <div class="window-title">
-      <button class="back-button" id="close-aios" aria-label="Back">
-        <i class="fas fa-arrow-left"></i>
-      </button>
-      <span>Settings</span>
-    </div>
-  </div>
-
-  <div class="window-content">
-    <div class="split-layout">
-      <!-- Tabs Area -->
-      <div class="tabs-sidebar">
-        <button class="tab-btn active" data-tab="profile"><i class="fas fa-user"></i><span>Profile</span></button>
-        <button class="tab-btn" data-tab="account"><i class="fas fa-cog"></i><span>Account</span></button>
-        <button class="tab-btn" data-tab="theme"><i class="fas fa-adjust"></i><span>Theme</span></button>
-        <button class="tab-btn" data-tab="about"><i class="fas fa-info-circle"></i><span>About</span></button>
-        <button class="tab-btn" data-tab="support"><i class="fas fa-question-circle"></i><span>Support</span></button>
-      </div>
-
-      <!-- Content Area -->
-      <div class="tab-content-area">
-        <!-- Profile Tab -->
-        <div class="tab-content active" id="profile-tab">
-          <h3 class="tab-heading">Profile Information</h3>
-          <form id="profile-form">
-            <div class="form-group">
-              <label for="fullName">Full Name</label>
-              <input type="text" id="fullName" placeholder="Enter your full name" aria-label="Full Name">
-            </div>
-            <div class="form-group">
-              <label for="nickname">Nickname</label>
-              <input type="text" id="nickname" placeholder="Enter your preferred name" aria-label="Nickname">
-            </div>
-            <div class="form-group">
-              <label for="occupation">Occupation</label>
-              <input type="text" id="occupation" placeholder="Enter your occupation" aria-label="Occupation">
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Save changes</button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Account Tab -->
-        <div class="tab-content" id="account-tab">
-          <h3 class="tab-heading">Account Settings</h3>
+<div id="settings-view" class="profile-settings-panel">
+  <!-- Account Section (Primary - Always Shown First) -->
+  <div class="settings-section account-section active" data-section="account">
+          <h3 class="section-heading">Account</h3>
 
           <!-- Logged Out State -->
           <div id="account-logged-out" class="auth-state">
@@ -68,6 +24,15 @@
               <div id="login-error" class="auth-error"></div>
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+              <div class="auth-divider">
+                <span>or</span>
+              </div>
+              <div class="form-actions">
+                <button type="button" id="google-signin-btn" class="btn btn-google">
+                  <i class="fab fa-google"></i>
+                  <span>Continue with Google</span>
+                </button>
               </div>
             </form>
 
@@ -93,6 +58,15 @@
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Sign Up</button>
               </div>
+              <div class="auth-divider">
+                <span>or</span>
+              </div>
+              <div class="form-actions">
+                <button type="button" id="google-signup-btn" class="btn btn-google">
+                  <i class="fab fa-google"></i>
+                  <span>Sign up with Google</span>
+                </button>
+              </div>
             </form>
           </div>
 
@@ -107,80 +81,163 @@
               <div class="email-display" id="userEmail">user@example.com</div>
             </div>
 
-            <!-- === NEW INTEGRATIONS SECTION START === -->
-            <div class="integrations-section">
-              <h4 class="section-subheading">Integrations</h4>
-
-              <!-- GitHub Integration Item -->
-              <div class="integration-item">
-                <div class="integration-info">
-                  <i class="fab fa-github"></i>
-                  <span>GitHub</span>
-                </div>
-                <button class="connect-btn" id="connect-github-btn" data-provider="github">
-                  <i class="fas fa-link icon-connect"></i>
-                  <i class="fas fa-check icon-connected" style="display: none;"></i>
-                  <span class="btn-text">Connect</span>
-                </button>
-              </div>
-
-              <!-- Google Integration Item -->
-              <div class="integration-item">
-                <div class="integration-info">
-                  <i class="fab fa-google"></i>
-                  <span>Google</span>
-                </div>
-                <button class="connect-btn" id="connect-google-btn" data-provider="google">
-                  <i class="fas fa-link icon-connect"></i>
-                  <i class="fas fa-check icon-connected" style="display: none;"></i>
-                  <span class="btn-text">Connect</span>
-                </button>
-              </div>
-            </div>
-            <!-- === NEW INTEGRATIONS SECTION END === -->
-
             <div class="account-actions">
               <button class="btn btn-secondary" id="logout-btn" aria-label="Logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Log out</span>
               </button>
-              <button class="btn btn-danger" id="delete-account-btn" aria-label="Delete Account">
-                <i class="fas fa-trash-alt"></i>
-                <span>Delete account</span>
-              </button>
             </div>
           </div>
-        </div>
+  </div>
 
-        <!-- Theme Tab -->
-        <div class="tab-content" id="theme-tab">
-          <h3 class="tab-heading">Theme Settings</h3>
-          <div class="form-group">
-            <label for="theme-options">Appearance</label>
-            <div class="theme-selector" id="theme-options">
-              <button class="theme-option" data-theme="light">
-                <i class="fas fa-sun"></i> Light
-              </button>
-              <button class="theme-option active" data-theme="dark">
-                <i class="fas fa-moon"></i> Dark
-              </button>
-            </div>
-          </div>
-        </div>
+  <!-- Other Sections Menu -->
+  <div class="settings-menu-divider"></div>
 
-        <!-- About Tab -->
-        <div class="tab-content" id="about-tab">
-          <h3 class="tab-heading">About</h3>
-          <p>A modern mobile application for managing your account and preferences. Built for optimal performance and user experience.</p>
-        </div>
+  <!-- Integrations Section -->
+  <button class="settings-menu-item" data-section="integrations">
+    <i class="fas fa-plug"></i>
+    <span>Integrations</span>
+    <i class="fas fa-chevron-right item-arrow"></i>
+  </button>
 
-        <!-- Support Tab -->
-        <div class="tab-content" id="support-tab">
-          <h3 class="tab-heading">Support</h3>
-          <p>Contact support or access documentation here.</p>
-        </div>
+  <!-- Profile Section -->
+  <button class="settings-menu-item" data-section="profile">
+    <i class="fas fa-user"></i>
+    <span>Profile</span>
+    <i class="fas fa-chevron-right item-arrow"></i>
+  </button>
 
+  <!-- Theme Section -->
+  <button class="settings-menu-item" data-section="theme">
+    <i class="fas fa-adjust"></i>
+    <span>Theme</span>
+    <i class="fas fa-chevron-right item-arrow"></i>
+  </button>
+
+  <!-- About Section -->
+  <button class="settings-menu-item" data-section="about">
+    <i class="fas fa-info-circle"></i>
+    <span>About</span>
+    <i class="fas fa-chevron-right item-arrow"></i>
+  </button>
+
+  <!-- Support Section -->
+  <button class="settings-menu-item" data-section="support">
+    <i class="fas fa-question-circle"></i>
+    <span>Support</span>
+    <i class="fas fa-chevron-right item-arrow"></i>
+  </button>
+</div>
+
+<!-- Full Screen Panels for Each Section -->
+<div id="integrations-panel" class="settings-full-panel hidden">
+  <div class="panel-header">
+    <button class="back-to-menu-btn" data-back="integrations">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>Integrations</h2>
+  </div>
+  <div class="panel-content">
+    <p class="panel-description">Connect your external accounts to enhance your experience.</p>
+    
+    <!-- GitHub Integration Item -->
+    <div class="integration-item">
+      <div class="integration-info">
+        <i class="fab fa-github"></i>
+        <span>GitHub</span>
+      </div>
+      <button class="connect-btn" id="connect-github-btn" data-provider="github">
+        <i class="fas fa-link icon-connect"></i>
+        <i class="fas fa-check icon-connected" style="display: none;"></i>
+        <span class="btn-text">Connect</span>
+      </button>
+    </div>
+
+    <!-- Google Integration Item -->
+    <div class="integration-item">
+      <div class="integration-info">
+        <i class="fab fa-google"></i>
+        <span>Google</span>
+      </div>
+      <button class="connect-btn" id="connect-google-btn" data-provider="google">
+        <i class="fas fa-link icon-connect"></i>
+        <i class="fas fa-check icon-connected" style="display: none;"></i>
+        <span class="btn-text">Connect</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="profile-panel" class="settings-full-panel hidden">
+  <div class="panel-header">
+    <button class="back-to-menu-btn" data-back="profile">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>Profile Information</h2>
+  </div>
+  <div class="panel-content">
+    <form id="profile-form">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="Enter your full name" aria-label="Full Name">
+      </div>
+      <div class="form-group">
+        <label for="nickname">Nickname</label>
+        <input type="text" id="nickname" placeholder="Enter your preferred name" aria-label="Nickname">
+      </div>
+      <div class="form-group">
+        <label for="occupation">Occupation</label>
+        <input type="text" id="occupation" placeholder="Enter your occupation" aria-label="Occupation">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="theme-panel" class="settings-full-panel hidden">
+  <div class="panel-header">
+    <button class="back-to-menu-btn" data-back="theme">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>Theme Settings</h2>
+  </div>
+  <div class="panel-content">
+    <div class="form-group">
+      <label for="theme-options">Appearance</label>
+      <div class="theme-selector" id="theme-options">
+        <button class="theme-option" data-theme="light">
+          <i class="fas fa-sun"></i> Light
+        </button>
+        <button class="theme-option active" data-theme="dark">
+          <i class="fas fa-moon"></i> Dark
+        </button>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="about-panel" class="settings-full-panel hidden">
+  <div class="panel-header">
+    <button class="back-to-menu-btn" data-back="about">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>About</h2>
+  </div>
+  <div class="panel-content">
+    <p>A modern mobile application for managing your account and preferences. Built for optimal performance and user experience.</p>
+  </div>
+</div>
+
+<div id="support-panel" class="settings-full-panel hidden">
+  <div class="panel-header">
+    <button class="back-to-menu-btn" data-back="support">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>Support</h2>
+  </div>
+  <div class="panel-content">
+    <p>Contact support or access documentation here.</p>
   </div>
 </div>

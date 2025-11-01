@@ -39,12 +39,6 @@
 
 <body class="dark-mode">
   <div class="app-container">
-    <!-- Sidebar -->
-    <div id="sidebar-overlay"></div>
-    <div id="sidebar-container">
-      <div id="aios-root"></div>
-    </div>
-
     <!-- Top Bar (Simplified) -->
     <div class="top-bar">
       <div class="top-bar-action">
@@ -62,7 +56,13 @@
           </button>
         </div>
       </div>
-      <button id="hamburger-btn" class="top-bar-btn"><i class="fas fa-bars"></i></button>
+      <div class="top-bar-action">
+        <button id="profile-menu-btn" class="top-bar-btn profile-btn" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-user-circle" id="profile-icon-default"></i>
+          <img id="profile-photo" class="profile-photo hidden" alt="Profile" />
+        </button>
+        <div id="profile-dropdown" class="profile-dropdown hidden" role="menu"></div>
+      </div>
     </div>
 
     <!-- Main Content -->
@@ -307,6 +307,11 @@
         }
       };
 
+      // Create aios-root container for profile dropdown content
+      const aiosRoot = document.createElement('div');
+      aiosRoot.id = 'aios-root';
+      document.body.appendChild(aiosRoot);
+
       await Promise.all([
         loadModuleHTML('aios', 'aios-root'),
         loadModuleHTML('chat', 'context-root'),
@@ -368,7 +373,7 @@
         closeDropdowns();
       }
 
-      hamburgerBtn?.addEventListener('click', () => window.aios.openSidebar());
+      // Profile menu button handler is now in aios.js
 
       newChatBtn?.addEventListener('click', (event) => {
         event.stopPropagation();

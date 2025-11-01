@@ -50,11 +50,35 @@ body, html {
     align-items: center;
     justify-content: center;
     transition: 0.2s ease, color 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .top-bar-btn:hover {
     background-color: var(--hover-bg);
     color: var(--text-color);
+}
+
+/* Profile Photo Styling */
+.profile-photo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.profile-photo.hidden {
+    display: none;
+}
+
+/* Hide default icon when photo is shown */
+.profile-btn:has(.profile-photo:not(.hidden)) #profile-icon-default {
+    display: none;
 }
 
 .top-bar-dropdown {
@@ -97,43 +121,11 @@ body, html {
     color: var(--text-color);
 }
 
-/* --- Sidebar --- */
-#sidebar-container {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 85%;
-    max-width: 350px;
-    height: 100%;
-    background-color: var(--bg-color);
-    z-index: 1200;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-}
-
-#sidebar-container.open {
-    transform: translateX(0);
-}
-
+/* --- Sidebar Removed - Now Using Profile Dropdown --- */
+/* Legacy sidebar elements hidden */
+#sidebar-container,
 #sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1100;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out;
-}
-
-#sidebar-overlay.open {
-    opacity: 1;
-    visibility: visible;
+    display: none;
 }
 
 /* --- Main Content (The Scrollable Area) --- */
@@ -167,7 +159,8 @@ body, html {
 /* --- Floating Input --- */
 .floating-input-wrapper {
     padding: 0.75rem;
-    padding-bottom: calc(1.35rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+    transition: padding 0.3s ease;
 }
 
 .floating-input-container {
@@ -175,6 +168,18 @@ body, html {
     display: flex;
     align-items: center;
     width: 100%;
+}
+
+/* Override desktop positioning - keep input container in place for mobile */
+.floating-input-container.welcome-mode,
+.floating-input-container.chat-mode,
+.floating-input-container.centered {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: none !important;
 }
 
 .input-action-menu {

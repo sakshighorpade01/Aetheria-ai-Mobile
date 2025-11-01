@@ -1,129 +1,157 @@
-/* notifications.css - Unified Notification System with Glassmorphism */
+/* notifications.css - Minimalist Top-Center Notification System */
 
 /* Container */
 .unified-notification-container {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 8px;
     z-index: 10000;
     pointer-events: none;
-    max-width: 400px;
+    max-width: 90vw;
+    width: auto;
 }
 
-/* Base Notification */
+/* Base Notification - Glassmorphism Style */
 .unified-notification {
     position: relative;
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    border-radius: 12px;
-    min-width: 300px;
-    max-width: 400px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    min-width: 200px;
+    max-width: 360px;
     pointer-events: all;
     overflow: hidden;
 
-    /* Glassmorphism Effect */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    /* Transparent glassmorphism effect - Light mode */
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 
     /* Animation */
     opacity: 0;
-    transform: translateX(100%) scale(0.9);
+    transform: translateY(-20px) scale(0.95);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark-mode .unified-notification {
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* Show Animation */
 .unified-notification.show {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateY(0) scale(1);
 }
 
 /* Hide Animation */
 .unified-notification.hide {
     opacity: 0;
-    transform: translateX(100%) scale(0.9);
+    transform: translateY(-20px) scale(0.95);
 }
 
-/* Hover Effect */
+/* Hover Effect - Enhanced Glassmorphism */
 .unified-notification:hover {
-    transform: translateX(0) scale(1.02);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+    transform: translateY(0) scale(1.02);
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
-/* Icon */
+.dark-mode .unified-notification:hover {
+    background: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Icon - Minimalist compact */
 .notification-icon {
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 16px;
 }
 
-/* Content */
+/* Content - Compact */
 .notification-content {
     flex: 1;
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    align-items: center;
 }
 
 .notification-message {
-    color: var(--text-color);
-    font-size: 14px;
-    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 500;
     word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Close Button */
+.dark-mode .notification-message {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Close Button - Minimalist */
 .notification-close {
     flex-shrink: 0;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
     border: none;
-    border-radius: 6px;
-    color: var(--text-secondary);
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.5);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 14px;
+    font-size: 12px;
     padding: 0;
+    margin-left: 4px;
 }
 
 .notification-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .notification-close {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .dark-mode .notification-close:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
 }
 
-/* Progress Bar */
+/* Progress Bar - Thinner and subtle */
 .notification-progress {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 3px;
+    height: 2px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
     transform-origin: left;
 }
 
@@ -137,60 +165,80 @@
     }
 }
 
-/* Type Variants */
+/* Type Variants - Minimalist with subtle color accent */
 .notification-success {
-    border-left: 4px solid var(--success-500, #10b981);
+    border-left: 3px solid #10b981;
 }
 
 .notification-success .notification-icon {
-    color: var(--success-500, #10b981);
+    color: #059669;
+}
+
+.dark-mode .notification-success .notification-icon {
+    color: #10b981;
 }
 
 .notification-success .notification-progress {
-    background: var(--success-500, #10b981);
+    background: #10b981;
 }
 
 .notification-error {
-    border-left: 4px solid var(--error-500, #ef4444);
+    border-left: 3px solid #ef4444;
 }
 
 .notification-error .notification-icon {
-    color: var(--error-500, #ef4444);
+    color: #dc2626;
+}
+
+.dark-mode .notification-error .notification-icon {
+    color: #ef4444;
 }
 
 .notification-error .notification-progress {
-    background: var(--error-500, #ef4444);
+    background: #ef4444;
 }
 
 .notification-warning {
-    border-left: 4px solid var(--warning-500, #f59e0b);
+    border-left: 3px solid #f59e0b;
 }
 
 .notification-warning .notification-icon {
-    color: var(--warning-500, #f59e0b);
+    color: #d97706;
+}
+
+.dark-mode .notification-warning .notification-icon {
+    color: #f59e0b;
 }
 
 .notification-warning .notification-progress {
-    background: var(--warning-500, #f59e0b);
+    background: #f59e0b;
 }
 
 .notification-info {
-    border-left: 4px solid var(--accent-color, #3b82f6);
+    border-left: 3px solid #3b82f6;
 }
 
 .notification-info .notification-icon {
-    color: var(--accent-color, #3b82f6);
+    color: #2563eb;
+}
+
+.dark-mode .notification-info .notification-icon {
+    color: #3b82f6;
 }
 
 .notification-info .notification-progress {
-    background: var(--accent-color, #3b82f6);
+    background: #3b82f6;
 }
 
 .notification-connection {
-    border-left: 4px solid #8b5cf6;
+    border-left: 3px solid #8b5cf6;
 }
 
 .notification-connection .notification-icon {
+    color: #7c3aed;
+}
+
+.dark-mode .notification-connection .notification-icon {
     color: #8b5cf6;
 }
 
@@ -223,18 +271,28 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Responsive Design */
+/* Responsive Design - Mobile optimized */
 @media (max-width: 768px) {
     .unified-notification-container {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-        max-width: none;
+        top: 12px;
+        max-width: calc(100vw - 32px);
     }
 
     .unified-notification {
-        min-width: auto;
-        max-width: none;
+        min-width: 180px;
+        max-width: 340px;
+        padding: 9px 14px;
+    }
+    
+    .notification-message {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .unified-notification {
+        min-width: 160px;
+        max-width: 300px;
     }
 }
 

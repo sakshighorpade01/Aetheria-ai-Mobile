@@ -1,10 +1,13 @@
 // js/artifact-handler.js (Updated)
 
+import NotificationService from './notification-service.js';
+
 class ArtifactHandler {
     constructor() {
         this.artifacts = new Map();
         this.currentId = 0;
         this.currentArtifactId = null;
+        this.notificationService = new NotificationService();
         this.init();
     }
 
@@ -228,15 +231,9 @@ class ArtifactHandler {
     }
 
     showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `artifact-notification ${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.classList.add('show'), 100);
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+        if (this.notificationService) {
+            this.notificationService.show(message, type, 3000);
+        }
     }
     
     // --- NEW: Functions to handle terminal display ---

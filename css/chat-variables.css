@@ -75,6 +75,7 @@
     --chat-container-left: 52.5%;
     --chat-max-width: 800px;
     --input-container-max-width: 800px;
+    --input-bottom-offset: 56px;
     --message-max-width: 85%;
     --input-min-height: 70px;
     --input-max-height: 200px;
