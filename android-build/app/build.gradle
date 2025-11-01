@@ -150,9 +150,32 @@ android {
 
         
     }
+    
+    // Signing configuration for release builds
+    signingConfigs {
+        release {
+            // These values are loaded from gradle.properties (not committed to git)
+            // Create gradle.properties file with:
+            // RELEASE_STORE_FILE=../aetheria-release-key.keystore
+            // RELEASE_STORE_PASSWORD=your_password
+            // RELEASE_KEY_ALIAS=aetheria-key
+            // RELEASE_KEY_PASSWORD=your_password
+            if (project.hasProperty('RELEASE_STORE_FILE')) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+    
     buildTypes {
         release {
             minifyEnabled true
+            // Sign release builds if signing config is available
+            if (project.hasProperty('RELEASE_STORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
