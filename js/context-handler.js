@@ -224,6 +224,7 @@ class ContextHandler {
         const message = this.loadError || 'Unable to load previous sessions.';
         this.elements.listView.innerHTML = `
             <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
                 <p>${message}</p>
                 <button class="retry-load-btn" type="button">
                     <i class="fas fa-sync-alt"></i> Retry
@@ -243,7 +244,12 @@ class ContextHandler {
         this.elements.listView.innerHTML = '';
 
         if (!sessions || sessions.length === 0) {
-            this.elements.listView.innerHTML = '<div class="empty-state">No sessions found.</div>';
+            this.elements.listView.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <p>No chat sessions yet.<br>Start a conversation to see your history here.</p>
+                </div>
+            `;
             return;
         }
 
@@ -443,7 +449,10 @@ class ContextHandler {
         if (!Array.isArray(runs) || runs.length === 0) {
             const emptyMessage = document.createElement('div');
             emptyMessage.className = 'empty-state';
-            emptyMessage.innerHTML = '<p>This session has no conversation history.</p>';
+            emptyMessage.innerHTML = `
+                <i class="fas fa-inbox"></i>
+                <p>This session has no conversation history.</p>
+            `;
             conversationContainer.appendChild(emptyMessage);
         } else {
             // Filter only top-level runs (no parent_run_id)
