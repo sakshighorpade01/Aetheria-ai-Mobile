@@ -45,19 +45,25 @@ export class AIOS {
             profileAvatarFallback: document.getElementById('profile-avatar-fallback'),
             profileName: document.getElementById('profile-name'),
             profileEmail: document.getElementById('profile-email'),
-            
+
             // Login prompt
             loginPrompt: document.getElementById('login-prompt'),
             openAuthModalBtn: document.getElementById('open-auth-modal-btn'),
-            
+
             // Auth modal
             authModal: document.getElementById('auth-modal'),
             closeAuthModalBtn: document.querySelector('.close-auth-modal-btn'),
-            
+
             // Account menu section
             accountMenuSection: document.getElementById('account-menu-section'),
             logoutSection: document.getElementById('logout-section'),
             
+            // Legacy account section elements (for backward compatibility)
+            accountLoggedOut: document.getElementById('account-logged-out'),
+            accountLoggedIn: document.getElementById('account-logged-in'),
+            userName: document.getElementById('userName'),
+            userEmail: document.getElementById('userEmail'),
+
             settingsMenuItems: document.querySelectorAll('.settings-menu-item'),
             settingsPanels: document.querySelectorAll('.settings-full-panel'),
             backButtons: document.querySelectorAll('.back-to-menu-btn'),
@@ -323,11 +329,15 @@ export class AIOS {
     async updateAuthUI(user) {
         const isAuthenticated = !!user;
         
-        // Toggle profile header and login prompt
+        // Toggle profile header and login prompt (new UI)
         this.elements.profileHeader?.classList.toggle('hidden', !isAuthenticated);
         this.elements.loginPrompt?.classList.toggle('hidden', isAuthenticated);
-        
-        // Toggle account menu sections
+
+        // Toggle legacy account sections (dropdown forms)
+        this.elements.accountLoggedOut?.classList.toggle('hidden', isAuthenticated);
+        this.elements.accountLoggedIn?.classList.toggle('hidden', !isAuthenticated);
+
+        // Toggle account menu sections (new UI)
         this.elements.accountMenuSection?.classList.toggle('hidden', !isAuthenticated);
         this.elements.logoutSection?.classList.toggle('hidden', !isAuthenticated);
 
@@ -336,16 +346,19 @@ export class AIOS {
             const userEmail = user.email;
             
             // Update profile header
-            if (this.elements.profileName) {
-                this.elements.profileName.textContent = userName;
+            const profileNameEl = this.elements.profileName || this.elements.userName;
+            if (profileNameEl) {
+                profileNameEl.textContent = userName;
             }
-            if (this.elements.profileEmail) {
-                this.elements.profileEmail.textContent = userEmail;
+
+            const profileEmailEl = this.elements.profileEmail || this.elements.userEmail;
+            if (profileEmailEl) {
+                profileEmailEl.textContent = userEmail;
             }
-            
+
             // Update profile avatar
             this.updateProfileAvatar(user);
-            
+
             // Update top bar profile photo
             this.updateProfilePhoto(user);
             
