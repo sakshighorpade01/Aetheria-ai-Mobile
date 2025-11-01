@@ -16,11 +16,19 @@ class ContextHandler {
         this.notificationService = new NotificationService();
 
         this.preloadDelay = preloadDelay;
-        this.loadingState = 'idle'; // idle | loading | loaded | error
+        this.loadingState = 'idle'; // idle | loading | loaded | error | cached
         this.loadError = null;
         this.backgroundLoadTimer = null;
         this.isWindowOpen = false;
         this.pendingLoadPromise = null;
+
+        this.cacheKey = 'aios_context_sessions';
+        this.cachedData = this.loadCachedSessions();
+        this.isShowingCachedData = false;
+
+        if (this.cachedData?.sessions?.length) {
+            this.loadedSessions = this.cachedData.sessions;
+        }
     }
 
     initializeElements() {
@@ -126,6 +134,7 @@ class ContextHandler {
 
         this.loadingState = 'loading';
         this.loadError = null;
+        this.isShowingCachedData = false;
 
         if (this.isWindowOpen) {
             this.renderLoadingState();
@@ -176,6 +185,8 @@ class ContextHandler {
                 this.loadedSessions = Array.isArray(sessions) ? sessions : [];
                 this.loadingState = 'loaded';
                 this.loadError = null;
+                this.isShowingCachedData = false;
+                this.saveSessionsToCache(this.loadedSessions);
 
                 if (this.isWindowOpen) {
                     this.showSessionList(this.loadedSessions);
@@ -184,7 +195,7 @@ class ContextHandler {
                 return this.loadedSessions;
             } catch (err) {
                 console.error('Failed to load sessions:', err);
-                
+
                 // Handle different error types
                 if (err.name === 'TimeoutError' || err.name === 'AbortError') {
                     this.loadError = 'Request timed out. The backend may be slow or unavailable. Please try again.';
@@ -195,7 +206,17 @@ class ContextHandler {
                 } else {
                     this.loadError = err?.message || 'An unexpected error occurred while loading sessions.';
                 }
-                
+
+                if (this.cachedData?.sessions?.length) {
+                    this.loadedSessions = this.cachedData.sessions;
+                    this.loadingState = 'cached';
+                    this.isShowingCachedData = true;
+                    if (this.isWindowOpen) {
+                        this.showSessionList(this.loadedSessions);
+                    }
+                    return this.loadedSessions;
+                }
+
                 this.loadingState = 'error';
                 if (this.isWindowOpen) {
                     this.renderErrorState();
@@ -223,6 +244,9 @@ class ContextHandler {
                 break;
             case 'loading':
                 this.renderLoadingState();
+                break;
+            case 'cached':
+                this.showSessionList(this.loadedSessions);
                 break;
             case 'error':
                 this.renderErrorState();
@@ -304,6 +328,9 @@ class ContextHandler {
         }
 
         this.addSelectionHeader();
+        if (this.isShowingCachedData) {
+            this.insertCachedNotice();
+        }
         this.renderSessionItems(sessions);
         this.initializeSelectionControls();
         this.updateSelectionUI();
@@ -443,18 +470,6 @@ class ContextHandler {
             }
         });
 
-        // Return full session objects (Electron format) - backend needs session_id to query data
-        return this.loadedSessions.filter(session => selectedIds.has(session.session_id));
-    }
-
-    showSessionDetails(sessionId) {
-        const session = this.loadedSessions.find(s => s.session_id === sessionId);
-        if (!session || !this.elements.detailView) {
-            this.showNotification('Could not find session details.', 'error');
-            return;
-        }
-
-        const template = document.getElementById('session-detail-template');
         if (!template) return;
 
         const view = template.content.cloneNode(true);

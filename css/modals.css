@@ -342,6 +342,42 @@
     flex-grow: 1;
 }
 
+.cached-data-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1.125rem;
+    margin: 0 1rem 0.75rem 1rem;
+    border: 1px solid rgba(var(--accent-color-rgb, 59, 130, 246), 0.4);
+    border-radius: 0.75rem;
+    background: rgba(var(--accent-color-rgb, 59, 130, 246), 0.08);
+    color: var(--accent-color);
+    animation: slideUpFade 0.35s ease;
+}
+
+.cached-data-banner i {
+    font-size: 1.25rem;
+    line-height: 1;
+    margin-top: 0.15rem;
+}
+
+.cached-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    color: var(--text-color);
+}
+
+.cached-banner-text strong {
+    font-size: 0.92rem;
+    color: var(--accent-color);
+}
+
+.cached-banner-text span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
 .use-selected-btn, .clear-selection-btn {
     display: inline-flex;
     align-items: center;
