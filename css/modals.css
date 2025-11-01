@@ -774,6 +774,25 @@
     margin: 0;
 }
 
+.empty-state.error-state i {
+    color: var(--error-color, #ef4444);
+}
+
+.error-hint {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(var(--accent-color-rgb, 59, 130, 246), 0.1);
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--accent-color);
+}
+
+.error-hint small {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    display: block;
+}
+
 .session-item-loading {
     text-align: center;
     padding: 3rem 2rem;
