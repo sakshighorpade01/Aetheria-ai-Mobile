@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - using deployed Render backend
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+const API_PROXY_URL = 'http://localhost:8765';
 
 class FileAttachmentHandler {
   constructor() {
@@ -20,12 +20,17 @@ class FileAttachmentHandler {
     this.maxFileSize = 10 * 1024 * 1024; // 10MB
     this.attachedFiles = [];
     this.initialize();
+    if (typeof window !== 'undefined') {
+      window.fileAttachmentHandler = this;
+    }
   }
 
   initialize() {
     this.attachButton = document.getElementById('attach-file-btn');
     this.fileInput = document.getElementById('file-input');
     this.previewsContainer = document.getElementById('file-previews-container');
+    this.attachmentStrip = document.getElementById('attachment-strip');
+    this.inputField = document.querySelector('#floating-input-container .input-field');
     
     this.previewModal = document.getElementById('file-preview-modal');
     this.previewContentArea = document.getElementById('preview-content-area');
@@ -152,50 +157,72 @@ class FileAttachmentHandler {
     if (!this.previewsContainer) return;
     this.previewsContainer.innerHTML = '';
 
+    if (this.attachedFiles.length === 0) {
+      this.attachmentStrip?.classList.add('hidden');
+      this.inputField?.classList.remove('with-attachments');
+      return;
+    }
+
+    this.attachmentStrip?.classList.remove('hidden');
+    this.inputField?.classList.add('with-attachments');
+
     this.attachedFiles.forEach((fileObject, index) => {
       const previewElement = document.createElement('div');
-      previewElement.className = 'file-preview-item';
+      previewElement.className = `file-preview-chip ${fileObject.status}`;
+      previewElement.setAttribute('role', 'listitem');
 
-      let statusIcon = '';
-      if (fileObject.status === 'uploading') {
-        statusIcon = '<i class="fas fa-spinner fa-spin"></i>';
-      } else if (fileObject.status === 'failed') {
-        statusIcon = '<i class="fas fa-exclamation-circle error-icon"></i>';
-      } else {
-        statusIcon = '<i class="fas fa-check-circle success-icon"></i>';
-      }
-      
-      let previewButton = '';
-      // Show preview button if a previewUrl exists and the file has completed processing
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'file-name';
+      nameSpan.textContent = fileObject.name;
+
+      const actionsWrapper = document.createElement('div');
+      actionsWrapper.className = 'file-actions';
+
       if (fileObject.previewUrl && fileObject.status === 'completed') {
-          previewButton = `<button class="preview-file-btn" data-index="${index}" title="Preview File"><i class="fas fa-eye"></i></button>`;
+        const previewButton = document.createElement('button');
+        previewButton.className = 'preview-file-btn';
+        previewButton.dataset.index = index;
+        previewButton.title = 'Preview file';
+        previewButton.innerHTML = '<i class="fas fa-eye"></i>';
+        previewButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.showPreview(index);
+        });
+        actionsWrapper.appendChild(previewButton);
       }
 
-      previewElement.innerHTML = `
-        <span class="file-name">${fileObject.name}</span>
-        <div class="file-actions">
-          ${previewButton}
-          <button class="remove-file-btn" data-index="${index}" title="Remove File">×</button>
-        </div>
-        <span class="file-status">${statusIcon}</span>
-      `;
+      const removeButton = document.createElement('button');
+      removeButton.className = 'remove-file-btn';
+      removeButton.dataset.index = index;
+      removeButton.title = 'Remove file';
+      removeButton.innerHTML = '<i class="fas fa-times"></i>';
+      removeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
+        this.removeFile(indexToRemove);
+      });
+      actionsWrapper.appendChild(removeButton);
+
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'file-status';
+      if (fileObject.status === 'uploading') {
+        statusSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      } else if (fileObject.status === 'failed') {
+        statusSpan.innerHTML = '<i class="fas fa-exclamation-circle error-icon"></i>';
+      } else {
+        statusSpan.innerHTML = '<i class="fas fa-check-circle success-icon"></i>';
+      }
+
+      previewElement.appendChild(nameSpan);
+      previewElement.appendChild(actionsWrapper);
+      previewElement.appendChild(statusSpan);
 
       this.previewsContainer.appendChild(previewElement);
     });
 
-    this.previewsContainer.querySelectorAll('.remove-file-btn').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
-        this.removeFile(indexToRemove);
-      });
-    });
-    
-    this.previewsContainer.querySelectorAll('.preview-file-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const indexToPreview = parseInt(e.currentTarget.dataset.index, 10);
-            this.showPreview(indexToPreview);
-        });
-    });
+    window.contextHandler?.updateContextFilesBarVisibility?.();
   }
 
   showPreview(index) {

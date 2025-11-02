@@ -4,7 +4,7 @@
 const config = {
     // Backend connection settings
     backend: {
-        // URL for the Python backend deployed on Render
+        // URL for the Python backend deployed on Render https://aios-web.onrender.com
         url: 'https://aios-web.onrender.com',
         
         // Maximum number of reconnection attempts

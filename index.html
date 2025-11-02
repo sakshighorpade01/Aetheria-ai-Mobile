@@ -79,25 +79,29 @@
     <!-- Bottom UI Area -->
     <div id="bottom-ui-container">
       <div class="floating-input-wrapper">
-        <div id="file-previews-container"></div>
-        <div class="floating-input-container" id="floating-input-container">
-          <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i></button>
-          <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
-            <button type="button" class="input-action-menu-item" data-menu-action="memory" role="menuitem" aria-pressed="false">
-              <i class="fas fa-brain"></i>
-              <span>Memory</span>
-            </button>
-            <button type="button" class="input-action-menu-item" data-menu-action="attach" role="menuitem">
-              <i class="fas fa-paperclip"></i>
-              <span>Attach file</span>
-            </button>
-            <button type="button" class="input-action-menu-item" data-menu-action="sessions" role="menuitem">
-              <i class="fas fa-comments"></i>
-              <span>Chats</span>
-            </button>
+        <div id="floating-input-container" class="floating-input-container">
+          <div id="attachment-strip" class="attachment-strip hidden" aria-live="polite">
+            <div id="file-previews-container" class="attachments-scroll" role="list"></div>
           </div>
-          <textarea id="floating-input" class="floating-input" placeholder="Ask anything..." rows="1"></textarea>
-          <button id="send-message" class="input-action-btn circular-btn"><i class="fas fa-paper-plane"></i></button>
+          <div class="input-field">
+            <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i></button>
+            <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
+              <button type="button" class="input-action-menu-item" data-menu-action="memory" role="menuitem" aria-pressed="false">
+                <i class="fas fa-brain"></i>
+                <span>Memory</span>
+              </button>
+              <button type="button" class="input-action-menu-item" data-menu-action="attach" role="menuitem">
+                <i class="fas fa-paperclip"></i>
+                <span>Attach file</span>
+              </button>
+              <button type="button" class="input-action-menu-item" data-menu-action="sessions" role="menuitem">
+                <i class="fas fa-comments"></i>
+                <span>Chats</span>
+              </button>
+            </div>
+            <textarea id="floating-input" class="floating-input" placeholder="Ask anything..." rows="1"></textarea>
+            <button id="send-message" class="input-action-btn circular-btn"><i class="fas fa-paper-plane"></i></button>
+          </div>
         </div>
         <input type="file" id="file-input" style="display: none;" multiple />
       </div>
