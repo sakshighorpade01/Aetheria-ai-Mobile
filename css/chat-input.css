@@ -8,18 +8,18 @@
     bottom: var(--input-bottom-offset, 56px);
     left: 50%;
     transform: translateX(-50%);
-    width: 50%;
+    width: 60%;
     max-width: var(--input-container-max-width);
     background-color: transparent;
-    border-radius: 16px;
+    border-radius: 0;
     box-shadow: none;
     padding: 0;
     z-index: var(--z-input-container);
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     transition: all var(--anim-normal) var(--easing-standard);
     opacity: 1;
     visibility: visible;
@@ -51,29 +51,34 @@
     flex-direction: column;
     gap: 6px;
     padding: 10px 12px 8px;
-    border-radius: 14px 14px 0 0;
-    border: 1px solid transparent;
-    background: rgba(var(--accent-color-rgb), 0.04);
+    border-radius: 26px 26px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(8px);
+    max-height: 0;
+    overflow: hidden;
     transition: opacity var(--anim-fast) var(--easing-standard),
-                transform var(--anim-fast) var(--easing-standard),
+                max-height var(--anim-fast) var(--easing-standard),
+                padding var(--anim-fast) var(--easing-standard),
                 visibility 0s linear var(--anim-fast);
 }
 
 .attachment-strip.hidden {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(8px);
-    border-color: transparent;
+    max-height: 0;
+    padding: 0 12px;
 }
 
 .attachment-strip:not(.hidden) {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
-    border-color: rgba(var(--accent-color-rgb), 0.12);
+    max-height: 200px;
+    padding: 10px 12px 8px;
 }
 
 .attachments-scroll {
@@ -193,18 +198,23 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    border-radius: 16px;
-    background: rgba(12, 20, 37, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 8px;
+    padding: 4px;
+    border-radius: 24px;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: border-color var(--anim-fast) var(--easing-standard);
+    min-height: 52px;
 }
 
 .input-field.with-attachments {
-    border-color: rgba(var(--accent-color-rgb), 0.3);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    border-top: none;
+    border-radius: 0 0 26px 26px;
 }
 
 .floating-input-container.hidden {
@@ -225,20 +235,64 @@
 
 /* --- Text Input Area --- */
 .floating-input {
-    flex-grow: 1;
+    flex: 1;
     border: none;
     box-shadow: none;
-    border-bottom: none;
-    border-radius: 16px 16px 0 0;
-    padding: 18px 20px;
+    border-radius: 20px;
+    padding: 10px 14px;
     resize: none;
     background-color: transparent;
     color: var(--text-color);
     font-family: inherit;
     max-height: var(--input-max-height);
     font-size: 0.95rem;
-    min-height: var(--input-min-height);
+    min-height: 40px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    line-height: 1.5;
+}
+
+.floating-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- Input Action Buttons (Desktop) --- */
+.input-action-btn.circular-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+#attach-file-btn {
+    background-color: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#attach-file-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#send-message {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+#send-message:hover {
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    transform: scale(1.05);
 }
 
 /* --- Input styling when files are attached --- */

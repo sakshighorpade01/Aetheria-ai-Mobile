@@ -22,7 +22,7 @@ let conversationStateManager = null;
 let floatingWindowManager = null;
 let welcomeDisplay = null;
 let notificationService = null;
-let shuffleMenuController = null;
+// ShuffleMenuController removed - not needed for PWA (Electron-only feature)
 let unifiedPreviewHandler = null;
 
 const defaultToolsConfig = {
@@ -618,123 +618,7 @@ function extractConversationHistory() {
     return history.trim();
 }
 
-class ShuffleMenuController {
-    constructor({ config, onMemoryToggle, onTasksToggle, onAgentTypeChange }) {
-        this.config = config;
-        this.onMemoryToggle = onMemoryToggle;
-        this.onTasksToggle = onTasksToggle;
-        this.onAgentTypeChange = onAgentTypeChange;
-
-        this.button = null;
-        this.menu = null;
-        this.toolsMenu = null;
-        this.memoryItem = null;
-        this.tasksItem = null;
-        this.aiosCheckbox = null;
-        this.deepSearchCheckbox = null;
-
-        this.isOpen = false;
-        this.boundDocumentListener = null;
-    }
-
-    initialize() {
-        this.button = document.querySelector('.shuffle-btn');
-        this.menu = this.button?.querySelector('.shuffle-menu');
-        if (!this.button || !this.menu) {
-            console.warn('ShuffleMenuController: menu markup not found.');
-            return;
-        }
-
-        this.memoryItem = this.menu.querySelector('[data-action="memory"]');
-        this.tasksItem = this.menu.querySelector('[data-action="tasks"]');
-        const toolsItem = this.menu.querySelector('[data-action="tools"]');
-        this.toolsMenu = toolsItem?.querySelector('.tools-menu') || null;
-        this.aiosCheckbox = this.toolsMenu?.querySelector('#ai_os') || null;
-        this.deepSearchCheckbox = this.toolsMenu?.querySelector('#deep_search') || null;
-
-        this.button.addEventListener('click', (event) => {
-            event.stopPropagation();
-            this.toggleMenu();
-        });
-
-        this.memoryItem?.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const nextValue = !this.config.memory;
-            this.onMemoryToggle(nextValue);
-            this.closeMenu();
-        });
-
-        this.tasksItem?.addEventListener('click', (event) => {
-            event.stopPropagation();
-            const nextValue = !this.config.tasks;
-            this.onTasksToggle(nextValue);
-            this.closeMenu();
-        });
-
-        toolsItem?.addEventListener('click', (event) => {
-            event.stopPropagation();
-            this.toolsMenu?.classList.toggle('visible');
-        });
-
-        this.aiosCheckbox?.addEventListener('change', (event) => {
-            const enabled = event.target.checked;
-            this.onAgentTypeChange(enabled ? 'aios' : 'deepsearch');
-        });
-
-        this.deepSearchCheckbox?.addEventListener('change', (event) => {
-            if (event.target.checked) {
-                this.onAgentTypeChange('deepsearch');
-            } else {
-                this.onAgentTypeChange('aios');
-            }
-        });
-
-        this.boundDocumentListener = (event) => {
-            if (!this.menu.contains(event.target) && !this.button.contains(event.target)) {
-                this.closeMenu();
-            }
-        };
-        document.addEventListener('click', this.boundDocumentListener);
-
-        this.syncUI();
-    }
-
-    toggleMenu() {
-        if (!this.menu) return;
-        this.isOpen = !this.isOpen;
-        this.menu.classList.toggle('visible', this.isOpen);
-        this.button?.setAttribute('aria-expanded', this.isOpen ? 'true' : 'false');
-    }
-
-    closeMenu() {
-        if (!this.menu) return;
-        this.isOpen = false;
-        this.menu.classList.remove('visible');
-        this.button?.setAttribute('aria-expanded', 'false');
-        this.toolsMenu?.classList.remove('visible');
-    }
-
-    syncUI() {
-        if (!this.menu) return;
-
-        this.memoryItem?.classList.toggle('active', !!this.config.memory);
-        this.tasksItem?.classList.toggle('active', !!this.config.tasks);
-
-        if (this.aiosCheckbox) {
-            this.aiosCheckbox.checked = selectedAgentType !== 'deepsearch';
-        }
-        if (this.deepSearchCheckbox) {
-            this.deepSearchCheckbox.checked = selectedAgentType === 'deepsearch';
-        }
-
-        const hasActive = this.config.memory || this.config.tasks || selectedAgentType === 'deepsearch';
-        this.button?.classList.toggle('has-active', hasActive);
-    }
-
-    destroy() {
-        document.removeEventListener('click', this.boundDocumentListener);
-    }
-}
+// ShuffleMenuController class removed - Electron-only feature, not needed for PWA
 
 function setupSocketListeners() {
     if (socketListenersBound) return;
@@ -934,23 +818,7 @@ export const chatModule = {
 
         window.conversationStateManager = conversationStateManager;
 
-        if (!shuffleMenuController) {
-            shuffleMenuController = new ShuffleMenuController({
-                config: chatConfig,
-                onMemoryToggle: (enabled) => this.setMemoryEnabled(enabled),
-                onTasksToggle: (isOpen) => this.setTasksVisibility(isOpen, { source: 'shuffle' }),
-                onAgentTypeChange: (type) => this.setAgentType(type),
-            });
-            shuffleMenuController.initialize();
-        } else {
-            shuffleMenuController.setConfig?.(chatConfig);
-            shuffleMenuController.setHandlers?.({
-                onMemoryToggle: (enabled) => this.setMemoryEnabled(enabled),
-                onTasksToggle: (isOpen) => this.setTasksVisibility(isOpen, { source: 'shuffle' }),
-                onAgentTypeChange: (type) => this.setAgentType(type),
-            });
-            shuffleMenuController.syncUI?.();
-        }
+        // ShuffleMenuController initialization removed - Electron-only feature
 
         socketService.init();
         setupSocketListeners();
@@ -1126,12 +994,10 @@ export const chatModule = {
     setMemoryEnabled(enabled) {
         const next = !!enabled;
         if (chatConfig.memory === next) {
-            shuffleMenuController?.syncUI();
             return;
         }
 
         chatConfig.memory = next;
-        shuffleMenuController?.syncUI();
         dispatchChatEvent('memoryToggle', { enabled: next });
         if (notificationService) {
             notificationService.show(`Memory is now ${next ? 'ON' : 'OFF'}.`, 'info');
@@ -1142,7 +1008,6 @@ export const chatModule = {
         const previousType = selectedAgentType;
         selectedAgentType = type === 'deepsearch' ? 'deepsearch' : 'aios';
         if (previousType === selectedAgentType) {
-            shuffleMenuController?.syncUI();
             return;
         }
 
@@ -1154,7 +1019,6 @@ export const chatModule = {
         } else {
             Object.assign(chatConfig.tools, defaultToolsConfig);
         }
-        shuffleMenuController?.syncUI();
         dispatchChatEvent('agentTypeChanged', { agentType: selectedAgentType });
         if (notificationService) {
             notificationService.show(`Agent switched to ${selectedAgentType.toUpperCase()}.`, 'info');
@@ -1165,7 +1029,6 @@ export const chatModule = {
     setTasksVisibility(isOpen, options = {}) {
         const next = !!isOpen;
         chatConfig.tasks = next;
-        shuffleMenuController?.syncUI();
         dispatchChatEvent('tasksToggle', { open: next });
 
         if (options.source === 'shuffle') {

@@ -158,34 +158,46 @@ body, html {
 
 /* --- Floating Input --- */
 .floating-input-wrapper {
-    padding: 0.75rem;
-    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
     transition: padding 0.3s ease;
 }
 
-.floating-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
+/* Mobile-specific input container styling */
+@media (max-width: 768px) {
+    .floating-input-container {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin: 0;
+        padding: 0;
+    }
 
-/* Override desktop positioning - keep input container in place for mobile */
-.floating-input-container.welcome-mode,
-.floating-input-container.chat-mode,
-.floating-input-container.centered {
-    position: relative !important;
-    bottom: auto !important;
-    left: auto !important;
-    transform: none !important;
-    width: 100% !important;
-    max-width: none !important;
+    .floating-input-container.welcome-mode,
+    .floating-input-container.chat-mode,
+    .floating-input-container.centered {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
 }
 
 .input-action-menu {
     position: absolute;
     bottom: calc(100% + 10px);
-    left: 0;
+    left: 8px;
     min-width: 190px;
     padding: 0.4rem 0;
     border-radius: 12px;
@@ -208,10 +220,15 @@ body, html {
     border-right: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
     transform: rotate(45deg);
+    z-index: -1;
 }
 
 .floating-input-container .input-action-menu.hidden {
     display: none;
+}
+
+.input-field {
+    position: relative;
 }
 
 .input-action-menu-item {
@@ -244,47 +261,102 @@ body, html {
     color: var(--accent-color);
 }
 
-.floating-input {
-    width: 100%;
-    min-height: 52px;
-    max-height: 200px;
-    border-radius: 1.75rem;
-    background-color: var(--elevated-bg);
-    border: 1px solid var(--border-color);
-    padding: 0.75rem 55px;
-    font-size: 1rem;
-    color: var(--text-color);
-    resize: none;
-    line-height: 1.5;
+@media (max-width: 768px) {
+    .floating-input {
+        flex: 1;
+        min-height: 40px;
+        max-height: 200px;
+        border-radius: 20px;
+        background-color: transparent;
+        border: none;
+        padding: 10px 14px;
+        font-size: 1rem;
+        color: var(--text-color);
+        resize: none;
+        line-height: 1.5;
+    }
+
+    .floating-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Ensure input field has proper structure on mobile */
+    .input-field {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px;
+        margin: 0;
+        border-radius: 26px;
+        background: rgba(30, 41, 59, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        min-height: 52px;
+        width: 100%;
+    }
+    
+    /* Buttons should be visible and properly sized */
+    .input-action-btn.circular-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    #attach-file-btn {
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    #attach-file-btn:hover,
+    #attach-file-btn:active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    #send-message {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    #send-message:hover,
+    #send-message:active {
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        transform: scale(1.05);
+    }
 }
 
-/* --- Input Action Buttons --- */
-.input-action-btn.circular-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-#attach-file-btn {
-    left: 6px;
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-}
-
-#send-message {
-    right: 6px;
-    background-color: var(--primary-500);
-    color: white;
+/* --- Mobile Attachment Strip --- */
+@media (max-width: 768px) {
+    .attachment-strip {
+        border-radius: 26px 26px 0 0;
+        padding: 12px;
+    }
+    
+    .attachment-strip:not(.hidden) {
+        padding: 12px;
+    }
+    
+    .attachment-strip.hidden {
+        padding: 0 12px;
+    }
+    
+    .input-field.with-attachments {
+        border-radius: 0 0 26px 26px;
+    }
 }
 
 /* --- File Previews --- */

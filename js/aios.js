@@ -3,8 +3,10 @@
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
-// Backend URL for OAuth integrations and API calls - using deployed Render backend
-const BACKEND_URL = 'https://aios-web.onrender.com';
+// Backend URL for OAuth integrations and API calls - using local development server
+const BACKEND_URL = (typeof window !== 'undefined' && window.location?.origin) 
+    ? `${window.location.protocol}//${window.location.hostname}:8765`
+    : 'http://localhost:8765';
 
 export class AIOS {
     constructor() {
@@ -321,6 +323,41 @@ export class AIOS {
         if (this.elements.profilePhoto) {
             this.elements.profilePhoto.classList.add('hidden');
             this.elements.profilePhoto.src = '';
+        }
+    }
+
+    updateProfileAvatarLarge(user) {
+        // Get profile photo URL from user metadata
+        const photoUrl = user.user_metadata?.avatar_url || 
+                        user.user_metadata?.picture || 
+                        user.user_metadata?.photo_url;
+        
+        const avatarContainer = this.elements.profileAvatarLarge;
+        if (!avatarContainer) return;
+
+        // Clear existing content
+        avatarContainer.innerHTML = '';
+        
+        if (photoUrl) {
+            // Create and add image element
+            const img = document.createElement('img');
+            img.src = photoUrl;
+            img.alt = 'Profile Avatar';
+            img.onerror = () => {
+                // Fallback to icon if image fails to load
+                avatarContainer.innerHTML = '<i class="fas fa-user"></i>';
+            };
+            avatarContainer.appendChild(img);
+        } else {
+            // Show default icon if no photo URL
+            avatarContainer.innerHTML = '<i class="fas fa-user"></i>';
+        }
+    }
+
+    clearProfileAvatarLarge() {
+        const avatarContainer = this.elements.profileAvatarLarge;
+        if (avatarContainer) {
+            avatarContainer.innerHTML = '<i class="fas fa-user"></i>';
         }
     }
 
