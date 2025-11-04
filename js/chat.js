@@ -875,8 +875,11 @@ export const chatModule = {
             addUserMessage(message || 'Attached context', attachedFiles, selectedSessions);
         }
 
+        // Clear input and reset height without triggering layout shift
         input.value = '';
-        input.style.height = 'auto';
+        requestAnimationFrame(() => {
+            input.style.height = 'auto';
+        });
         input.focus();
 
         const messageId = `msg_${Date.now()}`;
