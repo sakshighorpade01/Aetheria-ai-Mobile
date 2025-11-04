@@ -659,7 +659,6 @@ function setupSocketListeners() {
     });
 
     socketService.on('image_generated', handleImageGenerated);
-    socketService.on('browser-command', handleBrowserCommand);
 
     socketService.on('error', (err) => {
         console.error('Socket error:', err);
@@ -730,36 +729,6 @@ function handleImageGenerated(data = {}) {
         messageDiv.classList.add('expanded');
     } else {
         notificationService?.show('Generated image is ready in the artifact viewer.', 'info', 6000);
-    }
-}
-
-function handleBrowserCommand(data = {}) {
-    const messageId = data.message_id || data.messageId;
-    const messageDiv = messageId ? ongoingStreams.get(messageId) : null;
-    const action = (data.action || 'browser automation').replace(/_/g, ' ');
-    const url = data.url || data.target;
-    const noteId = data.request_id || `${messageId || 'browser'}-${action}`;
-
-    const note = document.createElement('div');
-    note.className = 'browser-command-note';
-    note.dataset.requestId = noteId;
-    note.innerHTML = `
-        <i class="fas fa-laptop"></i>
-        <div class="browser-command-copy">
-            <strong>Desktop-only automation requested:</strong> ${action}.
-            <br />This device cannot execute browser automation. Please open the desktop app to run this step${url ? `.<br /><span class="browser-command-url">Target: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></span>` : '.'}
-        </div>
-    `;
-
-    if (messageDiv) {
-        const existing = messageDiv.querySelector(`.browser-command-note[data-request-id="${noteId}"]`);
-        if (!existing) {
-            const mainContent = messageDiv.querySelector('.message-content') || messageDiv;
-            mainContent.appendChild(note);
-            messageDiv.classList.add('expanded');
-        }
-    } else {
-        notificationService?.show('Browser automation requested. Switch to desktop to continue.', 'warning', 6000);
     }
 }
 

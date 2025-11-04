@@ -9,23 +9,11 @@ const validSendChannels = [
     'minimize-window',
     'toggle-maximize-window',
     'close-window',
-    'open-webview',
     'send-message',
-    'webview-navigate',
-    'close-webview',
-    'resize-webview',
-    'drag-webview',
     'check-socket-connection',
     'restart-python-bridge',
     'terminate-session',
     'deepsearch-request',
-    // Browse AI related channels
-    'open-browse-ai-webview',
-    'close-browse-ai-webview',
-    'browse-ai-webview-navigate',
-    'browse-ai-header-height',
-    'browse-ai-send-message',
-    'initialize-browser-agent',
     // Auth related channels
     'handle-auth-redirect'
 ];
@@ -35,22 +23,8 @@ const validReceiveChannels = [
     'socket-error',
     'socket-status',
     'socket-connection-status',
-    'agent-step', 
-    'webview-created',
-    'webview-closed',
-    'webview-navigation-updated',
-    'webview-page-loaded',
-    'webview-content-captured',
+    'agent-step',
     'window-state-changed',
-    // Browse AI related channels
-    'browse-ai-webview-created',
-    'browse-ai-webview-closed',
-    'browse-ai-webview-navigation-updated',
-    'browse-ai-response',
-    'browse-ai-error',
-    'browse-ai-status',
-    'browse-ai-interaction',
-    'browse-ai-agent-initialized',
     // Auth related events
     'auth-state-changed'
 ];

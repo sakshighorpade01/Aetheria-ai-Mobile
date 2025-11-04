@@ -5,8 +5,7 @@ class StateManager {
             isWindowMaximized: false,
             isChatOpen: false,
             isAIOSOpen: false,
-            isToDoListOpen: false,
-            webViewBounds: { x: 0, y: 0, width: 400, height: 300 }
+            isToDoListOpen: false
         };
 
         this.subscribers = new Set();
@@ -43,9 +42,6 @@ class UIManager {
     constructor(stateManager) {
         this.state = stateManager;
         this.elements = {};
-        this.isDragging = false;
-        this.isResizing = false;
-        this.dragStart = { x: 0, y: 0 };
         this.init();
     }
 
@@ -53,7 +49,6 @@ class UIManager {
         this.cacheElements();
         this.setupEventListeners();
         this.setupStateSubscription();
-        this.setupWebViewEvents();
     }
 
     cacheElements() {
@@ -66,229 +61,11 @@ class UIManager {
             closeBtn: document.getElementById('close-window'),
             deepsearchIcon: document.getElementById('deepsearch-icon'),
             toDoListIcon: document.getElementById('to-do-list-icon'),
-            webViewContainer: null,
         };
     }
 
 
-    setupWebViewEvents() {
-        // Use the exposed ipcRenderer from preload.js instead of requiring electron directly
-        const ipcRenderer = window.electron.ipcRenderer;
 
-        ipcRenderer.on('webview-created', (bounds) => {
-            this.createWebViewContainer(bounds);
-        });
-
-        ipcRenderer.on('webview-closed', () => {
-            this.removeWebViewContainer();
-        });
-    }
-
-    createWebViewContainer(bounds) {
-        // Remove existing container if present
-        if (this.elements.webViewContainer) {
-            this.removeWebViewContainer();
-        }
-
-        this.elements.webViewContainer = document.createElement('div');
-        this.elements.webViewContainer.id = 'webview-container';
-        this.elements.webViewContainer.className = 'webview-container';
-
-        // Set initial position and size
-        this.elements.webViewContainer.style.left = `${bounds.x}px`;
-        this.elements.webViewContainer.style.top = `${bounds.y}px`;
-        this.elements.webViewContainer.style.width = `${bounds.width}px`;
-        this.elements.webViewContainer.style.height = `${bounds.height}px`;
-
-        // Explicitly set pointer-events to ensure clickability
-        this.elements.webViewContainer.style.pointerEvents = 'all';
-
-        // Create header with drag handle
-        const header = document.createElement('div');
-        header.className = 'webview-header';
-        header.innerHTML = `
-            <div class="drag-handle">
-                <span class="webview-title">Web View</span>
-            </div>
-            <div class="webview-controls">
-                <button class="close-webview" title="Close Webview">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-
-        // Force header to be on top and clickable
-        header.style.position = 'relative';
-        header.style.zIndex = '1004';
-        header.style.pointerEvents = 'all';
-
-        // Add drag functionality to header with more robust event handling
-        header.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Prevent text selection
-            e.stopPropagation(); // Prevent event from propagating
-            if (!e.target.closest('.close-webview')) {
-                this.startDragging(e);
-            }
-        }, true); // Use capture to ensure header gets events first
-
-        // Add close functionality
-        const closeButton = header.querySelector('.close-webview');
-        closeButton.style.pointerEvents = 'all';
-        closeButton.style.zIndex = '1006';
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent drag event from firing
-            console.log('Close button clicked');
-            window.electron.ipcRenderer.send('close-webview');
-        }, true); // Use capture
-
-        this.elements.webViewContainer.appendChild(header);
-
-        // Add resize handles
-        const resizePositions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
-        resizePositions.forEach(position => {
-            const resizer = document.createElement('div');
-            resizer.className = `resizer ${position}`;
-            
-            // Force resizers to be on top and clickable
-            resizer.style.pointerEvents = 'all';
-            resizer.style.zIndex = '1005';
-            
-            this.elements.webViewContainer.appendChild(resizer);
-
-            resizer.addEventListener('mousedown', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Resize handle clicked:', position);
-                this.startResizing(e, position);
-            }, true); // Use capture
-        });
-
-        document.body.appendChild(this.elements.webViewContainer);
-    }
-
-    removeWebViewContainer() {
-        if (this.elements.webViewContainer) {
-            this.elements.webViewContainer.remove();
-            this.elements.webViewContainer = null;
-        }
-    }
-
-    startDragging(e) {
-        if (e.target.closest('.resizer')) return;
-
-        console.log('Starting drag operation');
-        this.isDragging = true;
-        const container = this.elements.webViewContainer;
-
-        this.dragStart = {
-            x: e.clientX - container.offsetLeft,
-            y: e.clientY - container.offsetTop
-        };
-
-        const handleDrag = (e) => {
-            if (!this.isDragging) return;
-            
-            e.preventDefault(); // Prevent text selection during drag
-            
-            const newX = e.clientX - this.dragStart.x;
-            const newY = e.clientY - this.dragStart.y;
-
-            // Ensure window stays within viewport bounds
-            const maxX = window.innerWidth - container.offsetWidth;
-            const maxY = window.innerHeight - container.offsetHeight;
-
-            container.style.left = `${Math.max(0, Math.min(maxX, newX))}px`;
-            container.style.top = `${Math.max(0, Math.min(maxY, newY))}px`;
-
-            console.log('Dragging to:', container.style.left, container.style.top);
-            
-            window.electron.ipcRenderer.send('drag-webview', {
-                x: parseInt(container.style.left),
-                y: parseInt(container.style.top)
-            });
-        };
-
-        const stopDragging = () => {
-            console.log('Stopping drag operation');
-            this.isDragging = false;
-            document.removeEventListener('mousemove', handleDrag);
-            document.removeEventListener('mouseup', stopDragging);
-        };
-
-        document.addEventListener('mousemove', handleDrag, {capture: true});
-        document.addEventListener('mouseup', stopDragging, {capture: true});
-    }
-
-    startResizing(e, position) {
-        console.log('Starting resize operation for:', position);
-        this.isResizing = true;
-        const container = this.elements.webViewContainer;
-
-        const startBounds = {
-            x: container.offsetLeft,
-            y: container.offsetTop,
-            width: container.offsetWidth,
-            height: container.offsetHeight,
-            mouseX: e.clientX,
-            mouseY: e.clientY
-        };
-
-        const handleResize = (e) => {
-            if (!this.isResizing) return;
-            
-            e.preventDefault(); // Prevent text selection during resize
-            e.stopPropagation(); // Stop event from bubbling
-            
-            let newBounds = {
-                x: startBounds.x,
-                y: startBounds.y,
-                width: startBounds.width,
-                height: startBounds.height
-            };
-
-            const dx = e.clientX - startBounds.mouseX;
-            const dy = e.clientY - startBounds.mouseY;
-
-            // Handle different resize positions
-            if (position.includes('right')) {
-                newBounds.width = Math.max(300, startBounds.width + dx);
-            }
-            if (position.includes('left')) {
-                const newWidth = Math.max(300, startBounds.width - dx);
-                newBounds.x = startBounds.x + (startBounds.width - newWidth);
-                newBounds.width = newWidth;
-            }
-            if (position.includes('bottom')) {
-                newBounds.height = Math.max(200, startBounds.height + dy);
-            }
-            if (position.includes('top')) {
-                const newHeight = Math.max(200, startBounds.height - dy);
-                newBounds.y = startBounds.y + (startBounds.height - newHeight);
-                newBounds.height = newHeight;
-            }
-
-            // Apply new bounds
-            container.style.left = `${newBounds.x}px`;
-            container.style.top = `${newBounds.y}px`;
-            container.style.width = `${newBounds.width}px`;
-            container.style.height = `${newBounds.height}px`;
-
-            console.log('Resizing to:', newBounds);
-            
-            window.electron.ipcRenderer.send('resize-webview', newBounds);
-        };
-
-        const stopResizing = () => {
-            console.log('Stopping resize operation');
-            this.isResizing = false;
-            document.removeEventListener('mousemove', handleResize);
-            document.removeEventListener('mouseup', stopResizing);
-        };
-
-        document.addEventListener('mousemove', handleResize, {capture: true});
-        document.addEventListener('mouseup', stopResizing, {capture: true});
-    }
 
 
     setupEventListeners() {
@@ -312,10 +89,14 @@ class UIManager {
             this.state.setState({ isWindowMaximized: isMaximized });
         });
 
+        // Open links in default browser instead of in-app webview
         document.addEventListener('click', (event) => {
             if (event.target.tagName === 'A' && event.target.href) {
                 event.preventDefault();
-                ipcRenderer.send('open-webview', event.target.href);
+                // Open URL in user's default browser
+                if (typeof window !== 'undefined' && window.open) {
+                    window.open(event.target.href, '_blank', 'noopener,noreferrer');
+                }
             }
         });
     }
