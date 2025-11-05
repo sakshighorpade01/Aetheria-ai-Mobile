@@ -332,10 +332,12 @@ body:not(.dark-mode) #send-message:active {
     gap: 12px;
     padding: 4px;
     max-height: 160px;
+    width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    flex-wrap: nowrap;
 }
 
 #file-previews-container::-webkit-scrollbar {

@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - using deployed Render backend
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+const API_PROXY_URL = 'http://localhost:8765';
 
 class FileAttachmentHandler {
   constructor() {
@@ -160,6 +160,7 @@ class FileAttachmentHandler {
     if (this.attachedFiles.length === 0) {
       this.attachmentStrip?.classList.add('hidden');
       this.inputField?.classList.remove('with-attachments');
+      this.removeScrollListeners();
       return;
     }
 
@@ -248,7 +249,70 @@ class FileAttachmentHandler {
       this.previewsContainer.appendChild(previewElement);
     });
 
+    // Setup scroll detection after rendering
+    this.setupScrollDetection();
+
     window.contextHandler?.updateContextFilesBarVisibility?.();
+  }
+
+  setupScrollDetection() {
+    if (!this.previewsContainer || !this.attachmentStrip) return;
+
+    // Remove existing listeners first
+    this.removeScrollListeners();
+
+    // Check if content is scrollable
+    const checkScrollable = () => {
+      const isScrollable = this.previewsContainer.scrollWidth > this.previewsContainer.clientWidth;
+      const scrollLeft = this.previewsContainer.scrollLeft;
+      const isAtEnd = scrollLeft + this.previewsContainer.clientWidth >= this.previewsContainer.scrollWidth - 5;
+      const isAtStart = scrollLeft <= 5;
+
+      // Toggle overflow indicator
+      if (isScrollable) {
+        this.attachmentStrip.classList.add('has-overflow');
+      } else {
+        this.attachmentStrip.classList.remove('has-overflow');
+      }
+
+      // Toggle end indicator
+      if (isAtEnd) {
+        this.attachmentStrip.classList.add('scrolled-to-end');
+      } else {
+        this.attachmentStrip.classList.remove('scrolled-to-end');
+      }
+
+      // Toggle start indicator
+      if (!isAtStart && isScrollable) {
+        this.attachmentStrip.classList.add('scrolled-from-start');
+      } else {
+        this.attachmentStrip.classList.remove('scrolled-from-start');
+      }
+    };
+
+    // Create bound function for removal later
+    this.scrollHandler = checkScrollable;
+
+    // Check initially (with delay to ensure rendering is complete)
+    setTimeout(checkScrollable, 100);
+
+    // Check on scroll
+    this.previewsContainer.addEventListener('scroll', this.scrollHandler, { passive: true });
+
+    // Check on window resize
+    window.addEventListener('resize', this.scrollHandler);
+  }
+
+  removeScrollListeners() {
+    if (this.scrollHandler && this.previewsContainer) {
+      this.previewsContainer.removeEventListener('scroll', this.scrollHandler);
+      window.removeEventListener('resize', this.scrollHandler);
+      this.scrollHandler = null;
+    }
+    
+    if (this.attachmentStrip) {
+      this.attachmentStrip.classList.remove('has-overflow', 'scrolled-to-end', 'scrolled-from-start');
+    }
   }
 
   showPreview(index) {
@@ -289,6 +353,7 @@ class FileAttachmentHandler {
 
   clearAttachedFiles() {
     this.attachedFiles = [];
+    this.removeScrollListeners();
     this.renderPreviews();
   }
 }

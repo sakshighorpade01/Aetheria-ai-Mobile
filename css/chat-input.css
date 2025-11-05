@@ -61,10 +61,11 @@
     visibility: hidden;
     max-height: 0;
     overflow: hidden;
+    position: relative;
     transition: opacity var(--anim-fast) var(--easing-standard),
-                max-height var(--anim-fast) var(--easing-standard),
-                padding var(--anim-fast) var(--easing-standard),
-                visibility 0s linear var(--anim-fast);
+        max-height var(--anim-fast) var(--easing-standard),
+        padding var(--anim-fast) var(--easing-standard),
+        visibility 0s linear var(--anim-fast);
 }
 
 .attachment-strip.hidden {
@@ -83,15 +84,68 @@
 
 .attachments-scroll {
     display: flex;
+    flex-direction: row;
     gap: 12px;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 4px;
+    width: 100%;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scroll-behavior: smooth;
+    position: relative;
 }
 
 .attachments-scroll::-webkit-scrollbar {
     display: none;
+}
+
+/* Scroll indicator - subtle gradient on right edge when scrollable */
+.attachment-strip::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    bottom: 8px;
+    width: 40px;
+    background: linear-gradient(to left, var(--elevated-bg) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    border-radius: 0 26px 0 0;
+}
+
+.attachment-strip.has-overflow::after {
+    opacity: 0.8;
+}
+
+/* Hide gradient when scrolled to end */
+.attachment-strip.scrolled-to-end::after {
+    opacity: 0;
+}
+
+/* Left gradient indicator when scrolled */
+.attachment-strip::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 10px;
+    bottom: 8px;
+    width: 40px;
+    background: linear-gradient(to right, var(--elevated-bg) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    border-radius: 26px 0 0 0;
+}
+
+.attachment-strip.scrolled-from-start::before {
+    opacity: 0.8;
 }
 
 .file-preview-chip {
@@ -354,7 +408,7 @@ body:not(.dark-mode) #send-message:active {
     border-radius: 0;
 }
 
-.floating-input-container.has-files .attached-files-bar + .floating-input {
+.floating-input-container.has-files .attached-files-bar+.floating-input {
     border-top: none;
 }
 

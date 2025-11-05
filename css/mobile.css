@@ -382,6 +382,8 @@ body:not(.dark-mode) .input-action-menu-item i {
     .attachment-strip {
         border-radius: 26px 26px 0 0;
         padding: 12px;
+        overflow: hidden;
+        position: relative;
     }
     
     .attachment-strip:not(.hidden) {
@@ -394,6 +396,24 @@ body:not(.dark-mode) .input-action-menu-item i {
     
     .input-field.with-attachments {
         border-radius: 0 0 26px 26px;
+    }
+    
+    /* Ensure scroll container works on mobile */
+    .attachments-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+        scroll-behavior: smooth;
+        width: 100%;
+        position: relative;
+    }
+    
+    /* Ensure file chips don't shrink */
+    .file-preview-chip {
+        flex-shrink: 0;
+        min-width: 120px;
+        max-width: 120px;
     }
 }
 
