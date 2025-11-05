@@ -92,11 +92,11 @@
 /* Dark Mode Theme Overrides */
 .dark-mode {
     /* Window & Background Colors */
-    --window-bg: #1a1f2e;
-    --taskbar-bg: #1e293b;
-    --elevated-bg: #1e293b;
-    --input-bg: #1e293b;
-    --hover-bg: #243146;
+    --window-bg: #1a1a1a;
+    --taskbar-bg: #242424;
+    --elevated-bg: #242424;
+    --input-bg: #242424;
+    --hover-bg: #2e2e2e;
 
     /* Text Colors */
     --text-color: #e2e8f0;
@@ -104,7 +104,7 @@
     --file-name-color: #e2e8f0;
 
     /* Border & Divider Colors */
-    --border-color: #334155;
+    --border-color: #3a3a3a;
 
     /* Shadow Colors */
     --shadow-color: rgba(0, 0, 0, 0.3);
@@ -124,19 +124,19 @@
     --link-hover: #93c5fd;
 
     /* Code & Syntax Colors */
-    --code-bg: #1e293b;
-    --code-header-bg: #243146;
-    --code-border: #334155;
+    --code-bg: #242424;
+    --code-header-bg: #2e2e2e;
+    --code-border: #3a3a3a;
     --code-language-color: #94a3b8;
 
     /* Table Colors */
-    --table-border: #334155;
-    --table-header-bg: #1e293b;
-    --table-stripe-bg: #243146;
+    --table-border: #3a3a3a;
+    --table-header-bg: #242424;
+    --table-stripe-bg: #2e2e2e;
 
     /* Message Colors */
     --message-user-bg: #3b82f6;
-    --message-bot-bg: #1e293b;
+    --message-bot-bg: #242424;
 
     /* Animation Variables (same for both themes) */
     --anim-fast: 0.2s;

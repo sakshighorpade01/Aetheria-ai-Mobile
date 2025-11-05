@@ -112,7 +112,12 @@ body, html {
 
 .dropdown-item i {
     font-size: 0.95rem;
-    color: var(--accent-color);
+    color: #ffffff;
+}
+
+/* Light mode - dark icons */
+body:not(.dark-mode) .dropdown-item i {
+    color: #1a1a1a;
 }
 
 .dropdown-item:hover,
@@ -231,7 +236,12 @@ body, html {
     font-size: 0.95rem;
     width: 18px;
     text-align: center;
-    color: var(--accent-color);
+    color: #ffffff;
+}
+
+/* Light mode - dark icons */
+body:not(.dark-mode) .input-action-menu-item i {
+    color: #1a1a1a;
 }
 
 .input-action-menu-item:hover,
@@ -283,8 +293,36 @@ body, html {
 
 #send-message {
     right: 6px;
-    background-color: var(--primary-500);
-    color: white;
+    background: #ffffff;
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#send-message:hover {
+    background: #f5f5f5;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#send-message:active {
+    background: #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Light mode - dark button with white icon */
+body:not(.dark-mode) #send-message {
+    background: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body:not(.dark-mode) #send-message:hover {
+    background: #2e2e2e;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+body:not(.dark-mode) #send-message:active {
+    background: #3a3a3a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* --- File Previews --- */

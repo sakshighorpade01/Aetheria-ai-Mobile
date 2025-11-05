@@ -21,6 +21,7 @@
         opacity: 0;
         transform: translateY(-15px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -98,9 +99,14 @@
     transform: translateY(-50%);
     width: 3px;
     height: 0;
-    background: var(--accent-color);
+    background: #ffffff;
     border-radius: 0 2px 2px 0;
     transition: height 0.2s ease;
+}
+
+/* Light mode - dark accent bar */
+body:not(.dark-mode) .settings-menu-item::before {
+    background: #1a1a1a;
 }
 
 .settings-menu-item i:first-child {
@@ -134,8 +140,13 @@
 }
 
 .settings-menu-item:hover i:first-child {
-    color: var(--accent-color);
+    color: #ffffff;
     transform: scale(1.1);
+}
+
+/* Light mode - dark icon on hover */
+body:not(.dark-mode) .settings-menu-item:hover i:first-child {
+    color: #1a1a1a;
 }
 
 .settings-menu-item:hover .item-arrow {
@@ -165,6 +176,7 @@
     from {
         transform: translateX(100%);
     }
+
     to {
         transform: translateX(0);
     }
@@ -403,6 +415,7 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -544,7 +557,7 @@
 .btn-google:hover {
     background-color: #f8f9fa;
     border-color: #c5c7ca;
-    box-shadow: 0 2px 8px rgba(60,64,67,.15);
+    box-shadow: 0 2px 8px rgba(60, 64, 67, .15);
     transform: translateY(-1px);
 }
 
@@ -617,10 +630,10 @@
     align-items: center;
     gap: 0.875rem;
     padding: 0.875rem;
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: transparent;
     border-radius: 12px;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    box-shadow: none;
 }
 
 .profile-avatar-large {
@@ -628,13 +641,13 @@
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid var(--border-color);
+    background: var(--elevated-bg);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: white;
+    color: var(--text-color);
     flex-shrink: 0;
 }
 
@@ -653,7 +666,7 @@
 .profile-info-text .user-name-display {
     font-size: 1rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-color);
     margin-bottom: 0.2rem;
     white-space: nowrap;
     overflow: hidden;
@@ -662,7 +675,7 @@
 
 .profile-info-text .user-email-display {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
