@@ -28,8 +28,8 @@
     position: relative;
     width: 90%;
     max-width: 1100px;
-    height: 90vh;
-    max-height: 800px;
+    height: 85vh;
+    max-height: 700px;
     background: var(--window-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
@@ -60,71 +60,75 @@
 }
 
 .context-header {
-    padding: 16px 20px;
+    padding: 10px 14px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--elevated-bg);
+    transition: all 0.3s ease;
+}
+
+.context-header.hidden-for-detail {
+    display: none;
 }
 
 .context-header .header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
 }
 
 .context-header .header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
 .context-header h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-color);
 }
 
-.sync-context-btn,
+.sync-context-btn {
+    display: none !important;
+}
+
 .close-context-btn {
     background: none;
     border: none;
     color: var(--text-color);
     cursor: pointer;
-    padding: 8px;
+    padding: 5px;
     border-radius: 6px;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
 }
 
-.sync-context-btn:hover,
 .close-context-btn:hover {
     background: var(--hover-bg);
     color: var(--accent-color);
 }
 
-.sync-context-btn i {
-    font-size: 0.9rem;
-}
-
 .context-content {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 10px;
     position: relative;
 }
 
 /* --- List and Detail Views --- */
 #context-list-view {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
 }
 
 #context-list-view.hidden {
@@ -145,18 +149,19 @@
 .session-item {
     background: var(--elevated-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: var(--shadow-sm);
-    padding: 16px 18px;
+    padding: 10px 12px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
-    align-items: flex-start;
-    gap: 14px;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
+    min-height: 44px;
 }
 
 .session-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
     border-color: var(--accent-color);
     background: var(--hover-bg);
@@ -169,53 +174,37 @@
 .session-content {
     flex-grow: 1;
     cursor: pointer;
-}
-
-.session-content h3 {
-    font-weight: 600;
-    color: var(--text-color);
-    font-size: 1rem;
-    margin-bottom: 10px;
-    transition: color 0.2s ease;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.session-meta {
-    font-size: 0.85rem;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.session-meta .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.session-content h3 {
     font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin: 0;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
 }
 
-.session-meta .meta-item i {
-    width: 12px;
-    text-align: center;
-    opacity: 0.7;
+.session-meta {
+    display: none;
 }
 
 /* --- Session Selection Controls --- */
 .selection-controls {
     grid-column: 1 / -1;
-    padding: 12px 16px;
+    padding: 6px 10px;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 }
 
 .selection-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .selection-actions.hidden {
@@ -223,17 +212,17 @@
 }
 
 .selected-count {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
 .use-selected-btn,
 .clear-selection-btn {
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: all 0.2s ease;
 }
 
@@ -256,7 +245,7 @@
 }
 
 .session-select {
-    padding-top: 2px;
+    padding-top: 1px;
 }
 
 .session-checkbox {
@@ -269,13 +258,14 @@
 .custom-checkbox {
     position: relative;
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     background-color: var(--window-bg);
     border: 2px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .custom-checkbox::after {
@@ -284,7 +274,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     color: white;
     transition: all 0.2s ease;
@@ -481,13 +471,9 @@
     background: var(--hover-bg);
 }
 
-/* Session Header for Detail View */
+/* Session Header for Detail View - Hidden, replaced by inline back button */
 .session-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: none;
 }
 
 .back-button {
@@ -500,8 +486,10 @@
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
+    justify-content: center;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
 }
 
 .back-button:hover {
@@ -510,12 +498,16 @@
 }
 
 .back-button i {
-    font-size: 0.8rem;
+    font-size: 1rem;
+}
+
+.back-button span {
+    display: none;
 }
 
 .session-header h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
 }
 
@@ -525,21 +517,21 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 20px;
+    padding: 40px 16px;
     text-align: center;
     color: var(--text-secondary);
     grid-column: 1 / -1;
 }
 
 .empty-state i {
-    font-size: 3rem;
-    margin-bottom: 16px;
+    font-size: 2.5rem;
+    margin-bottom: 12px;
     opacity: 0.5;
 }
 
 .empty-state p {
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.4;
     margin: 0;
 }
 
@@ -552,17 +544,17 @@
 }
 
 .retry-load-btn {
-    margin-top: 16px;
-    padding: 10px 20px;
+    margin-top: 12px;
+    padding: 8px 16px;
     background: var(--accent-color);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: all 0.2s ease;
 }
 
@@ -572,8 +564,8 @@
 }
 
 .error-hint {
-    margin-top: 12px;
-    font-size: 0.85rem;
+    margin-top: 10px;
+    font-size: 0.8rem;
     opacity: 0.7;
 }
 
@@ -581,9 +573,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 30px 16px;
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 0.95rem;
     grid-column: 1 / -1;
 }
 
@@ -595,26 +587,55 @@
 }
 
 .conversation-messages {
-    padding: 20px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Inline header with back button and title */
+.conversation-inline-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+    background: transparent;
+}
+
+.conversation-inline-header .back-button {
+    flex-shrink: 0;
+}
+
+.conversation-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .conversation-messages .message {
-    margin-bottom: 16px;
-    padding: 12px 16px;
-    border-radius: 12px;
+    padding: 0;
+    border-radius: 0;
     line-height: 1.6;
+    font-size: 0.95rem;
+    background: transparent !important;
+    border: none !important;
+    max-width: 100%;
+    margin: 0;
 }
 
 .conversation-messages .user-message {
-    background: var(--accent-muted);
     color: var(--text-color);
-    margin-left: auto;
-    max-width: 80%;
+    text-align: left;
 }
 
 .conversation-messages .bot-message {
-    background: var(--elevated-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    max-width: 90%;
+    color: var(--text-secondary);
+    text-align: left;
 }

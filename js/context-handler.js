@@ -64,10 +64,6 @@ class ContextHandler {
         });
         this.elements.panel?.addEventListener('click', (e) => e.stopPropagation());
         this.elements.closeContextBtn?.addEventListener('click', () => this.toggleWindow(false));
-        this.elements.syncBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.forceRefreshSessions();
-        });
 
         this.elements.sessionsContainer?.addEventListener('change', (e) => {
             if (e.target.matches('.session-checkbox')) {
@@ -349,21 +345,34 @@ class ContextHandler {
     }
 
     showSessionList(sessions) {
-        console.log('[ContextHandler] showSessionList called with', sessions?.length, 'sessions');
-        console.log('[ContextHandler] Elements:', { 
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('[ContextHandler] ✓ showSessionList CALLED');
+        console.log('[ContextHandler] Sessions count:', sessions?.length);
+        console.log('[ContextHandler] Elements check:', { 
             hasListView: !!this.elements.listView, 
-            hasDetailView: !!this.elements.detailView 
+            hasDetailView: !!this.elements.detailView,
+            hasContextWindow: !!this.elements.contextWindow
         });
         
         if (!this.elements.listView || !this.elements.detailView) {
-            console.error('[ContextHandler] Missing required elements for session list!');
+            console.error('[ContextHandler] ✗ Missing required elements for session list!');
             return;
         }
 
+        // Show the header when returning to list view
+        const contextHeader = this.elements.contextWindow?.querySelector('.context-header');
+        console.log('[ContextHandler] Context header found:', !!contextHeader);
+        if (contextHeader) {
+            contextHeader.classList.remove('hidden-for-detail');
+            console.log('[ContextHandler] ✓ Header shown (removed hidden-for-detail class)');
+        }
+
+        console.log('[ContextHandler] Switching views - showing list, hiding detail');
         this.elements.listView.classList.remove('hidden');
         this.elements.detailView.classList.add('hidden');
-        this.elements.detailView.innerHTML = ''; // ★★★ FIX: Clear detail view content
+        this.elements.detailView.innerHTML = ''; // Clear detail view content
         this.elements.listView.innerHTML = '';
+        console.log('[ContextHandler] ✓ Views switched successfully');
 
         if (!sessions || sessions.length === 0) {
             console.log('[ContextHandler] No sessions to display, showing empty state');
@@ -450,6 +459,7 @@ class ContextHandler {
         const contentArea = sessionItem.querySelector('.session-content');
         contentArea.onclick = (e) => {
             if (!['input', 'label'].includes(e.target.tagName.toLowerCase())) {
+                console.log('[ContextHandler] Session item clicked, ID:', session.session_id);
                 this.showSessionDetails(session.session_id);
             }
         };
@@ -523,10 +533,26 @@ class ContextHandler {
     }
 
     showSessionDetails(sessionId) {
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('[ContextHandler] ✓ showSessionDetails CALLED');
+        console.log('[ContextHandler] Session ID:', sessionId);
+        
         const session = this.loadedSessions.find(s => s.session_id === sessionId);
+        console.log('[ContextHandler] Session found:', !!session);
+        console.log('[ContextHandler] Detail view exists:', !!this.elements.detailView);
+        
         if (!session || !this.elements.detailView) {
+            console.error('[ContextHandler] ✗ Cannot show session details - missing session or detailView');
             this.showNotification('Could not find session details.', 'error');
             return;
+        }
+
+        // Hide the header when showing detail view
+        const contextHeader = this.elements.contextWindow?.querySelector('.context-header');
+        console.log('[ContextHandler] Context header found:', !!contextHeader);
+        if (contextHeader) {
+            contextHeader.classList.add('hidden-for-detail');
+            console.log('[ContextHandler] ✓ Header hidden (added hidden-for-detail class)');
         }
 
         const template = document.getElementById('session-detail-template');
@@ -537,38 +563,69 @@ class ContextHandler {
         // Support both session.runs and session.memory.runs structures
         const runs = session.runs || session.memory?.runs || [];
 
-        const titleElement = view.querySelector('.session-header h3');
-        if (titleElement) {
-            let firstUserMessage = null;
-            for (const run of runs) {
-                if (run.input && run.input.input_content) {
-                    firstUserMessage = run.input.input_content;
-                    break;
-                }
-                if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                    firstUserMessage = run.content;
-                    break;
-                }
+        // Get session name for the inline header
+        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
+        let firstUserMessage = null;
+        for (const run of runs) {
+            if (run.input && run.input.input_content) {
+                firstUserMessage = run.input.input_content;
+                break;
             }
+            if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                firstUserMessage = run.content;
+                break;
+            }
+        }
 
-            let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-            if (firstUserMessage) {
-                let rawTitle = firstUserMessage;
-                const marker = 'Current message:';
-                const index = rawTitle.lastIndexOf(marker);
-                if (index !== -1) {
-                    rawTitle = rawTitle.substring(index + marker.length).trim();
-                }
-                sessionName = rawTitle.split('\n')[0].trim();
-                if (sessionName.length > 45) {
-                    sessionName = sessionName.substring(0, 45) + '...';
-                }
+        if (firstUserMessage) {
+            let rawTitle = firstUserMessage;
+            const marker = 'Current message:';
+            const index = rawTitle.lastIndexOf(marker);
+            if (index !== -1) {
+                rawTitle = rawTitle.substring(index + marker.length).trim();
             }
-            titleElement.textContent = sessionName;
+            sessionName = rawTitle.split('\n')[0].trim();
+            if (sessionName.length > 45) {
+                sessionName = sessionName.substring(0, 45) + '...';
+            }
         }
 
         const conversationContainer = view.querySelector('.conversation-messages');
-        if (!conversationContainer) return;
+        if (!conversationContainer) {
+            console.error('[ContextHandler] conversationContainer not found in template!');
+            return;
+        }
+
+        // Add inline back button and title at the top
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'conversation-inline-header';
+        
+        // Create back button element
+        const backButton = document.createElement('button');
+        backButton.className = 'back-button';
+        backButton.title = 'Back to sessions';
+        backButton.innerHTML = '<i class="fas fa-arrow-left"></i>';
+        
+        // Create title element
+        const titleElement = document.createElement('h3');
+        titleElement.className = 'conversation-title';
+        titleElement.textContent = sessionName;
+        
+        // Append elements to header
+        headerDiv.appendChild(backButton);
+        headerDiv.appendChild(titleElement);
+        
+        // Bind click event immediately
+        backButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('[ContextHandler] Back button clicked - returning to session list');
+            this.showSessionList(this.loadedSessions);
+        });
+        
+        console.log('[ContextHandler] Back button created and event listener attached');
+        
+        conversationContainer.insertBefore(headerDiv, conversationContainer.firstChild);
 
         // Check if session has runs data
         if (!Array.isArray(runs) || runs.length === 0) {
@@ -634,13 +691,21 @@ class ContextHandler {
 
         messageFormatter.applyInlineEnhancements?.(conversationContainer);
 
+        console.log('[ContextHandler] Appending view to detailView element');
         this.elements.detailView.innerHTML = '';
         this.elements.detailView.appendChild(view);
+        
+        console.log('[ContextHandler] Switching views - hiding list, showing detail');
         this.elements.listView.classList.add('hidden');
         this.elements.detailView.classList.remove('hidden');
-
-        const backButton = this.elements.detailView.querySelector('.back-button');
-        backButton?.addEventListener('click', () => this.showSessionList(this.loadedSessions));
+        
+        // Verify back button is in DOM
+        const verifyButton = this.elements.detailView.querySelector('.conversation-inline-header .back-button');
+        console.log('[ContextHandler] Back button verification:', {
+            found: !!verifyButton,
+            hasClickListener: verifyButton ? 'yes' : 'no',
+            detailViewVisible: !this.elements.detailView.classList.contains('hidden')
+        });
     }
 
     clearSelectedContext() {
