@@ -4,9 +4,7 @@ import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
 // Backend URL for OAuth integrations and API calls - using local development server
-const BACKEND_URL = (typeof window !== 'undefined' && window.location?.origin) 
-    ? `${window.location.protocol}//${window.location.hostname}:8765`
-    : 'http://localhost:8765';
+const BACKEND_URL = 'https://aios-web.onrender.com';
 
 export class AIOS {
     constructor() {
