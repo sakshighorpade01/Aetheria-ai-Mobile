@@ -4,7 +4,7 @@
 import { supabase } from './supabase-client.js';
 
 // The backend URL is centralized here - using local development server
-const BACKEND_URL = (typeof window !== 'undefined' && window.location?.origin) 
+const BACKEND_URL = (typeof window !== 'undefined' && window.location?.origin)
     ? `${window.location.protocol}//${window.location.hostname}:8765`
     : 'http://localhost:8765';
 let socket = null;
@@ -59,7 +59,7 @@ export const socketService = {
         if (socket) {
             return;
         }
-        
+
         console.log("Initializing socket connection...");
         // The 'io' function is available globally from the script in index.html
         socket = io(BACKEND_URL, {
@@ -86,19 +86,19 @@ export const socketService = {
         // Get the access token from Supabase to authenticate the request.
         await supabase.auth.refreshSession(); // Ensure the token is fresh
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (!session) {
             console.error('User is not authenticated.');
             // Throw an error for the UI to handle.
             throw new Error('You are not logged in. Please log in to chat.');
         }
-        
+
         // Add the access token to the payload.
         const authenticatedPayload = {
             ...messagePayload,
             accessToken: session.access_token
         };
-        
+
         // The backend expects the entire payload to be a single JSON string.
         socket.emit('send_message', JSON.stringify(authenticatedPayload));
     },

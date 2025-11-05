@@ -48,7 +48,7 @@
 /* --- Attachment Strip --- */
 .attachment-strip {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 6px;
     padding: 10px 12px 8px;
     border-radius: 26px 26px 0 0;
@@ -83,107 +83,135 @@
 
 .attachments-scroll {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
+    padding: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .attachments-scroll::-webkit-scrollbar {
-    height: 6px;
-}
-
-.attachments-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.attachments-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
+    display: none;
 }
 
 .file-preview-chip {
-    display: inline-flex;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    min-width: 160px;
-    max-width: 220px;
-    border-radius: 14px;
-    background: rgba(15, 29, 59, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 6px 18px rgba(10, 18, 36, 0.35);
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    transition: transform var(--anim-fast) var(--easing-standard),
-                border-color var(--anim-fast) var(--easing-standard),
-                background var(--anim-fast) var(--easing-standard);
+    justify-content: center;
+    min-width: 120px;
+    max-width: 120px;
+    height: 140px;
+    border-radius: 12px;
+    background: var(--elevated-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
 .file-preview-chip:hover {
     transform: translateY(-2px);
-    border-color: rgba(var(--accent-color-rgb), 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.file-preview-chip .file-thumbnail {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-color);
+    overflow: hidden;
+}
+
+.file-preview-chip .file-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-preview-chip .file-thumbnail .file-icon {
+    font-size: 2.5rem;
+    color: var(--text-secondary);
 }
 
 .file-preview-chip .file-name {
-    flex: 1 1 auto;
+    width: 100%;
+    padding: 8px;
+    font-size: 0.75rem;
+    text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-weight: 500;
+    color: var(--text-color);
+    background: var(--elevated-bg);
 }
 
-.file-preview-chip .file-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.file-preview-chip .preview-file-btn,
 .file-preview-chip .remove-file-btn {
-    width: 26px;
-    height: 26px;
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.75);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
     cursor: pointer;
-    transition: background var(--anim-fast) var(--easing-standard),
-                color var(--anim-fast) var(--easing-standard);
-}
-
-.file-preview-chip .preview-file-btn:hover {
-    background: rgba(var(--accent-color-rgb), 0.18);
-    color: var(--accent-color);
+    font-size: 0.8rem;
+    z-index: 10;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .file-preview-chip .remove-file-btn:hover {
-    background: rgba(239, 68, 68, 0.25);
-    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.9);
+    transform: scale(1.1);
+}
+
+.file-preview-chip .file-actions {
+    display: none;
+}
+
+.file-preview-chip .preview-file-btn {
+    display: none;
 }
 
 .file-preview-chip .file-status {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
     width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.65);
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    color: white;
+    font-size: 0.7rem;
 }
 
 .file-preview-chip.uploading {
-    background: rgba(30, 64, 175, 0.65);
+    opacity: 0.7;
+}
+
+.file-preview-chip.uploading .file-status {
+    background: rgba(59, 130, 246, 0.9);
 }
 
 .file-preview-chip.failed {
-    background: rgba(127, 29, 29, 0.7);
+    border-color: var(--error-500);
 }
 
 .file-preview-chip.failed .file-status {
-    color: var(--error-500);
+    background: rgba(239, 68, 68, 0.9);
 }
 
 .file-preview-chip .success-icon {

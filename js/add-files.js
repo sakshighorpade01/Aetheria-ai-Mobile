@@ -171,27 +171,42 @@ class FileAttachmentHandler {
       previewElement.className = `file-preview-chip ${fileObject.status}`;
       previewElement.setAttribute('role', 'listitem');
 
+      // Create thumbnail container
+      const thumbnailDiv = document.createElement('div');
+      thumbnailDiv.className = 'file-thumbnail';
+
+      // Show preview for images or icon for other files
+      if (fileObject.type.startsWith('image/') && fileObject.previewUrl) {
+        const img = document.createElement('img');
+        img.src = fileObject.previewUrl;
+        img.alt = fileObject.name;
+        thumbnailDiv.appendChild(img);
+      } else {
+        // Show appropriate icon based on file type
+        const iconElement = document.createElement('i');
+        iconElement.className = 'file-icon fas';
+        
+        if (fileObject.type === 'application/pdf') {
+          iconElement.classList.add('fa-file-pdf');
+        } else if (fileObject.type.startsWith('video/')) {
+          iconElement.classList.add('fa-file-video');
+        } else if (fileObject.type.startsWith('audio/')) {
+          iconElement.classList.add('fa-file-audio');
+        } else if (fileObject.type.includes('word') || fileObject.type.includes('document')) {
+          iconElement.classList.add('fa-file-word');
+        } else {
+          iconElement.classList.add('fa-file');
+        }
+        
+        thumbnailDiv.appendChild(iconElement);
+      }
+
+      // Create file name label
       const nameSpan = document.createElement('span');
       nameSpan.className = 'file-name';
       nameSpan.textContent = fileObject.name;
 
-      const actionsWrapper = document.createElement('div');
-      actionsWrapper.className = 'file-actions';
-
-      if (fileObject.previewUrl && fileObject.status === 'completed') {
-        const previewButton = document.createElement('button');
-        previewButton.className = 'preview-file-btn';
-        previewButton.dataset.index = index;
-        previewButton.title = 'Preview file';
-        previewButton.innerHTML = '<i class="fas fa-eye"></i>';
-        previewButton.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          this.showPreview(index);
-        });
-        actionsWrapper.appendChild(previewButton);
-      }
-
+      // Create remove button (X in top-left corner)
       const removeButton = document.createElement('button');
       removeButton.className = 'remove-file-btn';
       removeButton.dataset.index = index;
@@ -203,8 +218,8 @@ class FileAttachmentHandler {
         const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
         this.removeFile(indexToRemove);
       });
-      actionsWrapper.appendChild(removeButton);
 
+      // Create status indicator
       const statusSpan = document.createElement('span');
       statusSpan.className = 'file-status';
       if (fileObject.status === 'uploading') {
@@ -215,8 +230,19 @@ class FileAttachmentHandler {
         statusSpan.innerHTML = '<i class="fas fa-check-circle success-icon"></i>';
       }
 
+      // Click on card to preview (if available)
+      if (fileObject.previewUrl && fileObject.status === 'completed') {
+        previewElement.style.cursor = 'pointer';
+        previewElement.addEventListener('click', (e) => {
+          if (!e.target.closest('.remove-file-btn')) {
+            this.showPreview(index);
+          }
+        });
+      }
+
+      previewElement.appendChild(thumbnailDiv);
       previewElement.appendChild(nameSpan);
-      previewElement.appendChild(actionsWrapper);
+      previewElement.appendChild(removeButton);
       previewElement.appendChild(statusSpan);
 
       this.previewsContainer.appendChild(previewElement);
