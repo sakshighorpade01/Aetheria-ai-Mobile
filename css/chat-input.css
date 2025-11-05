@@ -48,8 +48,8 @@
 /* --- Attachment Strip --- */
 .attachment-strip {
     display: flex;
-    flex-direction: row;
-    gap: 6px;
+    flex-direction: column;
+    gap: 0;
     padding: 10px 12px 8px;
     border-radius: 26px 26px 0 0;
     border: none;
@@ -60,7 +60,7 @@
     opacity: 0;
     visibility: hidden;
     max-height: 0;
-    overflow: hidden;
+    overflow: hidden !important;
     position: relative;
     transition: opacity var(--anim-fast) var(--easing-standard),
         max-height var(--anim-fast) var(--easing-standard),
@@ -83,20 +83,21 @@
 }
 
 .attachments-scroll {
-    display: flex;
-    flex-direction: row;
+    display: flex !important;
+    flex-direction: row !important;
     gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     padding: 4px;
     width: 100%;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
     scroll-behavior: smooth;
     position: relative;
+    min-height: 150px;
 }
 
 .attachments-scroll::-webkit-scrollbar {
@@ -156,6 +157,7 @@
     justify-content: center;
     min-width: 120px;
     max-width: 120px;
+    width: 120px;
     height: 140px;
     border-radius: 12px;
     background: var(--elevated-bg);
@@ -163,8 +165,10 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     flex-shrink: 0;
+    flex-grow: 0;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
+    touch-action: pan-x;
 }
 
 .file-preview-chip:hover {
