@@ -4,18 +4,42 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - using deployed Render backend
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+const API_PROXY_URL = 'http://localhost:8765';
 
 class FileAttachmentHandler {
   constructor() {
     this.supportedFileTypes = {
-      'txt': 'text/plain', 'js': 'text/javascript', 'py': 'text/x-python', 'html': 'text/html',
-      'css': 'text/css', 'json': 'application/json', 'c': 'text/x-c',
+      // Text/Code files
+      'txt': 'text/plain', 'md': 'text/markdown', 'js': 'text/javascript', 'jsx': 'text/javascript',
+      'ts': 'text/typescript', 'tsx': 'text/typescript', 'py': 'text/x-python', 'java': 'text/x-java',
+      'cpp': 'text/x-c++', 'c': 'text/x-c', 'h': 'text/x-c', 'cs': 'text/x-csharp',
+      'php': 'text/x-php', 'rb': 'text/x-ruby', 'go': 'text/x-go', 'rs': 'text/x-rust',
+      'swift': 'text/x-swift', 'kt': 'text/x-kotlin', 'scala': 'text/x-scala',
+      'html': 'text/html', 'htm': 'text/html', 'xml': 'text/xml', 'css': 'text/css',
+      'scss': 'text/x-scss', 'sass': 'text/x-sass', 'less': 'text/x-less',
+      'json': 'application/json', 'yaml': 'text/yaml', 'yml': 'text/yaml',
+      'sql': 'text/x-sql', 'sh': 'text/x-sh', 'bat': 'text/x-bat', 'ps1': 'text/x-powershell',
+      // Documents
       'pdf': 'application/pdf',
-      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'doc': 'application/msword', 'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'xls': 'application/vnd.ms-excel', 'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'ppt': 'application/vnd.ms-powerpoint', 'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'odt': 'application/vnd.oasis.opendocument.text', 'ods': 'application/vnd.oasis.opendocument.spreadsheet',
+      'odp': 'application/vnd.oasis.opendocument.presentation',
+      'rtf': 'application/rtf', 'csv': 'text/csv',
+      // Images
       'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'gif': 'image/gif',
+      'bmp': 'image/bmp', 'webp': 'image/webp', 'svg': 'image/svg+xml', 'ico': 'image/x-icon',
+      'tiff': 'image/tiff', 'tif': 'image/tiff',
+      // Audio
       'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg', 'm4a': 'audio/mp4',
-      'mp4': 'video/mp4', 'webm': 'video/webm', 'mov': 'video/quicktime', 'avi': 'video/x-msvideo'
+      'aac': 'audio/aac', 'flac': 'audio/flac', 'wma': 'audio/x-ms-wma',
+      // Video
+      'mp4': 'video/mp4', 'webm': 'video/webm', 'mov': 'video/quicktime', 'avi': 'video/x-msvideo',
+      'mkv': 'video/x-matroska', 'flv': 'video/x-flv', 'wmv': 'video/x-ms-wmv',
+      // Archives
+      'zip': 'application/zip', 'rar': 'application/x-rar-compressed', '7z': 'application/x-7z-compressed',
+      'tar': 'application/x-tar', 'gz': 'application/gzip'
     };
     this.maxFileSize = 10 * 1024 * 1024; // 10MB
     this.attachedFiles = [];
@@ -31,7 +55,7 @@ class FileAttachmentHandler {
     this.previewsContainer = document.getElementById('file-previews-container');
     this.attachmentStrip = document.getElementById('attachment-strip');
     this.inputField = document.querySelector('#floating-input-container .input-field');
-    
+
     this.previewModal = document.getElementById('file-preview-modal');
     this.previewContentArea = document.getElementById('preview-content-area');
     this.closePreviewBtn = this.previewModal?.querySelector('.close-preview-btn');
@@ -39,12 +63,12 @@ class FileAttachmentHandler {
     this.fileInput?.addEventListener('change', (event) => {
       this.handleFileSelection(event);
     });
-    
+
     this.closePreviewBtn?.addEventListener('click', () => this.hidePreview());
     this.previewModal?.addEventListener('click', (e) => {
-        if (e.target === this.previewModal) {
-            this.hidePreview();
-        }
+      if (e.target === this.previewModal) {
+        this.hidePreview();
+      }
     });
   }
 
@@ -85,8 +109,8 @@ class FileAttachmentHandler {
 
   async handleFileSelection(event) {
     const files = Array.from(event.target.files);
-    if (files.length + this.attachedFiles.length > 10) {
-      chatModule.showNotification("You can attach a maximum of 10 files.", "warning");
+    if (files.length + this.attachedFiles.length > 20) {
+      chatModule.showNotification("You can attach a maximum of 20 files.", "warning");
       return;
     }
 
@@ -108,7 +132,7 @@ class FileAttachmentHandler {
         isText,
         file,
         // ★★★ FIX: Initialize previewUrl to null. It will be populated below. ★★★
-        previewUrl: null 
+        previewUrl: null
       };
 
       this.attachedFiles.push(fileObject);
@@ -146,10 +170,10 @@ class FileAttachmentHandler {
   // ★★★ FIX: New function to read file as a Base64 Data URL ★★★
   readFileAsDataURL(file) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => resolve(event.target.result);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = (event) => resolve(event.target.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
     });
   }
 
@@ -172,6 +196,11 @@ class FileAttachmentHandler {
       previewElement.className = `file-preview-chip ${fileObject.status}`;
       previewElement.setAttribute('role', 'listitem');
 
+      // Add image-file class for images
+      if (fileObject.type.startsWith('image/')) {
+        previewElement.classList.add('image-file');
+      }
+
       // Create thumbnail container
       const thumbnailDiv = document.createElement('div');
       thumbnailDiv.className = 'file-thumbnail';
@@ -186,7 +215,7 @@ class FileAttachmentHandler {
         // Show appropriate icon based on file type
         const iconElement = document.createElement('i');
         iconElement.className = 'file-icon fas';
-        
+
         if (fileObject.type === 'application/pdf') {
           iconElement.classList.add('fa-file-pdf');
         } else if (fileObject.type.startsWith('video/')) {
@@ -195,14 +224,22 @@ class FileAttachmentHandler {
           iconElement.classList.add('fa-file-audio');
         } else if (fileObject.type.includes('word') || fileObject.type.includes('document')) {
           iconElement.classList.add('fa-file-word');
+        } else if (fileObject.type.includes('excel') || fileObject.type.includes('spreadsheet') || fileObject.name.endsWith('.csv')) {
+          iconElement.classList.add('fa-file-excel');
+        } else if (fileObject.type.includes('powerpoint') || fileObject.type.includes('presentation')) {
+          iconElement.classList.add('fa-file-powerpoint');
+        } else if (fileObject.type.includes('zip') || fileObject.type.includes('rar') || fileObject.type.includes('7z') || fileObject.type.includes('tar') || fileObject.type.includes('gzip')) {
+          iconElement.classList.add('fa-file-archive');
+        } else if (fileObject.name.match(/\.(js|jsx|ts|tsx|py|java|cpp|c|cs|php|rb|go|rs|swift|kt|scala|html|css|json|xml|sql|sh|md)$/i)) {
+          iconElement.classList.add('fa-file-code');
         } else {
           iconElement.classList.add('fa-file');
         }
-        
+
         thumbnailDiv.appendChild(iconElement);
       }
 
-      // Create file name label
+      // Create file name label (shown for non-image files)
       const nameSpan = document.createElement('span');
       nameSpan.className = 'file-name';
       nameSpan.textContent = fileObject.name;
@@ -220,17 +257,6 @@ class FileAttachmentHandler {
         this.removeFile(indexToRemove);
       });
 
-      // Create status indicator
-      const statusSpan = document.createElement('span');
-      statusSpan.className = 'file-status';
-      if (fileObject.status === 'uploading') {
-        statusSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-      } else if (fileObject.status === 'failed') {
-        statusSpan.innerHTML = '<i class="fas fa-exclamation-circle error-icon"></i>';
-      } else {
-        statusSpan.innerHTML = '<i class="fas fa-check-circle success-icon"></i>';
-      }
-
       // Click on card to preview (if available)
       if (fileObject.previewUrl && fileObject.status === 'completed') {
         previewElement.style.cursor = 'pointer';
@@ -244,102 +270,43 @@ class FileAttachmentHandler {
       previewElement.appendChild(thumbnailDiv);
       previewElement.appendChild(nameSpan);
       previewElement.appendChild(removeButton);
-      previewElement.appendChild(statusSpan);
 
       this.previewsContainer.appendChild(previewElement);
     });
 
-    // Setup scroll detection after rendering
-    this.setupScrollDetection();
-
     window.contextHandler?.updateContextFilesBarVisibility?.();
   }
 
-  setupScrollDetection() {
-    if (!this.previewsContainer || !this.attachmentStrip) return;
-
-    // Remove existing listeners first
-    this.removeScrollListeners();
-
-    // Check if content is scrollable
-    const checkScrollable = () => {
-      const isScrollable = this.previewsContainer.scrollWidth > this.previewsContainer.clientWidth;
-      const scrollLeft = this.previewsContainer.scrollLeft;
-      const isAtEnd = scrollLeft + this.previewsContainer.clientWidth >= this.previewsContainer.scrollWidth - 5;
-      const isAtStart = scrollLeft <= 5;
-
-      // Toggle overflow indicator
-      if (isScrollable) {
-        this.attachmentStrip.classList.add('has-overflow');
-      } else {
-        this.attachmentStrip.classList.remove('has-overflow');
-      }
-
-      // Toggle end indicator
-      if (isAtEnd) {
-        this.attachmentStrip.classList.add('scrolled-to-end');
-      } else {
-        this.attachmentStrip.classList.remove('scrolled-to-end');
-      }
-
-      // Toggle start indicator
-      if (!isAtStart && isScrollable) {
-        this.attachmentStrip.classList.add('scrolled-from-start');
-      } else {
-        this.attachmentStrip.classList.remove('scrolled-from-start');
-      }
-    };
-
-    // Create bound function for removal later
-    this.scrollHandler = checkScrollable;
-
-    // Check initially (with delay to ensure rendering is complete)
-    setTimeout(checkScrollable, 100);
-
-    // Check on scroll
-    this.previewsContainer.addEventListener('scroll', this.scrollHandler, { passive: true });
-
-    // Check on window resize
-    window.addEventListener('resize', this.scrollHandler);
-  }
-
-  removeScrollListeners() {
-    if (this.scrollHandler && this.previewsContainer) {
-      this.previewsContainer.removeEventListener('scroll', this.scrollHandler);
-      window.removeEventListener('resize', this.scrollHandler);
-      this.scrollHandler = null;
-    }
-    
-    if (this.attachmentStrip) {
-      this.attachmentStrip.classList.remove('has-overflow', 'scrolled-to-end', 'scrolled-from-start');
-    }
-  }
-
   showPreview(index) {
-      const fileObject = this.attachedFiles[index];
-      if (!fileObject || !fileObject.previewUrl || !this.previewModal) return;
+    const fileObject = this.attachedFiles[index];
+    if (!fileObject || !fileObject.previewUrl || !this.previewModal) return;
 
-      let contentHTML = '';
-      if (fileObject.type.startsWith('image/')) {
-          contentHTML = `<img src="${fileObject.previewUrl}" alt="Preview of ${fileObject.name}">`;
-      } else if (fileObject.type.startsWith('video/')) {
-          contentHTML = `<video src="${fileObject.previewUrl}" controls autoplay></video>`;
-      } else if (fileObject.type.startsWith('audio/')) {
-          contentHTML = `<audio src="${fileObject.previewUrl}" controls autoplay></audio>`;
-      } else if (fileObject.type === 'application/pdf') {
-          contentHTML = `<iframe class="pdf-preview" src="${fileObject.previewUrl}"></iframe>`;
-      } else {
-          contentHTML = `<p>Preview is not available for this file type.</p>`;
-      }
+    let contentHTML = '';
+    if (fileObject.type.startsWith('image/')) {
+      contentHTML = `
+            <div class="preview-header">
+              <h3 class="preview-title">${fileObject.name}</h3>
+            </div>
+            <img src="${fileObject.previewUrl}" alt="Preview of ${fileObject.name}">
+          `;
+    } else if (fileObject.type.startsWith('video/')) {
+      contentHTML = `<video src="${fileObject.previewUrl}" controls autoplay></video>`;
+    } else if (fileObject.type.startsWith('audio/')) {
+      contentHTML = `<audio src="${fileObject.previewUrl}" controls autoplay></audio>`;
+    } else if (fileObject.type === 'application/pdf') {
+      contentHTML = `<iframe class="pdf-preview" src="${fileObject.previewUrl}"></iframe>`;
+    } else {
+      contentHTML = `<p>Preview is not available for this file type.</p>`;
+    }
 
-      this.previewContentArea.innerHTML = contentHTML;
-      this.previewModal.classList.remove('hidden');
+    this.previewContentArea.innerHTML = contentHTML;
+    this.previewModal.classList.remove('hidden');
   }
 
   hidePreview() {
-      if (!this.previewModal) return;
-      this.previewModal.classList.add('hidden');
-      this.previewContentArea.innerHTML = '';
+    if (!this.previewModal) return;
+    this.previewModal.classList.add('hidden');
+    this.previewContentArea.innerHTML = '';
   }
 
   removeFile(index) {
@@ -353,8 +320,11 @@ class FileAttachmentHandler {
 
   clearAttachedFiles() {
     this.attachedFiles = [];
-    this.removeScrollListeners();
     this.renderPreviews();
+  }
+
+  removeScrollListeners() {
+    // Placeholder method - no scroll listeners to remove in current implementation
   }
 }
 

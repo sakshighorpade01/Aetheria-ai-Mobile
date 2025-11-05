@@ -61,7 +61,6 @@
     visibility: hidden;
     max-height: 0;
     overflow: hidden;
-    position: relative;
     transition: opacity var(--anim-fast) var(--easing-standard),
         max-height var(--anim-fast) var(--easing-standard),
         padding var(--anim-fast) var(--easing-standard),
@@ -83,70 +82,20 @@
 }
 
 .attachments-scroll {
-    display: flex !important;
-    flex-direction: row !important;
+    display: flex;
+    flex-direction: row;
     gap: 12px;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 4px;
     width: 100%;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: pan-x !important;
-    scroll-behavior: smooth;
-    position: relative;
-    min-height: 150px;
+    flex-wrap: nowrap;
 }
 
 .attachments-scroll::-webkit-scrollbar {
     display: none;
-}
-
-/* Scroll indicator - subtle gradient on right edge when scrollable */
-.attachment-strip::after {
-    content: '';
-    position: absolute;
-    right: 12px;
-    top: 10px;
-    bottom: 8px;
-    width: 40px;
-    background: linear-gradient(to left, var(--elevated-bg) 0%, transparent 100%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2;
-    border-radius: 0 26px 0 0;
-}
-
-.attachment-strip.has-overflow::after {
-    opacity: 0.8;
-}
-
-/* Hide gradient when scrolled to end */
-.attachment-strip.scrolled-to-end::after {
-    opacity: 0;
-}
-
-/* Left gradient indicator when scrolled */
-.attachment-strip::before {
-    content: '';
-    position: absolute;
-    left: 12px;
-    top: 10px;
-    bottom: 8px;
-    width: 40px;
-    background: linear-gradient(to right, var(--elevated-bg) 0%, transparent 100%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 2;
-    border-radius: 26px 0 0 0;
-}
-
-.attachment-strip.scrolled-from-start::before {
-    opacity: 0.8;
 }
 
 .file-preview-chip {
@@ -155,20 +104,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 120px;
-    max-width: 120px;
-    width: 120px;
-    height: 140px;
+    min-width: 84px;
+    max-width: 84px;
+    height: 98px;
     border-radius: 12px;
     background: var(--elevated-bg);
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     flex-shrink: 0;
-    flex-grow: 0;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
-    touch-action: pan-x;
 }
 
 .file-preview-chip:hover {
@@ -178,7 +124,7 @@
 
 .file-preview-chip .file-thumbnail {
     width: 100%;
-    height: 100px;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,28 +139,35 @@
 }
 
 .file-preview-chip .file-thumbnail .file-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: var(--text-secondary);
 }
 
 .file-preview-chip .file-name {
-    width: 100%;
-    padding: 8px;
-    font-size: 0.75rem;
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    padding: 2px 4px;
+    font-size: 0.6rem;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--text-color);
-    background: var(--elevated-bg);
+    color: var(--text-secondary);
+    background: transparent;
+}
+
+.file-preview-chip.image-file .file-name {
+    display: none;
 }
 
 .file-preview-chip .remove-file-btn {
     position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 24px;
-    height: 24px;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: none;
     display: flex;
@@ -223,7 +176,7 @@
     background: rgba(0, 0, 0, 0.6);
     color: white;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     z-index: 10;
     transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -242,18 +195,7 @@
 }
 
 .file-preview-chip .file-status {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 50%;
-    color: white;
-    font-size: 0.7rem;
+    display: none;
 }
 
 .file-preview-chip.uploading {

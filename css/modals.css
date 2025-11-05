@@ -338,9 +338,6 @@ body:not(.dark-mode) #send-message:active {
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
-    scroll-behavior: smooth;
 }
 
 #file-previews-container::-webkit-scrollbar {
@@ -464,8 +461,27 @@ body:not(.dark-mode) #send-message:active {
 
 #preview-content-area {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+#preview-content-area .preview-header {
+    width: 100%;
+    padding: 0.5rem 0;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#preview-content-area .preview-title {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-color);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #preview-content-area img,
