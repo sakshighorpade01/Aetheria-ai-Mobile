@@ -330,18 +330,27 @@
       window.aios = new AIOS();
       await window.aios.init();
 
+      console.log('[Init] Creating ContextHandler...');
       const contextHandler = new ContextHandler({ preloadDelay: 2500 });
+      console.log('[Init] ContextHandler created, initializing elements...');
       contextHandler.initializeElements();
+      console.log('[Init] Binding events...');
       contextHandler.bindEvents();
+      console.log('[Init] Starting preload sessions...');
       contextHandler.preloadSessions();
+      console.log('[Init] ContextHandler setup complete');
 
       const fileAttachmentHandler = new FileAttachmentHandler();
 
+      console.log('[Init] Creating ContextViewer...');
       window.contextViewer = new ContextViewer();
+      console.log('[Init] Setting global references...');
       window.chat = chatModule;
       window.contextHandler = contextHandler;
       window.fileAttachmentHandler = fileAttachmentHandler;
+      console.log('[Init] Initializing chat module...');
       window.chat.init(contextHandler, fileAttachmentHandler, window.contextViewer);
+      console.log('[Init] Chat module initialized');
 
       window.todo = new ToDoList();
       await window.todo.init();
@@ -428,13 +437,21 @@
         if (!item) return;
 
         const action = item.dataset.menuAction;
+        console.log('[UI] Input action menu clicked:', action);
+        
         if (action === 'attach') {
           closeDropdowns();
           window.fileAttachmentHandler?.openFilePicker?.();
         } else if (action === 'sessions') {
+          console.log('[UI] Sessions button clicked, contextHandler exists:', !!window.contextHandler);
           closeDropdowns();
           closeFloatingWindows();
-          window.contextHandler?.toggleWindow(true);
+          if (window.contextHandler) {
+            console.log('[UI] Calling toggleWindow(true)...');
+            window.contextHandler.toggleWindow(true);
+          } else {
+            console.error('[UI] contextHandler not available!');
+          }
         } else if (action === 'memory') {
           // handled above, but keep menu open for toggle feedback
         }

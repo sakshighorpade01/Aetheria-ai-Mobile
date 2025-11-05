@@ -26,8 +26,13 @@ class ContextHandler {
     }
 
     initializeElements() {
+        console.log('[ContextHandler] Initializing elements...');
         this.elements.contextWindow = document.getElementById('context-window');
-        if (!this.elements.contextWindow) return;
+        
+        if (!this.elements.contextWindow) {
+            console.error('[ContextHandler] context-window element not found in DOM!');
+            return;
+        }
 
         this.elements.panel = this.elements.contextWindow.querySelector('.context-window-panel');
         this.elements.closeContextBtn = this.elements.contextWindow.querySelector('.close-context-btn');
@@ -36,6 +41,17 @@ class ContextHandler {
         this.elements.listView = document.getElementById('context-list-view');
         this.elements.detailView = document.getElementById('context-detail-view');
         this.elements.contextBtn = document.querySelector('[data-tool="context"]');
+        
+        console.log('[ContextHandler] Elements initialized:', {
+            hasContextWindow: !!this.elements.contextWindow,
+            hasPanel: !!this.elements.panel,
+            hasCloseBtn: !!this.elements.closeContextBtn,
+            hasSyncBtn: !!this.elements.syncBtn,
+            hasSessionsContainer: !!this.elements.sessionsContainer,
+            hasListView: !!this.elements.listView,
+            hasDetailView: !!this.elements.detailView,
+            hasContextBtn: !!this.elements.contextBtn
+        });
     }
 
     bindEvents() {
@@ -65,9 +81,15 @@ class ContextHandler {
     }
 
     toggleWindow(show, buttonElement = null) {
-        if (!this.elements.contextWindow) return;
+        console.log('[ContextHandler] toggleWindow called:', { show, hasElement: !!this.elements.contextWindow });
+        
+        if (!this.elements.contextWindow) {
+            console.error('[ContextHandler] contextWindow element not found!');
+            return;
+        }
 
         if (show) {
+            console.log('[ContextHandler] Opening window, loadingState:', this.loadingState);
             this.isWindowOpen = true;
             if (buttonElement) {
                 this.triggerButton = buttonElement;
@@ -75,14 +97,20 @@ class ContextHandler {
             }
 
             this.elements.contextWindow.classList.remove('hidden');
+            console.log('[ContextHandler] Window classList after remove hidden:', this.elements.contextWindow.classList.toString());
+            
             this.renderCurrentState();
 
             if (this.loadingState === 'idle') {
+                console.log('[ContextHandler] Starting loadSessionsInBackground...');
                 this.loadSessionsInBackground().catch((err) => {
-                    console.error('Context preload failed:', err);
+                    console.error('[ContextHandler] Context preload failed:', err);
                 });
+            } else {
+                console.log('[ContextHandler] Skipping load, state is:', this.loadingState);
             }
         } else {
+            console.log('[ContextHandler] Closing window');
             this.isWindowOpen = false;
             this.elements.contextWindow.classList.add('hidden');
             if (this.triggerButton) {
@@ -110,14 +138,19 @@ class ContextHandler {
     }
 
     async loadSessionsInBackground({ force = false } = {}) {
+        console.log('[ContextHandler] loadSessionsInBackground called:', { force, loadingState: this.loadingState });
+        
         if (!force) {
             if (this.loadingState === 'loading' && this.pendingLoadPromise) {
+                console.log('[ContextHandler] Already loading, returning existing promise');
                 return this.pendingLoadPromise;
             }
             if (this.loadingState === 'loaded' && this.loadedSessions.length > 0) {
+                console.log('[ContextHandler] Already loaded, returning cached sessions:', this.loadedSessions.length);
                 return Promise.resolve(this.loadedSessions);
             }
         } else if (this.pendingLoadPromise) {
+            console.log('[ContextHandler] Force refresh but already loading');
             return this.pendingLoadPromise;
         }
 
@@ -126,32 +159,42 @@ class ContextHandler {
             this.backgroundLoadTimer = null;
         }
 
+        console.log('[ContextHandler] Setting state to loading');
         this.loadingState = 'loading';
         this.loadError = null;
 
         if (this.isWindowOpen) {
+            console.log('[ContextHandler] Window is open, rendering loading state');
             this.renderLoadingState();
         }
 
         const loadPromise = (async () => {
             try {
+                console.log('[ContextHandler] Attempting Supabase session refresh...');
                 try {
                     await supabase.auth.refreshSession();
+                    console.log('[ContextHandler] Supabase session refresh successful');
                 } catch (refreshError) {
-                    console.warn('Supabase session refresh failed:', refreshError);
+                    console.warn('[ContextHandler] Supabase session refresh failed:', refreshError);
                 }
 
+                console.log('[ContextHandler] Getting Supabase session...');
                 const { data, error } = await supabase.auth.getSession();
                 const session = data?.session;
+                console.log('[ContextHandler] Session retrieved:', { hasSession: !!session, hasToken: !!session?.access_token, error });
+                
                 if (error || !session?.access_token) {
                     throw new Error('Please log in to view chat history.');
                 }
 
+                console.log('[ContextHandler] Fetching sessions from backend:', `${API_PROXY_URL}/api/sessions`);
                 const response = await fetch(`${API_PROXY_URL}/api/sessions`, {
                     headers: { Authorization: `Bearer ${session.access_token}` },
                     signal: AbortSignal.timeout(15000) // 15 second timeout
                 });
 
+                console.log('[ContextHandler] Backend response status:', response.status, response.statusText);
+                
                 if (!response.ok) {
                     let errorMessage = '';
                     
@@ -175,17 +218,25 @@ class ContextHandler {
                 }
 
                 const sessions = await response.json();
+                console.log('[ContextHandler] Sessions received from backend:', { count: sessions?.length, sessions });
+                
                 this.loadedSessions = Array.isArray(sessions) ? sessions : [];
                 this.loadingState = 'loaded';
                 this.loadError = null;
 
+                console.log('[ContextHandler] Sessions loaded successfully:', this.loadedSessions.length);
+
                 if (this.isWindowOpen) {
+                    console.log('[ContextHandler] Window is open, showing session list');
                     this.showSessionList(this.loadedSessions);
+                } else {
+                    console.log('[ContextHandler] Window is closed, not rendering');
                 }
 
                 return this.loadedSessions;
             } catch (err) {
-                console.error('Failed to load sessions:', err);
+                console.error('[ContextHandler] Failed to load sessions:', err);
+                console.error('[ContextHandler] Error details:', { name: err.name, message: err.message, stack: err.stack });
                 
                 // Handle different error types
                 if (err.name === 'TimeoutError' || err.name === 'AbortError') {
@@ -198,9 +249,14 @@ class ContextHandler {
                     this.loadError = err?.message || 'An unexpected error occurred while loading sessions.';
                 }
                 
+                console.log('[ContextHandler] Setting error state:', this.loadError);
                 this.loadingState = 'error';
+                
                 if (this.isWindowOpen) {
+                    console.log('[ContextHandler] Window is open, rendering error state');
                     this.renderErrorState();
+                } else {
+                    console.log('[ContextHandler] Window is closed, not rendering error');
                 }
                 throw err;
             } finally {
@@ -219,18 +275,23 @@ class ContextHandler {
     }
 
     renderCurrentState() {
+        console.log('[ContextHandler] renderCurrentState called, state:', this.loadingState);
         switch (this.loadingState) {
             case 'loaded':
+                console.log('[ContextHandler] Rendering loaded state with', this.loadedSessions.length, 'sessions');
                 this.showSessionList(this.loadedSessions);
                 break;
             case 'loading':
+                console.log('[ContextHandler] Rendering loading state');
                 this.renderLoadingState();
                 break;
             case 'error':
+                console.log('[ContextHandler] Rendering error state:', this.loadError);
                 this.renderErrorState();
                 break;
             case 'idle':
             default:
+                console.log('[ContextHandler] Rendering idle state');
                 this.renderIdleState();
                 break;
         }
@@ -288,7 +349,16 @@ class ContextHandler {
     }
 
     showSessionList(sessions) {
-        if (!this.elements.listView || !this.elements.detailView) return;
+        console.log('[ContextHandler] showSessionList called with', sessions?.length, 'sessions');
+        console.log('[ContextHandler] Elements:', { 
+            hasListView: !!this.elements.listView, 
+            hasDetailView: !!this.elements.detailView 
+        });
+        
+        if (!this.elements.listView || !this.elements.detailView) {
+            console.error('[ContextHandler] Missing required elements for session list!');
+            return;
+        }
 
         this.elements.listView.classList.remove('hidden');
         this.elements.detailView.classList.add('hidden');
@@ -296,6 +366,7 @@ class ContextHandler {
         this.elements.listView.innerHTML = '';
 
         if (!sessions || sessions.length === 0) {
+            console.log('[ContextHandler] No sessions to display, showing empty state');
             this.elements.listView.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-comments"></i>
@@ -305,10 +376,12 @@ class ContextHandler {
             return;
         }
 
+        console.log('[ContextHandler] Rendering', sessions.length, 'session items');
         this.addSelectionHeader();
         this.renderSessionItems(sessions);
         this.initializeSelectionControls();
         this.updateSelectionUI();
+        console.log('[ContextHandler] Session list rendered successfully');
     }
 
     addSelectionHeader() {
