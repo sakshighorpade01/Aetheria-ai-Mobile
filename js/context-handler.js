@@ -5,9 +5,7 @@ import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 
 // Backend API URL for session management - using local development server
-const API_PROXY_URL = (typeof window !== 'undefined' && window.location?.origin) 
-    ? `${window.location.protocol}//${window.location.hostname}:8765`
-    : 'http://localhost:8765';
+const API_PROXY_URL = 'https://aios-web.onrender.com';
 
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
