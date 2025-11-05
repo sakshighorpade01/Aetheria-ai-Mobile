@@ -4,8 +4,10 @@
 const config = {
     // Backend connection settings
     backend: {
-        // URL for the Python backend - production server
-        url: 'https://aios-web.onrender.com',
+        // URL for the Python backend - using local development server
+        url: (typeof window !== 'undefined' && window.location?.origin) 
+            ? `${window.location.protocol}//${window.location.hostname}:8765`
+            : 'http://localhost:8765',
         
         // Maximum number of reconnection attempts
         maxReconnectAttempts: 50,
