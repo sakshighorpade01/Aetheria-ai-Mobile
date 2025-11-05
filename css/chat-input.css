@@ -177,7 +177,6 @@
     color: white;
     cursor: pointer;
     font-size: 0.7rem;
-    z-index: 10;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 

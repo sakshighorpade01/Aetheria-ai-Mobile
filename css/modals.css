@@ -197,7 +197,7 @@ body:not(.dark-mode) .dropdown-item i {
     background: var(--window-bg);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-lg);
-    z-index: 1400;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
 }
