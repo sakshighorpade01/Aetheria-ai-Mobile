@@ -46,8 +46,6 @@ export class AIOS {
             backButtons: document.querySelectorAll('.back-to-menu-btn'),
 
             logoutBtn: document.getElementById('logout-btn'),
-            userEmail: document.getElementById('userEmail'),
-            userName: document.getElementById('userName'),
             userNameDisplay: document.getElementById('userName-display'),
             userEmailDisplay: document.getElementById('userEmail-display'),
             profileAvatarLarge: document.getElementById('profile-avatar-large'),
@@ -274,10 +272,6 @@ export class AIOS {
         if (isAuthenticated) {
             const userName = user.user_metadata?.name || user.user_metadata?.full_name || 'User';
             const userEmail = user.email;
-            
-            // Update all user info displays
-            this.elements.userEmail.textContent = userEmail;
-            this.elements.userName.textContent = userName;
             
             // Update profile header card
             if (this.elements.userNameDisplay) {
