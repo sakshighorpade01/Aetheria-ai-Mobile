@@ -370,13 +370,21 @@ body:not(.dark-mode) .settings-menu-item:hover i:first-child {
 
 .auth-tab-btn:hover {
     color: var(--text-color);
-    background: rgba(var(--accent-color-rgb, 99, 102, 241), 0.08);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+body:not(.dark-mode) .auth-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .auth-tab-btn.active {
-    color: var(--accent-color);
+    color: #ffffff;
     background: var(--elevated-bg);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+body:not(.dark-mode) .auth-tab-btn.active {
+    color: #1a1a1a;
 }
 
 .dark-mode .auth-tab-btn.active {
@@ -472,9 +480,13 @@ body:not(.dark-mode) .settings-menu-item:hover i:first-child {
 }
 
 .integration-item:hover {
-    border-color: var(--accent-color);
+    border-color: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
+}
+
+body:not(.dark-mode) .integration-item:hover {
+    border-color: #1a1a1a;
 }
 
 .integration-item:last-child {
@@ -506,16 +518,24 @@ body:not(.dark-mode) .settings-menu-item:hover i:first-child {
     border-radius: 6px;
     border: 1px solid var(--border-color);
     background-color: var(--elevated-bg);
-    color: var(--accent-color);
+    color: #ffffff;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
+body:not(.dark-mode) .connect-btn {
+    color: #1a1a1a;
+}
+
 .connect-btn:hover {
     background-color: var(--hover-bg);
-    border-color: var(--accent-color);
+    border-color: #ffffff;
+}
+
+body:not(.dark-mode) .connect-btn:hover {
+    border-color: #1a1a1a;
 }
 
 .connect-btn.connected {
@@ -544,9 +564,9 @@ body:not(.dark-mode) .settings-menu-item:hover i:first-child {
     gap: 0.75rem;
     width: 100%;
     padding: 0.75rem 1rem;
-    background-color: #fff;
-    color: #3c4043;
-    border: 1.5px solid #dadce0;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1.5px solid #1a1a1a;
     border-radius: 10px;
     font-size: 0.9375rem;
     font-weight: 600;
@@ -555,36 +575,36 @@ body:not(.dark-mode) .settings-menu-item:hover i:first-child {
 }
 
 .btn-google:hover {
-    background-color: #f8f9fa;
-    border-color: #c5c7ca;
-    box-shadow: 0 2px 8px rgba(60, 64, 67, .15);
+    background-color: #2e2e2e;
+    border-color: #2e2e2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transform: translateY(-1px);
 }
 
 .btn-google:active {
-    background-color: #f1f3f4;
+    background-color: #3a3a3a;
     transform: translateY(0);
 }
 
 .btn-google i {
     font-size: 1.125rem;
-    color: #4285f4;
+    color: #ffffff;
 }
 
 .dark-mode .btn-google {
-    background-color: #1a73e8;
-    color: #fff;
-    border-color: #1a73e8;
+    background-color: #ffffff;
+    color: #1a1a1a;
+    border-color: #ffffff;
 }
 
 .dark-mode .btn-google:hover {
-    background-color: #1b66c9;
-    border-color: #1557b0;
-    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+    background-color: #f5f5f5;
+    border-color: #f5f5f5;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
 .dark-mode .btn-google i {
-    color: #fff;
+    color: #1a1a1a;
 }
 
 /* Auth Divider */

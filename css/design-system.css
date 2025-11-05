@@ -77,7 +77,7 @@
   --message-bot-bg: #F5F3EB;
   --message-bot-text: var(--neutral-900);
 
-  --button-primary-bg: var(--primary-600);
+  --button-primary-bg: #1a1a1a;
   --button-primary-text: white;
   --button-secondary-bg: #EFEBE0;
   --button-secondary-text: var(--neutral-800);
@@ -123,8 +123,8 @@
   --message-bot-bg: #2e2e2e;
   --message-bot-text: var(--neutral-100);
 
-  --button-primary-bg: var(--primary-600);
-  --button-primary-text: white;
+  --button-primary-bg: #ffffff;
+  --button-primary-text: #1a1a1a;
   --button-secondary-bg: #3a3a3a;
   --button-secondary-text: var(--neutral-200);
 
@@ -297,9 +297,13 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
+  background-color: #2e2e2e;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #f5f5f5;
 }
 
 .btn-secondary {
@@ -610,9 +614,13 @@ textarea.input {
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
+  background-color: #2e2e2e;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #f5f5f5;
 }
 
 .btn-secondary {
