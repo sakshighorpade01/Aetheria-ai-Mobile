@@ -48,8 +48,8 @@
 /* --- Attachment Strip --- */
 .attachment-strip {
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    flex-direction: row;
+    gap: 6px;
     padding: 10px 12px 8px;
     border-radius: 26px 26px 0 0;
     border: none;
@@ -60,7 +60,7 @@
     opacity: 0;
     visibility: hidden;
     max-height: 0;
-    overflow: hidden !important;
+    overflow: hidden;
     position: relative;
     transition: opacity var(--anim-fast) var(--easing-standard),
         max-height var(--anim-fast) var(--easing-standard),

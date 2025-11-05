@@ -338,6 +338,9 @@ body:not(.dark-mode) #send-message:active {
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scroll-behavior: smooth;
 }
 
 #file-previews-container::-webkit-scrollbar {
