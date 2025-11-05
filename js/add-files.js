@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - using deployed Render backend
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+const API_PROXY_URL = 'http://localhost:8765';
 
 class FileAttachmentHandler {
   constructor() {
@@ -122,16 +122,59 @@ class FileAttachmentHandler {
 
       const fileIndex = this.attachedFiles.length;
       const ext = file.name.split('.').pop().toLowerCase();
-      const isText = file.type.startsWith('text/') || this.supportedFileTypes[ext] === 'text/plain';
+      
+      // Map extensions to backend-accepted MIME types
+      const mimeTypeMap = {
+        'pdf': 'application/pdf',
+        'js': 'application/x-javascript',
+        'jsx': 'application/x-javascript',
+        'py': 'application/x-python',
+        'txt': 'text/plain',
+        'html': 'text/html',
+        'htm': 'text/html',
+        'css': 'text/css',
+        'csv': 'text/csv',
+        'xml': 'text/xml',
+        'rtf': 'text/rtf'
+      };
+      
+      // Backend-supported MIME types (excluding text/md as it's not supported)
+      const backendSupportedMimeTypes = [
+        'application/pdf',
+        'application/x-javascript',
+        'text/javascript',
+        'application/x-python',
+        'text/x-python',
+        'text/plain',
+        'text/html',
+        'text/css',
+        'text/csv',
+        'text/xml',
+        'text/rtf'
+      ];
+      
+      // Text file extensions that can be read as text
+      const textExtensions = ['txt', 'md', 'csv', 'json', 'xml', 'html', 'css', 'js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'h', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sh', 'bat', 'ps1', 'yaml', 'yml', 'sql', 'rtf'];
+      const isText = file.type.startsWith('text/') || textExtensions.includes(ext) || this.supportedFileTypes[ext]?.startsWith('text/');
+      
+      // Get the correct MIME type for backend
+      let backendMimeType = file.type;
+      if (mimeTypeMap[ext]) {
+        backendMimeType = mimeTypeMap[ext];
+      }
+      
+      // Check if backend supports this MIME type
+      const isBackendSupported = backendSupportedMimeTypes.includes(backendMimeType);
 
       const fileObject = {
         id: `file_${Date.now()}_${fileIndex}`,
         name: file.name,
         type: file.type,
+        backendMimeType: backendMimeType,
         status: 'uploading',
         isText,
+        isBackendSupported,
         file,
-        // ★★★ FIX: Initialize previewUrl to null. It will be populated below. ★★★
         previewUrl: null
       };
 
@@ -140,11 +183,15 @@ class FileAttachmentHandler {
 
       try {
         if (fileObject.isText) {
+          // Read text files as text content
           fileObject.content = await this.readFileAsText(file);
         } else {
+          // Upload binary files (images, videos, audio, PDFs, documents) to Supabase
           fileObject.path = await this.uploadFileToSupabase(file);
-          // ★★★ FIX: Generate a persistent Base64 Data URL for previewing later. ★★★
-          fileObject.previewUrl = await this.readFileAsDataURL(file);
+          // Generate preview URL for media files
+          if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+            fileObject.previewUrl = await this.readFileAsDataURL(file);
+          }
         }
         fileObject.status = 'completed';
       } catch (error) {
@@ -270,6 +317,15 @@ class FileAttachmentHandler {
       previewElement.appendChild(thumbnailDiv);
       previewElement.appendChild(nameSpan);
       previewElement.appendChild(removeButton);
+      
+      // Add indicator for unsupported files
+      if (fileObject.isText && !fileObject.isBackendSupported && fileObject.status === 'completed') {
+        const indicator = document.createElement('div');
+        indicator.className = 'file-processing-indicator';
+        indicator.title = 'Content will be included in message';
+        indicator.innerHTML = '<i class="fas fa-file-alt"></i>';
+        previewElement.appendChild(indicator);
+      }
 
       this.previewsContainer.appendChild(previewElement);
     });

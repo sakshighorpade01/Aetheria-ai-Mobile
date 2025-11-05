@@ -86,7 +86,7 @@
           <div class="input-field">
             <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i></button>
             <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
-              <button type="button" class="input-action-menu-item" data-menu-action="memory" role="menuitem" aria-pressed="false">
+              <button type="button" class="input-action-menu-item active" data-menu-action="memory" role="menuitem" aria-pressed="true">
                 <i class="fas fa-brain"></i>
                 <span>Memory</span>
               </button>
@@ -190,23 +190,10 @@
                 tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
             });
 
-            // --- NEW: Preview Modal Events ---
+            // --- Preview Modal Events ---
             this.closePreviewBtn.addEventListener('click', () => this.hidePreview());
             this.previewModal.addEventListener('click', (e) => {
                 if (e.target === this.previewModal) this.hidePreview();
-            });
-
-            this.filesContent.addEventListener('click', (e) => {
-                const previewBtn = e.target.closest('.preview-context-file-btn');
-                if (previewBtn) {
-                    const previewUrl = previewBtn.dataset.previewUrl;
-                    const fileType = previewBtn.dataset.fileType;
-                    if (previewUrl) {
-                        this.showPreview(previewUrl, fileType);
-                    } else {
-                        alert('Preview is not available for this file type.');
-                    }
-                }
             });
         }
 
@@ -245,53 +232,355 @@
 
         renderFiles(files) {
             if (files.length === 0) {
-                this.filesContent.innerHTML = '<p class="empty-state">No files were attached.</p>';
+                this.filesContent.innerHTML = '<div class="empty-state"><i class="fas fa-paperclip"></i><p>No files were attached.</p></div>';
                 return;
             }
-            this.filesContent.innerHTML = files.map((file, index) => `
-                <div class="viewer-file-item">
-                    <i class="fas fa-file"></i>
-                    <span class="item-name">${file.name}</span>
-                    <div class="viewer-file-actions">
-                        <button class="preview-context-file-btn" data-preview-url="${file.previewUrl || ''}" data-file-type="${file.type}" title="Preview File"><i class="fas fa-eye"></i></button>
+            
+            this.filesContent.innerHTML = files.map((file, index) => {
+                // Determine file icon based on type
+                let iconClass = 'fa-file';
+                if (file.type.startsWith('image/')) iconClass = 'fa-file-image';
+                else if (file.type.startsWith('video/')) iconClass = 'fa-file-video';
+                else if (file.type.startsWith('audio/')) iconClass = 'fa-file-audio';
+                else if (file.type === 'application/pdf') iconClass = 'fa-file-pdf';
+                else if (file.type.includes('word') || file.type.includes('document')) iconClass = 'fa-file-word';
+                else if (file.type.includes('excel') || file.type.includes('spreadsheet')) iconClass = 'fa-file-excel';
+                else if (file.type.includes('zip') || file.type.includes('archive')) iconClass = 'fa-file-archive';
+                else if (file.name.match(/\.(js|jsx|ts|tsx|py|java|cpp|c|cs|php|rb|go|rs|html|css|json)$/i)) iconClass = 'fa-file-code';
+                
+                // Check if file has preview capability (either previewUrl or text content)
+                const hasPreview = file.previewUrl || file.isText || file.content;
+                
+                return `
+                    <div class="viewer-file-item">
+                        <i class="fas ${iconClass}"></i>
+                        <span class="item-name">${this.escapeHtml(file.name)}</span>
+                        <div class="viewer-file-actions">
+                            ${hasPreview ? `<button class="preview-context-file-btn" data-file-index="${index}" title="Preview File"><i class="fas fa-eye"></i></button>` : ''}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+            
+            // Add click handlers for preview buttons
+            this.filesContent.querySelectorAll('.preview-context-file-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const fileIndex = parseInt(btn.dataset.fileIndex);
+                    const file = files[fileIndex];
+                    this.showFilePreview(file);
+                });
+            });
         }
 
         renderSessions(sessions) {
             if (sessions.length === 0) {
-                this.sessionsContent.innerHTML = '<p class="empty-state">No sessions were used as context.</p>';
+                this.sessionsContent.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No sessions were used as context.</p></div>';
                 return;
             }
+            
+            // Render session chips
             this.sessionsContent.innerHTML = sessions.map((session, index) => {
-                const chatHistoryHtml = session.interactions.map(turn => `
-                    <div class="viewer-session-turn">
-                        <strong class="viewer-session-role">${turn.user_input ? 'User' : 'Assistant'}:</strong>
-                        <div class="viewer-session-content">${messageFormatter.format(turn.user_input || turn.llm_output)}</div>
+                // Support both session.runs and session.memory.runs structures
+                const runs = session.runs || session.memory?.runs || [];
+                
+                // Get session title from first user message
+                let sessionTitle = `Session ${index + 1}`;
+                const topLevelRuns = runs.filter(run => !run.parent_run_id);
+                
+                if (topLevelRuns.length > 0) {
+                    const firstRun = topLevelRuns[0];
+                    const userInput = firstRun.input?.input_content || firstRun.content || '';
+                    
+                    if (userInput && userInput.trim()) {
+                        let messageContent = userInput;
+                        const marker = 'Current message:';
+                        const markerIndex = messageContent.lastIndexOf(marker);
+                        if (markerIndex !== -1) {
+                            messageContent = messageContent.substring(markerIndex + marker.length).trim();
+                        }
+                        
+                        // Get first line as title
+                        sessionTitle = messageContent.split('\n')[0].trim();
+                        if (sessionTitle.length > 50) {
+                            sessionTitle = sessionTitle.substring(0, 50) + '...';
+                        }
+                    }
+                }
+                
+                return `
+                    <div class="viewer-session-chip" data-session-index="${index}">
+                        <span class="viewer-session-chip-title">${this.escapeHtml(sessionTitle)}</span>
+                        <i class="fas fa-chevron-right viewer-session-chip-icon"></i>
                     </div>
-                `).join('');
-
-                return `<div class="viewer-session-item">${chatHistoryHtml}</div>`;
-            }).join('<hr class="viewer-divider">');
+                `;
+            }).join('');
+            
+            // Add click handlers to chips
+            this.sessionsContent.querySelectorAll('.viewer-session-chip').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    const sessionIndex = parseInt(chip.dataset.sessionIndex);
+                    this.showSessionDetail(sessions[sessionIndex], sessionIndex);
+                });
+            });
+        }
+        
+        showSessionDetail(session, index) {
+            // Support both session.runs and session.memory.runs structures
+            const runs = session.runs || session.memory?.runs || [];
+            const topLevelRuns = runs.filter(run => !run.parent_run_id);
+            
+            // Get session title
+            let sessionTitle = `Session ${index + 1}`;
+            if (topLevelRuns.length > 0) {
+                const firstRun = topLevelRuns[0];
+                const userInput = firstRun.input?.input_content || firstRun.content || '';
+                
+                if (userInput && userInput.trim()) {
+                    let messageContent = userInput;
+                    const marker = 'Current message:';
+                    const markerIndex = messageContent.lastIndexOf(marker);
+                    if (markerIndex !== -1) {
+                        messageContent = messageContent.substring(markerIndex + marker.length).trim();
+                    }
+                    sessionTitle = messageContent.split('\n')[0].trim();
+                    if (sessionTitle.length > 50) {
+                        sessionTitle = sessionTitle.substring(0, 50) + '...';
+                    }
+                }
+            }
+            
+            // Build conversation HTML
+            const conversationHtml = topLevelRuns.map(run => {
+                const userInput = run.input?.input_content || '';
+                const assistantOutput = run.content || '';
+                
+                let html = '';
+                
+                // Add user message
+                if (userInput && userInput.trim()) {
+                    let messageContent = userInput;
+                    const marker = 'Current message:';
+                    const markerIndex = messageContent.lastIndexOf(marker);
+                    if (markerIndex !== -1) {
+                        messageContent = messageContent.substring(markerIndex + marker.length).trim();
+                    }
+                    
+                    html += `
+                        <div class="viewer-session-turn">
+                            <div class="viewer-session-role">User</div>
+                            <div class="viewer-session-content">${this.escapeHtml(messageContent)}</div>
+                        </div>
+                    `;
+                }
+                
+                // Add assistant message
+                if (assistantOutput && assistantOutput.trim()) {
+                    html += `
+                        <div class="viewer-session-turn">
+                            <div class="viewer-session-role">Assistant</div>
+                            <div class="viewer-session-content">${this.escapeHtml(assistantOutput)}</div>
+                        </div>
+                    `;
+                }
+                
+                // Legacy format support
+                if (!userInput && !assistantOutput && run.role && run.content) {
+                    const isUser = run.role === 'user';
+                    let messageContent = run.content;
+                    
+                    if (isUser) {
+                        const marker = 'Current message:';
+                        const markerIndex = messageContent.lastIndexOf(marker);
+                        if (markerIndex !== -1) {
+                            messageContent = messageContent.substring(markerIndex + marker.length).trim();
+                        }
+                    }
+                    
+                    html += `
+                        <div class="viewer-session-turn">
+                            <div class="viewer-session-role">${isUser ? 'User' : 'Assistant'}</div>
+                            <div class="viewer-session-content">${this.escapeHtml(messageContent)}</div>
+                        </div>
+                    `;
+                }
+                
+                return html;
+            }).join('');
+            
+            // Render expanded view
+            this.sessionsContent.innerHTML = `
+                <div class="viewer-session-expanded">
+                    <div class="viewer-session-header">
+                        <button class="viewer-session-back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="viewer-session-header-title">${this.escapeHtml(sessionTitle)}</div>
+                    </div>
+                    <div class="viewer-session-conversation">
+                        ${conversationHtml || '<div class="empty-state"><i class="fas fa-inbox"></i><p>No conversation history.</p></div>'}
+                    </div>
+                </div>
+            `;
+            
+            // Add back button handler
+            const backBtn = this.sessionsContent.querySelector('.viewer-session-back-btn');
+            backBtn.addEventListener('click', () => {
+                this.renderSessions(this.currentContext.sessions);
+            });
+        }
+        
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        // --- NEW: Preview Logic ---
-        showPreview(url, type) {
+        // --- Preview Logic ---
+        showFilePreview(file) {
             let contentHTML = '';
-            if (type.startsWith('image/')) {
-                contentHTML = `<img src="${url}" alt="File Preview">`;
-            } else if (type.startsWith('video/')) {
-                contentHTML = `<video src="${url}" controls autoplay></video>`;
-            } else if (type.startsWith('audio/')) {
-                contentHTML = `<audio src="${url}" controls autoplay></audio>`;
-            } else if (type === 'application/pdf') {
-                contentHTML = `<iframe class="pdf-preview" src="${url}"></iframe>`;
-            } else {
-                contentHTML = `<p>Preview is not available for this file type.</p>`;
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
+            // Handle text files
+            if (file.isText || file.content) {
+                const content = file.content || '';
+                
+                // Handle Markdown files
+                if (fileExt === 'md' && typeof marked !== 'undefined') {
+                    const renderedMarkdown = marked.parse(content);
+                    contentHTML = `
+                        <div class="preview-header">
+                            <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
+                        </div>
+                        <div class="markdown-file-preview">
+                            ${renderedMarkdown}
+                        </div>
+                    `;
+                }
+                // Handle CSV files
+                else if (fileExt === 'csv') {
+                    const tableHTML = this.renderCSVTable(content);
+                    contentHTML = `
+                        <div class="preview-header">
+                            <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
+                        </div>
+                        <div class="csv-file-preview">
+                            ${tableHTML}
+                        </div>
+                    `;
+                }
+                // Handle other text files
+                else {
+                    const escapedContent = this.escapeHtml(content);
+                    contentHTML = `
+                        <div class="preview-header">
+                            <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
+                        </div>
+                        <div class="text-file-preview">
+                            <pre><code>${escapedContent}</code></pre>
+                        </div>
+                    `;
+                }
             }
+            // Handle media files with previewUrl
+            else if (file.previewUrl) {
+                if (file.type.startsWith('image/')) {
+                    contentHTML = `
+                        <div class="preview-header">
+                            <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
+                        </div>
+                        <img src="${file.previewUrl}" alt="Preview of ${this.escapeHtml(file.name)}">
+                    `;
+                } else if (file.type.startsWith('video/')) {
+                    contentHTML = `<video src="${file.previewUrl}" controls autoplay></video>`;
+                } else if (file.type.startsWith('audio/')) {
+                    contentHTML = `<audio src="${file.previewUrl}" controls autoplay></audio>`;
+                } else if (file.type === 'application/pdf') {
+                    contentHTML = `<iframe class="pdf-preview" src="${file.previewUrl}"></iframe>`;
+                } else {
+                    contentHTML = `<p>Preview is not available for this file type.</p>`;
+                }
+            }
+            // Handle binary document files (docx, xlsx, etc.)
+            else if (file.type.includes('word') || file.type.includes('excel') || file.type.includes('powerpoint') || 
+                     file.type.includes('document') || file.type.includes('spreadsheet') || file.type.includes('presentation')) {
+                contentHTML = `
+                    <div class="preview-unavailable">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>${this.escapeHtml(file.name)}</h3>
+                        <p>Preview is not available for ${fileExt.toUpperCase()} files.</p>
+                        <p class="preview-hint">This file will be sent to the AI for processing.</p>
+                    </div>
+                `;
+            }
+            else {
+                contentHTML = `
+                    <div class="preview-unavailable">
+                        <i class="fas fa-file"></i>
+                        <h3>${this.escapeHtml(file.name)}</h3>
+                        <p>Preview is not available for this file type.</p>
+                    </div>
+                `;
+            }
+            
             this.previewContentArea.innerHTML = contentHTML;
             this.previewModal.classList.remove('hidden');
+        }
+        
+        renderCSVTable(csvContent) {
+            const lines = csvContent.split('\n').filter(line => line.trim());
+            if (lines.length === 0) return '<p>Empty CSV file</p>';
+            
+            // Parse CSV (simple parser, handles basic cases)
+            const parseCSVLine = (line) => {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current.trim());
+                return result;
+            };
+            
+            const rows = lines.map(line => parseCSVLine(line));
+            const headers = rows[0];
+            const dataRows = rows.slice(1);
+            
+            // Limit to first 100 rows for performance
+            const limitedRows = dataRows.slice(0, 100);
+            const hasMore = dataRows.length > 100;
+            
+            let tableHTML = '<table class="csv-table"><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${this.escapeHtml(header)}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            
+            limitedRows.forEach(row => {
+                tableHTML += '<tr>';
+                row.forEach(cell => {
+                    tableHTML += `<td>${this.escapeHtml(cell)}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            
+            tableHTML += '</tbody></table>';
+            
+            if (hasMore) {
+                tableHTML += `<p class="csv-note">Showing first 100 rows of ${dataRows.length} total rows</p>`;
+            }
+            
+            return tableHTML;
         }
 
         hidePreview() {

@@ -537,6 +537,27 @@ body:not(.dark-mode) .input-action-menu-item i {
         max-width: 95%;
         width: fit-content;
         align-self: flex-end;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+    }
+    
+    /* Context button mobile optimization */
+    .user-message-context-button {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        border-radius: 14px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .user-message-context-button:active {
+        transform: scale(0.94);
+        color: #f59e0b;
+    }
+    
+    .dark-mode .user-message-context-button:active {
+        color: #fbbf24;
     }
 }
 

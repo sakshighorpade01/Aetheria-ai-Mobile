@@ -42,7 +42,7 @@ if (typeof window !== 'undefined') {
 }
 
 const chatConfig = {
-    memory: false,
+    memory: true,
     tasks: false,
     tools: { ...defaultToolsConfig },
     debug_mode: true,
@@ -288,7 +288,7 @@ function addUserMessage(message, files = [], sessions = []) {
     const displayText = message || (hasContext ? '[Context Attached]' : '');
     messageDiv.dataset.rawMessage = displayText;
     messageDiv.innerHTML = messageFormatter.format(displayText);
-    
+
     wrapperDiv.appendChild(messageDiv);
 
     if (files.length > 0 || sessions.length > 0) {
@@ -431,7 +431,7 @@ function populateBotMessage(data) {
     const ownerName = agent_name || team_name;
     if (!ownerName || !content) return;
 
-    const targetContainer = is_log 
+    const targetContainer = is_log
         ? messageDiv.querySelector(`#logs-${messageId}`)
         : messageDiv.querySelector(`#main-content-${messageId}`);
 
@@ -444,7 +444,7 @@ function populateBotMessage(data) {
         contentBlock = document.createElement('div');
         contentBlock.id = contentBlockId;
         contentBlock.className = is_log ? 'content-block log-block' : 'content-block';
-        
+
         // Only add header for log blocks, not for main content
         if (is_log) {
             const header = document.createElement('div');
@@ -459,7 +459,7 @@ function populateBotMessage(data) {
 
         targetContainer.appendChild(contentBlock);
     }
-    
+
     const innerContentDiv = contentBlock.querySelector('.inner-content');
     if (innerContentDiv) {
         const streamId = `${messageId}-${ownerName}`;
@@ -555,7 +555,7 @@ function handleDone(data) {
     const thinkingIndicator = messageDiv.querySelector('.thinking-indicator');
     const summary = thinkingIndicator?.querySelector('.reasoning-summary');
     const summaryTextEl = summary?.querySelector('.summary-text');
-    
+
     const hasLogs = messageDiv.querySelector('.log-block, .tool-log-entry');
     if (thinkingIndicator && hasLogs) {
         thinkingIndicator.classList.add('steps-done');
@@ -830,7 +830,7 @@ export const chatModule = {
             this.setAgentType('aios');
         }
 
-        this.setMemoryEnabled(false);
+        this.setMemoryEnabled(true);
         this.setTasksVisibility(false);
 
         conversationStateManager?.onConversationCleared();
@@ -909,7 +909,62 @@ export const chatModule = {
         if (selectedSessions.length > 0) {
             payload.context_session_ids = selectedSessions.map(session => session.session_id);
         }
-        if (attachedFiles.length > 0) payload.files = attachedFiles.map(f => ({ name: f.name, type: f.type, path: f.path, content: f.content, isText: f.isText }));
+
+        // Handle file attachments
+        if (attachedFiles.length > 0) {
+            const backendSupportedFiles = [];
+            const unsupportedTextFiles = [];
+            const binaryDocumentFiles = [];
+
+            attachedFiles.forEach(f => {
+                // Check if it's a binary document file (docx, xlsx, pptx, etc.)
+                const isBinaryDoc = f.type.includes('word') || f.type.includes('excel') ||
+                    f.type.includes('powerpoint') || f.type.includes('document') ||
+                    f.type.includes('spreadsheet') || f.type.includes('presentation') ||
+                    f.type.includes('msword') || f.type.includes('ms-excel') ||
+                    f.type.includes('ms-powerpoint') || f.type.includes('officedocument');
+
+                if (isBinaryDoc && f.path) {
+                    // Binary documents: send with path (uploaded to Supabase)
+                    binaryDocumentFiles.push({
+                        name: f.name,
+                        type: f.type,
+                        path: f.path,
+                        isText: false
+                    });
+                } else if (f.isBackendSupported && (f.path || f.content)) {
+                    // Backend-supported files: send with correct MIME type
+                    backendSupportedFiles.push({
+                        name: f.name,
+                        type: f.backendMimeType || f.type,
+                        path: f.path,
+                        content: f.content,
+                        isText: f.isText
+                    });
+                } else if (f.isText && f.content) {
+                    // Unsupported text files: include content in message
+                    unsupportedTextFiles.push({
+                        name: f.name,
+                        content: f.content
+                    });
+                }
+            });
+
+            // Combine all files for backend
+            const allBackendFiles = [...backendSupportedFiles, ...binaryDocumentFiles];
+            if (allBackendFiles.length > 0) {
+                payload.files = allBackendFiles;
+            }
+
+            // Include unsupported text files in the message
+            if (unsupportedTextFiles.length > 0) {
+                let fileContentsText = '\n\n--- Attached Files ---\n';
+                unsupportedTextFiles.forEach(file => {
+                    fileContentsText += `\n### File: ${file.name}\n\`\`\`\n${file.content}\n\`\`\`\n`;
+                });
+                payload.message = (payload.message || '') + fileContentsText;
+            }
+        }
 
         try {
             await socketService.sendMessage(payload);
