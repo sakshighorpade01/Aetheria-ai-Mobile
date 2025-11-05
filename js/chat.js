@@ -445,10 +445,13 @@ function populateBotMessage(data) {
         contentBlock.id = contentBlockId;
         contentBlock.className = is_log ? 'content-block log-block' : 'content-block';
         
-        const header = document.createElement('div');
-        header.className = 'content-block-header';
-        header.textContent = ownerName.replace(/_/g, ' ');
-        contentBlock.appendChild(header);
+        // Only add header for log blocks, not for main content
+        if (is_log) {
+            const header = document.createElement('div');
+            header.className = 'content-block-header';
+            header.textContent = ownerName.replace(/_/g, ' ');
+            contentBlock.appendChild(header);
+        }
 
         const innerContent = document.createElement('div');
         innerContent.className = 'inner-content';
@@ -506,10 +509,9 @@ function handleAgentStep(data) {
             logEntry.innerHTML = `
                 <i class="fas fa-wrench tool-log-icon"></i>
                 <div class="tool-log-details">
-                    <span class="tool-log-owner">${ownerName}</span>
                     <span class="tool-log-action">Used tool: <strong>${toolName}</strong></span>
                 </div>
-                <span class="tool-log-status in-progress">In progress...</span>
+                <span class="tool-log-status in-progress" title="In progress"></span>
             `;
             logsContainer.appendChild(logEntry);
         }
@@ -517,9 +519,9 @@ function handleAgentStep(data) {
         if (logEntry) {
             const statusEl = logEntry.querySelector('.tool-log-status');
             if (statusEl) {
-                statusEl.textContent = 'Completed';
                 statusEl.classList.remove('in-progress');
                 statusEl.classList.add('completed');
+                statusEl.setAttribute('title', 'Completed');
             }
         }
     }
@@ -714,7 +716,6 @@ function handleImageGenerated(data = {}) {
             logEntry.innerHTML = `
                 <i class="fas fa-palette tool-log-icon"></i>
                 <div class="tool-log-details">
-                    <span class="tool-log-owner">${(data.agent_name || 'ImageTools').replace(/_/g, ' ')}</span>
                     <span class="tool-log-action"><strong>Generated an image artifact</strong></span>
                 </div>
                 <button class="artifact-reference compact" data-artifact-id="${artifactId}" title="Open image artifact">

@@ -258,9 +258,7 @@
 }
 
 .tool-log-owner {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-weight: 500;
+    display: none;
 }
 
 .tool-log-action {
@@ -269,30 +267,43 @@
 }
 
 .tool-log-status {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 99px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease;
 }
 
 .tool-log-status.in-progress {
-    color: var(--warning-700);
-    background-color: transparent;
+    background-color: #fbbf24;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.8), 0 0 4px rgba(251, 191, 36, 1);
+    animation: pulse 2s ease-in-out infinite;
 }
 
 .dark-mode .tool-log-status.in-progress {
-    color: var(--warning-100);
-    background-color: transparent;
+    background-color: #fcd34d;
+    box-shadow: 0 0 12px rgba(252, 211, 77, 0.9), 0 0 4px rgba(252, 211, 77, 1);
 }
 
 .tool-log-status.completed {
-    color: var(--success-700);
-    background-color: transparent;
+    background-color: #22c55e;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.7), 0 0 4px rgba(34, 197, 94, 1);
 }
 
 .dark-mode .tool-log-status.completed {
-    color: var(--success-100);
-    background-color: transparent;
+    background-color: #4ade80;
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.8), 0 0 4px rgba(74, 222, 128, 1);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.15);
+    }
 }
 
 .sandbox-log .content-block-header {

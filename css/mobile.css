@@ -499,6 +499,47 @@ body:not(.dark-mode) .input-action-menu-item i {
     color: var(--error-500);
 }
 
+/* --- Mobile Message Styling Fixes --- */
+@media (max-width: 768px) {
+    /* Increase user message width on mobile */
+    .message {
+        max-width: 95%;
+        word-break: normal !important;
+        overflow-wrap: anywhere;
+    }
+    
+    /* User messages should use more space and not break prematurely */
+    .user-message {
+        max-width: 95%;
+        word-break: normal !important;
+        white-space: pre-wrap;
+        min-width: fit-content;
+    }
+    
+    /* Better word wrapping for user messages */
+    .user-message-text {
+        word-break: normal !important;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+        display: inline-block;
+        max-width: 100%;
+    }
+    
+    /* Ensure user message container uses available space */
+    .user-message-container {
+        max-width: 95%;
+        width: fit-content;
+        min-width: 0;
+    }
+    
+    /* User message wrapper should allow full width */
+    .user-message-wrapper {
+        max-width: 95%;
+        width: fit-content;
+        align-self: flex-end;
+    }
+}
+
 /* --- File Preview Modal --- */
 #file-preview-modal {
     position: fixed;
