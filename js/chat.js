@@ -362,74 +362,120 @@ function createBotMessagePlaceholder(messageId) {
     });
 }
 
-// Helper to extract code from object and strip markdown code block formatting
-function extractCodeFromObject(obj) {
-    if (!obj || typeof obj !== 'object') {
-        return String(obj ?? '');
+// Helper to normalize content from backend (handles objects, strings, etc.)
+function normalizeBackendContent(content) {
+    console.log('[Chat] normalizeBackendContent called:', {
+        contentType: typeof content,
+        isNull: content === null,
+        isUndefined: content === undefined,
+        contentPreview: typeof content === 'string' ? content.substring(0, 100) : content
+    });
+
+    // If it's already a string, return as-is
+    if (typeof content === 'string') {
+        console.log('[Chat] Content is already a string, returning as-is');
+        return content;
     }
 
-    const potentialKeys = ['raw', 'code', 'content', 'text', 'output'];
-    const languageHint = obj.lang || obj.language || (obj.type === 'code' ? obj.format || '' : '');
+    // If it's null or undefined, return empty string
+    if (content == null) {
+        console.log('[Chat] Content is null/undefined, returning empty string');
+        return '';
+    }
 
-    const wrapWithFence = (codeString, lang = languageHint) => {
-        const fenceLang = typeof lang === 'string' && lang.length ? lang.trim() : '';
-        const normalized = typeof codeString === 'string' ? codeString : JSON.stringify(codeString, null, 2);
-        const trimmed = normalized.endsWith('\n') ? normalized.trimEnd() : normalized;
-        return `\`\`\`${fenceLang}\n${trimmed}\n\`\`\``;
-    };
-
-    for (const key of potentialKeys) {
-        if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
-
-        const value = obj[key];
-        if (value == null) continue;
-
-        if (typeof value === 'string') {
-            const trimmed = value.trim();
-            if (trimmed.startsWith('```')) {
-                return trimmed;
+    // If it's an object, extract the actual content
+    if (typeof content === 'object') {
+        console.log('[Chat] Content is an object, extracting...');
+        
+        // Check for common content keys
+        const potentialKeys = ['raw', 'code', 'content', 'text', 'output', 'data'];
+        
+        for (const key of potentialKeys) {
+            if (Object.prototype.hasOwnProperty.call(content, key)) {
+                const value = content[key];
+                console.log(`[Chat] Found key "${key}" with value type:`, typeof value);
+                
+                // If the value is a string, check if it's already markdown
+                if (typeof value === 'string') {
+                    const trimmed = value.trim();
+                    // If it's already a code block, return as-is
+                    if (trimmed.startsWith('```')) {
+                        console.log('[Chat] Value is already markdown code block');
+                        return trimmed;
+                    }
+                    // If it has language info, wrap it
+                    const lang = content.lang || content.language || content.format || '';
+                    if (lang && trimmed) {
+                        console.log('[Chat] Wrapping in code block with language:', lang);
+                        return `\`\`\`${lang}\n${trimmed}\n\`\`\``;
+                    }
+                    // Otherwise return the raw string
+                    console.log('[Chat] Returning raw string value');
+                    return trimmed;
+                }
+                
+                // If the value is an object, stringify it as JSON
+                if (typeof value === 'object' && value !== null) {
+                    console.log('[Chat] Value is object, stringifying as JSON');
+                    const jsonString = JSON.stringify(value, null, 2);
+                    return `\`\`\`json\n${jsonString}\n\`\`\``;
+                }
+                
+                // For other types, convert to string
+                console.log('[Chat] Converting value to string');
+                return String(value);
             }
-            return wrapWithFence(trimmed);
         }
-
-        if (typeof value === 'object') {
-            return wrapWithFence(JSON.stringify(value, null, 2), 'json');
+        
+        // If no content key found, stringify the entire object
+        console.log('[Chat] No content key found, stringifying entire object');
+        try {
+            const jsonString = JSON.stringify(content, null, 2);
+            return `\`\`\`json\n${jsonString}\n\`\`\``;
+        } catch (e) {
+            console.error('[Chat] Failed to stringify object:', e);
+            return '[Complex object - unable to display]';
         }
-
-        return wrapWithFence(String(value));
     }
 
-    return wrapWithFence(obj.type === 'code' ? JSON.stringify(obj, null, 2) : String(obj));
+    // For any other type, convert to string
+    console.log('[Chat] Converting to string (fallback)');
+    return String(content);
 }
 
 function populateBotMessage(data) {
-    // Use 'let' for content so it can be modified.
+    console.log('[Chat] populateBotMessage called:', {
+        messageId: data.id,
+        contentType: typeof data.content,
+        streaming: data.streaming,
+        agent_name: data.agent_name,
+        team_name: data.team_name,
+        is_log: data.is_log
+    });
+
     let { content, id: messageId, streaming = false, agent_name, team_name, is_log } = data;
     const messageDiv = ongoingStreams.get(messageId);
-    if (!messageDiv) return;
+    if (!messageDiv) {
+        console.warn('[Chat] Message div not found for:', messageId);
+        return;
+    }
 
-    // If the content from the backend is an object, extract the code
-    if (typeof content === 'object' && content !== null) {
-        content = extractCodeFromObject(content);
-    }
-    // ★★★ THIS IS THE CRITICAL FIX ★★★
-    // If the content from the backend is an object (which causes the '[object Object]' error),
-    // we must convert it into a markdown code block string *before* it's sent to the formatter.
-    if (typeof content === 'object' && content !== null) {
-        try {
-            // The message-formatter expects a JSON string inside a markdown code block.
-            // We construct that string here.
-            const jsonString = JSON.stringify(content, null, 2);
-            content = "```json\n" + jsonString + "\n```";
-        } catch (e) {
-            // Fallback in case of a circular object, though unlikely.
-            content = "Error: Could not display complex object from server.";
-        }
-    }
-    // ★★★ END OF FIX ★★★
+    // Normalize content from backend (handles objects, strings, etc.)
+    const originalContent = content;
+    content = normalizeBackendContent(content);
+    
+    console.log('[Chat] Content after normalization:', {
+        originalType: typeof originalContent,
+        normalizedType: typeof content,
+        normalizedLength: content?.length,
+        normalizedPreview: typeof content === 'string' ? content.substring(0, 100) : content
+    });
 
     const ownerName = agent_name || team_name;
-    if (!ownerName || !content) return;
+    if (!ownerName || !content) {
+        console.warn('[Chat] Missing ownerName or content:', { ownerName, hasContent: !!content });
+        return;
+    }
 
     const targetContainer = is_log
         ? messageDiv.querySelector(`#logs-${messageId}`)
@@ -463,9 +509,13 @@ function populateBotMessage(data) {
     const innerContentDiv = contentBlock.querySelector('.inner-content');
     if (innerContentDiv) {
         const streamId = `${messageId}-${ownerName}`;
+        
+        // Use inline mode for main content, button mode for logs
+        const useInlineMode = !is_log;
+        
         const formattedContent = streaming
             ? messageFormatter.formatStreaming(content, streamId)
-            : messageFormatter.format(content, { inlineArtifacts: true });
+            : messageFormatter.format(content, { inlineArtifacts: useInlineMode });
 
         innerContentDiv.innerHTML = formattedContent;
 
@@ -582,6 +632,14 @@ function handleDone(data) {
     }
 
     messageFormatter.finishStreaming(messageId);
+    
+    // Apply inline enhancements (Mermaid, syntax highlighting, etc.) after streaming completes
+    const mainContent = messageDiv.querySelector('.message-content');
+    if (mainContent && messageFormatter.applyInlineEnhancements) {
+        console.log('[Chat] Applying inline enhancements after streaming complete');
+        messageFormatter.applyInlineEnhancements(mainContent);
+    }
+    
     ongoingStreams.delete(messageId);
     sessionActive = false;
 

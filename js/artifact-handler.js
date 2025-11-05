@@ -123,6 +123,9 @@ class ArtifactHandler {
 
         const panContainer = document.createElement('div');
         panContainer.className = 'mermaid-pan-container';
+        panContainer.dataset.scale = '1';
+        panContainer.dataset.translateX = '0';
+        panContainer.dataset.translateY = '0';
 
         const mermaidDiv = document.createElement('div');
         mermaidDiv.className = 'mermaid';
@@ -131,18 +134,131 @@ class ArtifactHandler {
 
         panContainer.appendChild(mermaidDiv);
         wrapper.appendChild(panContainer);
+
+        // Add zoom controls
+        const controls = document.createElement('div');
+        controls.className = 'mermaid-controls';
+        controls.innerHTML = `
+            <button class="zoom-in-btn" title="Zoom In"><i class="fas fa-plus"></i></button>
+            <button class="zoom-out-btn" title="Zoom Out"><i class="fas fa-minus"></i></button>
+            <button class="zoom-reset-btn" title="Reset View"><i class="fas fa-expand"></i></button>
+        `;
+        wrapper.appendChild(controls);
         container.appendChild(wrapper);
 
-        const runMermaid = () => {
-            if (typeof window === 'undefined' || !window.mermaid) return;
-            if (typeof window.mermaid.run === 'function') {
-                window.mermaid.run({ nodes: [mermaidDiv] });
-            } else if (typeof window.mermaid.init === 'function') {
-                window.mermaid.init(undefined, [mermaidDiv]);
+        // Setup zoom controls
+        this.setupMermaidZoom(panContainer, controls);
+
+        const runMermaid = async () => {
+            console.log('[ArtifactHandler] Starting Mermaid render in modal');
+
+            if (typeof window === 'undefined' || !window.mermaid) {
+                console.error('[ArtifactHandler] Mermaid library not loaded');
+                this.showMermaidError(container, 'Mermaid library not loaded');
+                return;
+            }
+
+            try {
+                // Wait a bit for the modal to be fully visible and sized
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                console.log('[ArtifactHandler] Rendering Mermaid diagram');
+                console.log('[ArtifactHandler] Mermaid content:', content.substring(0, 100));
+
+                if (typeof window.mermaid.run === 'function') {
+                    await window.mermaid.run({ nodes: [mermaidDiv] });
+                } else if (typeof window.mermaid.init === 'function') {
+                    await window.mermaid.init(undefined, [mermaidDiv]);
+                } else {
+                    throw new Error('No Mermaid render method available');
+                }
+
+                // After rendering, ensure SVG is visible
+                const svg = mermaidDiv.querySelector('svg');
+                if (svg) {
+                    console.log('[ArtifactHandler] Mermaid SVG rendered, dimensions:', {
+                        width: svg.getAttribute('width'),
+                        height: svg.getAttribute('height'),
+                        viewBox: svg.getAttribute('viewBox')
+                    });
+
+                    // Don't remove dimensions, just ensure it's visible
+                    svg.style.display = 'block';
+                    svg.style.margin = '0 auto';
+                } else {
+                    console.error('[ArtifactHandler] No SVG found after Mermaid render');
+                }
+            } catch (error) {
+                console.error('Mermaid rendering error:', error);
+                this.showMermaidError(container, 'Failed to render diagram. Check syntax.');
             }
         };
 
-        requestAnimationFrame(runMermaid);
+        // Use setTimeout instead of requestAnimationFrame for better timing
+        setTimeout(runMermaid, 50);
+    }
+
+    setupMermaidZoom(panContainer, controls) {
+        const applyTransform = () => {
+            const scale = parseFloat(panContainer.dataset.scale) || 1;
+            const x = parseFloat(panContainer.dataset.translateX) || 0;
+            const y = parseFloat(panContainer.dataset.translateY) || 0;
+            panContainer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+        };
+
+        controls.querySelector('.zoom-in-btn')?.addEventListener('click', () => {
+            const currentScale = parseFloat(panContainer.dataset.scale) || 1;
+            panContainer.dataset.scale = Math.min(3, currentScale * 1.2).toString();
+            applyTransform();
+        });
+
+        controls.querySelector('.zoom-out-btn')?.addEventListener('click', () => {
+            const currentScale = parseFloat(panContainer.dataset.scale) || 1;
+            panContainer.dataset.scale = Math.max(0.5, currentScale / 1.2).toString();
+            applyTransform();
+        });
+
+        controls.querySelector('.zoom-reset-btn')?.addEventListener('click', () => {
+            panContainer.dataset.scale = '1';
+            panContainer.dataset.translateX = '0';
+            panContainer.dataset.translateY = '0';
+            applyTransform();
+        });
+
+        // Pan with mouse drag
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        panContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - (parseFloat(panContainer.dataset.translateX) || 0);
+            startY = e.clientY - (parseFloat(panContainer.dataset.translateY) || 0);
+            panContainer.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panContainer.dataset.translateX = (e.clientX - startX).toString();
+            panContainer.dataset.translateY = (e.clientY - startY).toString();
+            applyTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            panContainer.style.cursor = 'grab';
+        });
+
+        panContainer.style.cursor = 'grab';
+    }
+
+    showMermaidError(container, message) {
+        container.innerHTML = `
+            <div style="padding: 40px; text-align: center; color: var(--error-500);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 12px;"></i>
+                <p style="margin: 0; font-size: 0.9rem;">${message}</p>
+            </div>
+        `;
     }
 
     renderCodeArtifact(container, content, language) {
@@ -235,7 +351,7 @@ class ArtifactHandler {
             this.notificationService.show(message, type, 3000);
         }
     }
-    
+
     // --- NEW: Functions to handle terminal display ---
     showTerminal(artifactId) {
         const container = document.getElementById('artifact-container');
