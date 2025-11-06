@@ -1,14 +1,15 @@
-# python-backend/github_tools.py (Expanded Version)
+"""GitHub toolkit exposing repository management helpers."""
 
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from agno.tools import Toolkit
-from github import Github, GithubException
+from github import Github, GithubException, InputGitTreeElement
 
 from supabase_client import supabase_client
 
 logger = logging.getLogger(__name__)
+
 
 class GitHubTools(Toolkit):
     """A toolkit for interacting with the GitHub API on behalf of the user."""
@@ -20,11 +21,16 @@ class GitHubTools(Toolkit):
             tools=[
                 self.list_repositories,
                 self.create_issue,
-                # --- NEW: Registering the expanded tools ---
+                # --- Expanded tools ---
                 self.get_file_content,
                 self.list_pull_requests,
                 self.get_pull_request_details,
                 self.add_comment,
+                self.get_repository_details,
+                self.list_branches,
+                self.create_branch,
+                self.create_or_update_file,
+                self.commit_files,
             ],
         )
         self.user_id = user_id
@@ -32,163 +38,291 @@ class GitHubTools(Toolkit):
         self._access_token: Optional[str] = None
         self._token_fetched = False
 
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
     def _get_access_token(self) -> Optional[str]:
-        # This method is unchanged and remains the same.
         if self._token_fetched:
             return self._access_token
         try:
             response = (
                 supabase_client.from_("user_integrations")
-                .select("access_token").eq("user_id", self.user_id).eq("service", "github")
-                .single().execute()
+                .select("access_token")
+                .eq("user_id", self.user_id)
+                .eq("service", "github")
+                .single()
+                .execute()
             )
             if response.data and response.data.get("access_token"):
                 self._access_token = response.data["access_token"]
             else:
                 self._access_token = None
-        except Exception as e:
-            logger.error(f"Error fetching GitHub token for user {self.user_id}: {e}")
+        except Exception as exc:
+            logger.error("Error fetching GitHub token for user %s: %s", self.user_id, exc)
             self._access_token = None
         self._token_fetched = True
         return self._access_token
 
     def _get_client(self) -> Optional[Github]:
-        # This method is unchanged and remains the same.
         if self._github_client:
             return self._github_client
         access_token = self._get_access_token()
         if access_token:
             self._github_client = Github(access_token)
-            return self._github_client
-        return None
+        return self._github_client
 
-    # --- EXISTING TOOLS (Unchanged) ---
+    # ------------------------------------------------------------------
+    # Core tools
+    # ------------------------------------------------------------------
     def list_repositories(self) -> str:
-        # This method is unchanged.
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repos = client.get_user().get_repos()
             repo_list = [repo.full_name for repo in repos]
-            if not repo_list: return "No repositories found for your account."
+            if not repo_list:
+                return "No repositories found for your account."
             return "\n".join(repo_list)
-        except GithubException as e:
-            return f"Error accessing GitHub API: {e.data.get('message', 'Invalid credentials')}."
+        except GithubException as exc:
+            message = exc.data.get("message", "Invalid credentials") if exc.data else str(exc)
+            return f"Error accessing GitHub API: {message}."
 
     def create_issue(self, repo_full_name: str, title: str, body: str) -> str:
-        # This method is unchanged.
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repo = client.get_repo(repo_full_name)
             issue = repo.create_issue(title=title, body=body)
             return f"Successfully created issue #{issue.number} in {repo_full_name}. URL: {issue.html_url}"
-        except GithubException as e:
-            if e.status == 404: return f"Error: Repository '{repo_full_name}' not found."
-            return f"Error creating issue: {e.data.get('message', 'Unknown error')}."
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Repository '{repo_full_name}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error creating issue: {message}."
 
-    # --- NEW EXPANDED TOOLS ---
-    def get_file_content(self, repo_full_name: str, file_path: str) -> str:
-        """
-        Retrieves the content of a specific file from a GitHub repository.
-
-        Args:
-            repo_full_name: The full name of the repository (e.g., 'owner/repo-name').
-            file_path: The full path to the file within the repository (e.g., 'src/main.py').
-
-        Returns:
-            The content of the file as a string, or an error message.
-        """
+    # ------------------------------------------------------------------
+    # Expanded tools
+    # ------------------------------------------------------------------
+    def get_file_content(self, repo_full_name: str, file_path: str, ref: Optional[str] = None) -> str:
+        """Retrieves the contents of a file from a repository."""
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repo = client.get_repo(repo_full_name)
-            contents = repo.get_contents(file_path)
-            if contents.encoding == "base64":
-                return contents.decoded_content.decode('utf-8')
-            return contents.decoded_content
-        except GithubException as e:
-            if e.status == 404: return f"Error: File or repository not found at '{repo_full_name}/{file_path}'."
-            return f"Error getting file content: {e.data.get('message', 'Unknown error')}."
+            contents = repo.get_contents(file_path, ref=ref)
+            decoded = contents.decoded_content
+            return decoded.decode("utf-8") if isinstance(decoded, bytes) else str(decoded)
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: File or repository not found at '{repo_full_name}/{file_path}'."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error getting file content: {message}."
 
-    def list_pull_requests(self, repo_full_name: str, state: str = 'open') -> str:
-        """
-        Lists pull requests for a specified repository.
-
-        Args:
-            repo_full_name: The full name of the repository (e.g., 'owner/repo-name').
-            state: The state of the pull requests to list. Can be 'open', 'closed', or 'all'.
-
-        Returns:
-            A formatted string listing the pull requests, or an error message.
-        """
+    def list_pull_requests(self, repo_full_name: str, state: str = "open") -> str:
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repo = client.get_repo(repo_full_name)
-            pulls = repo.get_pulls(state=state, sort='created', direction='desc')
+            pulls = repo.get_pulls(state=state, sort="created", direction="desc")
             if pulls.totalCount == 0:
                 return f"No {state} pull requests found in {repo_full_name}."
-            
-            pr_summaries = [
-                f"PR #{pr.number}: {pr.title} (by {pr.user.login})"
-                for pr in pulls
-            ]
-            return "\n".join(pr_summaries)
-        except GithubException as e:
-            return f"Error listing pull requests: {e.data.get('message', 'Unknown error')}."
+            summaries = [f"PR #{pr.number}: {pr.title} (by {pr.user.login})" for pr in pulls]
+            return "\n".join(summaries)
+        except GithubException as exc:
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error listing pull requests: {message}."
 
     def get_pull_request_details(self, repo_full_name: str, pr_number: int) -> str:
-        """
-        Gets the detailed information for a single pull request, including changed files.
-
-        Args:
-            repo_full_name: The full name of the repository (e.g., 'owner/repo-name').
-            pr_number: The number of the pull request.
-
-        Returns:
-            A detailed summary of the pull request.
-        """
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repo = client.get_repo(repo_full_name)
             pr = repo.get_pull(pr_number)
-            changed_files = [f.filename for f in pr.get_files()]
-            
-            details = (
-                f"PR #{pr.number}: {pr.title}\n"
-                f"Author: {pr.user.login}\n"
-                f"State: {pr.state}\n"
-                f"URL: {pr.html_url}\n\n"
-                f"Description:\n{pr.body}\n\n"
-                f"Files Changed ({len(changed_files)}):\n" + "\n".join(f"- {file}" for file in changed_files)
-            )
-            return details
-        except GithubException as e:
-            if e.status == 404: return f"Error: Pull request #{pr_number} not found in '{repo_full_name}'."
-            return f"Error getting PR details: {e.data.get('message', 'Unknown error')}."
+            changed_files = [f"- {file.filename}" for file in pr.get_files()]
+            details = [
+                f"PR #{pr.number}: {pr.title}",
+                f"Author: {pr.user.login}",
+                f"State: {pr.state}",
+                f"URL: {pr.html_url}",
+                "",
+                "Description:",
+                pr.body or "No description.",
+                "",
+                f"Files Changed ({len(changed_files)}):",
+                *(changed_files or ["- None"]),
+            ]
+            return "\n".join(details)
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Pull request #{pr_number} not found in '{repo_full_name}'."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error getting PR details: {message}."
 
     def add_comment(self, repo_full_name: str, issue_number: int, comment_body: str) -> str:
-        """
-        Adds a comment to a specified issue or pull request.
-
-        Args:
-            repo_full_name: The full name of the repository (e.g., 'owner/repo-name').
-            issue_number: The number of the issue or pull request to comment on.
-            comment_body: The text of the comment to post.
-
-        Returns:
-            A confirmation message with a link to the new comment.
-        """
         client = self._get_client()
-        if not client: return "GitHub account not connected."
+        if not client:
+            return "GitHub account not connected."
         try:
             repo = client.get_repo(repo_full_name)
-            # The same method works for both issues and PRs
             issue = repo.get_issue(number=issue_number)
             comment = issue.create_comment(comment_body)
             return f"Successfully added comment to issue/PR #{issue_number}. URL: {comment.html_url}"
-        except GithubException as e:
-            if e.status == 404: return f"Error: Issue or PR #{issue_number} not found in '{repo_full_name}'."
-            return f"Error adding comment: {e.data.get('message', 'Unknown error')}."
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Issue or PR #{issue_number} not found in '{repo_full_name}'."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error adding comment: {message}."
+
+    def get_repository_details(self, repo_full_name: str) -> str:
+        client = self._get_client()
+        if not client:
+            return "GitHub account not connected."
+        try:
+            repo = client.get_repo(repo_full_name)
+            details = [
+                f"**Repository**: {repo.full_name}",
+                f"**ID**: `{repo.id}`",
+                f"**Default Branch**: {repo.default_branch}",
+                f"**Visibility**: {repo.visibility}",
+                f"**SSH URL**: {repo.ssh_url}",
+                f"**HTTPS URL**: {repo.clone_url}",
+            ]
+            return "Repository details:\n" + "\n".join(details)
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Repository '{repo_full_name}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error getting repository details: {message}."
+
+    def list_branches(self, repo_full_name: str) -> str:
+        client = self._get_client()
+        if not client:
+            return "GitHub account not connected."
+        try:
+            repo = client.get_repo(repo_full_name)
+            branches = [branch.name for branch in repo.get_branches()]
+            if not branches:
+                return f"No branches found in {repo_full_name}."
+            return "Branches:\n" + "\n".join(f"- {name}" for name in branches)
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Repository '{repo_full_name}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error listing branches: {message}."
+
+    def create_branch(self, repo_full_name: str, new_branch: str, from_branch: Optional[str] = None) -> str:
+        client = self._get_client()
+        if not client:
+            return "GitHub account not connected."
+        try:
+            repo = client.get_repo(repo_full_name)
+            source_branch = from_branch or repo.default_branch
+            try:
+                repo.get_git_ref(f"heads/{new_branch}")
+                return f"Error: Branch '{new_branch}' already exists in {repo_full_name}."
+            except GithubException as exc:
+                if exc.status != 404:
+                    raise
+
+            base_ref = repo.get_git_ref(f"heads/{source_branch}")
+            repo.create_git_ref(ref=f"refs/heads/{new_branch}", sha=base_ref.object.sha)
+            return f"Created branch '{new_branch}' from '{source_branch}' in {repo_full_name}."
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Source branch '{from_branch or source_branch}' or repository '{repo_full_name}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error creating branch: {message}."
+        except Exception as exc:  # pragma: no cover - unexpected error logging
+            logger.exception("Unexpected error creating branch")
+            return f"An unexpected error occurred: {exc}"
+
+    def create_or_update_file(
+        self,
+        repo_full_name: str,
+        path: str,
+        content: str,
+        commit_message: str,
+        branch: Optional[str] = None,
+    ) -> str:
+        client = self._get_client()
+        if not client:
+            return "GitHub account not connected."
+        if not path:
+            return "Error: File path must be provided."
+        try:
+            repo = client.get_repo(repo_full_name)
+            target_branch = branch or repo.default_branch
+            try:
+                existing = repo.get_contents(path, ref=target_branch)
+                repo.update_file(
+                    path=path,
+                    message=commit_message,
+                    content=content,
+                    sha=existing.sha,
+                    branch=target_branch,
+                )
+                return f"Updated file '{path}' on branch '{target_branch}'."
+            except GithubException as exc:
+                if exc.status != 404:
+                    raise
+                repo.create_file(
+                    path=path,
+                    message=commit_message,
+                    content=content,
+                    branch=target_branch,
+                )
+                return f"Created file '{path}' on branch '{target_branch}'."
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Repository '{repo_full_name}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error creating or updating file: {message}."
+        except Exception as exc:  # pragma: no cover - unexpected error logging
+            logger.exception("Unexpected error creating/updating file")
+            return f"An unexpected error occurred: {exc}"
+
+    def commit_files(
+        self,
+        repo_full_name: str,
+        branch: str,
+        files: List[Dict[str, str]],
+        commit_message: str,
+    ) -> str:
+        client = self._get_client()
+        if not client:
+            return "GitHub account not connected."
+        if not branch:
+            return "Error: Branch name must be provided."
+        if not files:
+            return "Error: At least one file must be provided."
+        try:
+            repo = client.get_repo(repo_full_name)
+            ref = repo.get_git_ref(f"heads/{branch}")
+            base_commit = repo.get_git_commit(ref.object.sha)
+
+            tree_elements: List[InputGitTreeElement] = []
+            for file_entry in files:
+                path = file_entry.get("path")
+                content = file_entry.get("content")
+                if not path or content is None:
+                    return "Error: Each file must include 'path' and 'content'."
+                blob = repo.create_git_blob(content, "utf-8")
+                tree_elements.append(InputGitTreeElement(path=path, mode="100644", type="blob", sha=blob.sha))
+
+            tree = repo.create_git_tree(tree_elements, base_tree=base_commit.tree)
+            new_commit = repo.create_git_commit(commit_message, tree, [base_commit])
+            ref.edit(new_commit.sha)
+            return (
+                f"Committed {len(files)} file(s) to branch '{branch}'. "
+                f"Commit SHA: `{new_commit.sha}`"
+            )
+        except GithubException as exc:
+            if exc.status == 404:
+                return f"Error: Repository '{repo_full_name}' or branch '{branch}' not found."
+            message = exc.data.get("message", "Unknown error") if exc.data else str(exc)
+            return f"Error committing files: {message}."

@@ -1,0 +1,48 @@
+# render.yaml (Final Version with All Syntax Corrections)
+services:
+  - type: redis
+    name: aios-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: aios-web
+    plan: free
+    runtime: docker
+    repo: https://github.com/GodBoii/AI-OS
+    branch: master
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # ===================================================================
+    # CRITICAL FIX: Use a single set of quotes. The YAML parser treats this
+    # as one literal string, and the shell correctly interprets it.
+    dockerCommand: 'gunicorn --worker-class eventlet -w 1 --timeout 300 --keep-alive 65 --bind 0.0.0.0:$PORT app:app'
+    # ===================================================================
+    envVars:
+      - fromGroup: aios-secrets
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: aios-redis
+          property: connectionString
+
+  - type: web
+    name: aios-flower
+    plan: free
+    runtime: docker
+    repo: https://github.com/GodBoii/AI-OS
+    branch: master
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # ===================================================================
+    # CRITICAL FIX: Reorder the command to place global Celery options
+    # (-A and --broker) BEFORE the 'flower' subcommand.
+    dockerCommand: "celery -A celery_app:celery_app flower --broker=$REDIS_URL"
+    # ===================================================================
+    envVars:
+      - fromGroup: aios-secrets
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: aios-redis
+          property: connectionString

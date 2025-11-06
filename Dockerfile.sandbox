@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     git \
     curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user for security.

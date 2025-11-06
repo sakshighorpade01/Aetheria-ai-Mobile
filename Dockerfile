@@ -1,31 +1,31 @@
-# Dockerfile
+# Dockerfile (Final, Production-Ready Version)
 
-# Use an official Python runtime as a parent image
-FROM python:3.11
+FROM python:3.11-slim-bookworm
 
-# Set the working directory in the container
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
+    libffi-dev \
+    libssl-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+
 WORKDIR /app
 
-# Copy the requirements file into the container at /app
-COPY ./python-backend/requirements.txt .
+COPY python-backend/requirements.txt . 
 
-# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the python-backend application code into the container at /app
-COPY ./python-backend/ .
+COPY python-backend/ . 
 
-RUN mkdir -p /app/uploads
-# Make port 8765 available to the world outside this container
-# This doesn't publish the port, just documents it.
 EXPOSE 8765
 
-# Define environment variables (can be overridden at runtime)
-ENV PORT=8765
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 
-# Command to run the application using Gunicorn
-# Assumes your Flask app instance in app.py is named 'app'
-# Uses eventlet for SocketIO compatibility
-# Update the CMD line to add timeout parameter
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "--timeout", "300", "--keep-alive", "65", "--bind", "0.0.0.0:8765", "app:app"]
+# Railway will set PORT dynamically (usually 8000-9000 range)
+# Gunicorn binds to 0.0.0.0:$PORT which Railway provides
+# For local development, PORT defaults to 8765
+CMD ["sh", "-c", "gunicorn --worker-class eventlet -w 1 --timeout 300 --keep-alive 65 --bind 0.0.0.0:${PORT:-8765} app:app"]

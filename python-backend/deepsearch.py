@@ -6,7 +6,7 @@ from agno.memory.db.sqlite import SqliteMemoryDb
 from agno.memory.classifier import MemoryClassifier
 from agno.memory.summarizer import MemorySummarizer
 from agno.team.team import Team
-from agno.tools.duckduckgo import DuckDuckGoTools
+from agno.tools.googlesearch import GoogleSearchTools
 from agno.tools.shell import ShellTools
 from agno.tools.calculator import CalculatorTools
 from agno.tools.crawl4ai import Crawl4aiTools
@@ -73,7 +73,7 @@ def get_deepsearch(
 
     # Add DuckDuckGo search if requested
     if ddg_search:
-        tools.append(DuckDuckGoTools())
+        tools.append(GoogleSearchTools())
         instructions.append("Use DuckDuckGoTools for web / internet searches. Always include sources.")
 
     # Add shell tools if requested
