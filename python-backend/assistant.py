@@ -27,8 +27,6 @@ from agno.tools.website import WebsiteTools
 from agno.tools.hackernews import HackerNewsTools
 from agno.tools.wikipedia import WikipediaTools
 from agno.tools.arxiv import ArxivTools
-from agno.tools.yfinance import YFinanceTools
-from agno.tools.crawl4ai import Crawl4aiTools
 from sandbox_tools import SandboxTools
 from github_tools import GitHubTools
 from google_email_tools import GoogleEmailTools
