@@ -4,8 +4,8 @@ import { supabase } from './supabase-client.js';
 import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 
-// Backend API URL for session management - using local development server
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+// Backend API URL for session management - Railway deployment
+const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
 
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
