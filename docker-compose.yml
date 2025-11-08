@@ -28,10 +28,8 @@ services:
   flower:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.flower
     container_name: aios-flower
-    # The -A flag now targets the centralized Celery app defined in `celery_app.py`.
-    command: ["celery", "-A", "celery_app:celery_app", "flower"]
     ports:
       - "5555:5555"
     env_file:

@@ -1,0 +1,26 @@
+# Dockerfile.flower - Dedicated Dockerfile for Celery Flower monitoring
+
+FROM python:3.11-slim-bookworm
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
+    libffi-dev \
+    libssl-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY python-backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY python-backend/ .
+
+ENV PYTHONUNBUFFERED=1
+
+# Flower-specific CMD with dynamic port support
+# Railway will set PORT dynamically, defaults to 5555 for local development
+CMD ["sh", "-c", "celery -A celery_app:celery_app flower --port=${PORT:-5555}"]
