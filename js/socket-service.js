@@ -4,7 +4,7 @@
 import { supabase } from './supabase-client.js';
 
 // The backend URL is centralized here - Local development
-const BACKEND_URL = 'http://localhost:8765';
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 let socket = null;
 
 // Store callbacks for different events.

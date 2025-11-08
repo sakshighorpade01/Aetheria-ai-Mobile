@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
 // Backend URL for OAuth integrations and API calls - Local development
-const BACKEND_URL = 'http://localhost:8765';
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 
 export class AIOS {
     constructor() {

@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - Local development
-const API_PROXY_URL = 'http://localhost:8765';
+const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
 
 class FileAttachmentHandler {
   constructor() {
