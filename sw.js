@@ -137,12 +137,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Strategy 1: Network-first for API calls (with timeout)
+  // CRITICAL: Never cache real-time endpoints (socket.io, sessions API)
+  // This prevents stale connection states and ensures fresh data
+  if (url.pathname.includes('socket.io') || 
+      url.pathname.includes('/api/sessions') ||
+      url.pathname.includes('/api/integrations')) {
+    // Direct network request, no caching
+    event.respondWith(fetch(request));
+    return;
+  }
+  
+  // Strategy 1: Network-first for other API calls (with timeout)
   if (url.pathname.startsWith('/api/') || 
-      url.pathname.startsWith('/login/') || 
-      url.pathname.startsWith('/socket.io/') ||
+      url.pathname.startsWith('/login/') ||
       url.hostname.includes('onrender.com') ||
-      url.hostname.includes('supabase.co')) {
+      url.hostname.includes('supabase.co') ||
+      url.hostname.includes('railway.app')) {
     event.respondWith(networkFirstWithTimeout(request, 5000));
     return;
   }

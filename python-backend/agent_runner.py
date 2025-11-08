@@ -192,3 +192,44 @@ def run_agent_and_stream(
     except Exception as e:
         logger.error(f"Agent run failed for conversation {conversation_id}: {e}\n{traceback.format_exc()}")
         socketio.emit("error", {"message": f"An error occurred: {str(e)}. Your conversation is preserved."}, room=sid)
+    
+    finally:
+        # CRITICAL: Clean up media objects to prevent memory leaks
+        # This ensures large file buffers are released immediately
+        try:
+            # Clear media object references
+            if images:
+                for img in images:
+                    if hasattr(img, 'content'):
+                        img.content = None
+                images.clear()
+                logger.debug(f"Cleaned up {len(images)} image objects")
+            
+            if audio:
+                for aud in audio:
+                    if hasattr(aud, 'content'):
+                        aud.content = None
+                audio.clear()
+                logger.debug(f"Cleaned up {len(audio)} audio objects")
+            
+            if videos:
+                for vid in videos:
+                    if hasattr(vid, 'content'):
+                        vid.content = None
+                videos.clear()
+                logger.debug(f"Cleaned up {len(videos)} video objects")
+            
+            if other_files:
+                for file in other_files:
+                    if hasattr(file, 'content'):
+                        file.content = None
+                other_files.clear()
+                logger.debug(f"Cleaned up {len(other_files)} file objects")
+            
+            # Clear agent reference to allow garbage collection
+            agent = None
+            
+            logger.info(f"Memory cleanup completed for message_id={message_id}")
+            
+        except Exception as cleanup_error:
+            logger.error(f"Error during memory cleanup: {cleanup_error}")
