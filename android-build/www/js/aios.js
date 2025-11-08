@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 
 const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168');
 // This BACKEND_URL is for the popup window, NOT for the initial fetch.
-const BACKEND_URL = 'https://ai-os-yjbb.onrender.com';
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 
 export class AIOS {
     constructor() {

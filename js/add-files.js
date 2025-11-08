@@ -3,8 +3,8 @@
 import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
-// Backend URL for file upload API - using deployed Render backend
-const API_PROXY_URL = 'https://aios-web.onrender.com';
+// Backend URL for file upload API - Railway deployment
+const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
 
 class FileAttachmentHandler {
   constructor() {

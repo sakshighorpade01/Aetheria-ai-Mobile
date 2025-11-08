@@ -4,7 +4,7 @@
 import { supabase } from './supabase-client.js';
 
 // The backend URL is centralized here.
-const BACKEND_URL = 'https://ai-os-yjbb.onrender.com';
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 let socket = null;
 
 // Store callbacks for different events.

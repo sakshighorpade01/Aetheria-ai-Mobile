@@ -4,8 +4,8 @@
 const config = {
     // Backend connection settings
     backend: {
-        // URL for the Python backend running in Docker
-        url: 'https://ai-os-yjbb.onrender.com',
+        // URL for the Python backend - Railway deployment
+        url: 'https://aios-web-production.up.railway.app',
         
         // Maximum number of reconnection attempts
         maxReconnectAttempts: 50,
