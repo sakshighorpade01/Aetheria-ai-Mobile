@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -25,8 +26,10 @@
   <link rel="stylesheet" href="css/aios.css" />
   <link rel="stylesheet" href="css/mobile.css" />
   <link rel="stylesheet" href="css/modals.css" />
+  <link rel="stylesheet" href="css/install-prompt.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
   <!-- JS Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -84,9 +87,11 @@
             <div id="file-previews-container" class="attachments-scroll" role="list"></div>
           </div>
           <div class="input-field">
-            <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true" aria-expanded="false"><i class="fas fa-plus"></i></button>
+            <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true"
+              aria-expanded="false"><i class="fas fa-plus"></i></button>
             <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
-              <button type="button" class="input-action-menu-item active" data-menu-action="memory" role="menuitem" aria-pressed="true">
+              <button type="button" class="input-action-menu-item active" data-menu-action="memory" role="menuitem"
+                aria-pressed="true">
                 <i class="fas fa-brain"></i>
                 <span>Memory</span>
               </button>
@@ -112,6 +117,23 @@
   <div id="to-do-list-root"></div>
   <div id="context-root"></div>
   <div class="notification-container"></div>
+
+  <!-- PWA Install Prompt Banner -->
+  <div id="install-prompt-banner" class="install-prompt-banner">
+    <div class="install-prompt-content">
+      <div class="install-prompt-icon">
+        <img src="/assets/icon.png?v=2" alt="App Icon">
+      </div>
+      <div class="install-prompt-text">
+        <h3 class="install-prompt-title">Install Aetheria AI</h3>
+        <p class="install-prompt-subtitle">Get quick access from your home screen</p>
+      </div>
+      <div class="install-prompt-actions">
+        <button id="install-prompt-install-btn" class="install-prompt-btn install-prompt-btn-primary">Install</button>
+        <button id="install-prompt-dismiss-btn" class="install-prompt-btn install-prompt-btn-secondary">Not now</button>
+      </div>
+    </div>
+  </div>
   <div id="file-preview-modal" class="modal-overlay hidden">
     <div class="preview-modal-content">
       <button class="close-preview-btn">×</button>
@@ -122,24 +144,24 @@
   <!-- Context Viewer Modal -->
   <div id="context-viewer-modal" class="modal-overlay hidden">
     <div class="context-viewer-panel">
-        <div class="context-viewer-header">
-            <h3>Message Context</h3>
-            <button class="close-viewer-btn">×</button>
-        </div>
-        <div class="context-viewer-tabs">
-            <button class="viewer-tab active" data-tab="sessions">
-                <i class="fas fa-network-wired"></i>
-                <span>Sessions</span>
-            </button>
-            <button class="viewer-tab" data-tab="files">
-                <i class="fas fa-paperclip"></i>
-                <span>Files</span>
-            </button>
-        </div>
-        <div class="context-viewer-content">
-            <div class="viewer-tab-content active" id="sessions-content"></div>
-            <div class="viewer-tab-content" id="files-content"></div>
-        </div>
+      <div class="context-viewer-header">
+        <h3>Message Context</h3>
+        <button class="close-viewer-btn">×</button>
+      </div>
+      <div class="context-viewer-tabs">
+        <button class="viewer-tab active" data-tab="sessions">
+          <i class="fas fa-network-wired"></i>
+          <span>Sessions</span>
+        </button>
+        <button class="viewer-tab" data-tab="files">
+          <i class="fas fa-paperclip"></i>
+          <span>Files</span>
+        </button>
+      </div>
+      <div class="context-viewer-content">
+        <div class="viewer-tab-content active" id="sessions-content"></div>
+        <div class="viewer-tab-content" id="files-content"></div>
+      </div>
     </div>
   </div>
 
@@ -163,95 +185,95 @@
 
     // ★★★ NEW: Context Viewer Class (Expanded Logic) ★★★
     class ContextViewer {
-        constructor() {
-            this.modal = document.getElementById('context-viewer-modal');
-            this.closeBtn = this.modal.querySelector('.close-viewer-btn');
-            this.tabs = this.modal.querySelectorAll('.viewer-tab');
-            this.sessionsContent = this.modal.querySelector('#sessions-content');
-            this.filesContent = this.modal.querySelector('#files-content');
-            this.tabContents = this.modal.querySelectorAll('.viewer-tab-content');
-            this.currentContext = {};
+      constructor() {
+        this.modal = document.getElementById('context-viewer-modal');
+        this.closeBtn = this.modal.querySelector('.close-viewer-btn');
+        this.tabs = this.modal.querySelectorAll('.viewer-tab');
+        this.sessionsContent = this.modal.querySelector('#sessions-content');
+        this.filesContent = this.modal.querySelector('#files-content');
+        this.tabContents = this.modal.querySelectorAll('.viewer-tab-content');
+        this.currentContext = {};
 
-            // --- NEW: Preview Modal Elements ---
-            this.previewModal = document.getElementById('context-viewer-preview-modal');
-            this.previewContentArea = this.previewModal.querySelector('#context-viewer-preview-area');
-            this.closePreviewBtn = this.previewModal.querySelector('.close-preview-btn');
+        // --- NEW: Preview Modal Elements ---
+        this.previewModal = document.getElementById('context-viewer-preview-modal');
+        this.previewContentArea = this.previewModal.querySelector('#context-viewer-preview-area');
+        this.closePreviewBtn = this.previewModal.querySelector('.close-preview-btn');
 
-            this.bindEvents();
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        this.closeBtn.addEventListener('click', () => this.hide());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.hide();
+        });
+
+        this.tabs.forEach(tab => {
+          tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+        });
+
+        // --- Preview Modal Events ---
+        this.closePreviewBtn.addEventListener('click', () => this.hidePreview());
+        this.previewModal.addEventListener('click', (e) => {
+          if (e.target === this.previewModal) this.hidePreview();
+        });
+      }
+
+      show(contextData) {
+        this.currentContext = contextData;
+        const { files = [], sessions = [] } = contextData;
+
+        this.renderSessions(sessions);
+        this.renderFiles(files);
+
+        this.tabs.forEach(tab => {
+          const tabName = tab.dataset.tab;
+          const hasContent = (tabName === 'files' && files.length > 0) || (tabName === 'sessions' && sessions.length > 0);
+          tab.style.display = hasContent ? 'flex' : 'none';
+        });
+
+        if (sessions.length > 0) {
+          this.switchTab('sessions');
+        } else if (files.length > 0) {
+          this.switchTab('files');
+        } else {
+          this.switchTab('sessions');
         }
 
-        bindEvents() {
-            this.closeBtn.addEventListener('click', () => this.hide());
-            this.modal.addEventListener('click', (e) => {
-                if (e.target === this.modal) this.hide();
-            });
+        this.modal.classList.remove('hidden');
+      }
 
-            this.tabs.forEach(tab => {
-                tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
-            });
+      hide() {
+        this.modal.classList.add('hidden');
+      }
 
-            // --- Preview Modal Events ---
-            this.closePreviewBtn.addEventListener('click', () => this.hidePreview());
-            this.previewModal.addEventListener('click', (e) => {
-                if (e.target === this.previewModal) this.hidePreview();
-            });
+      switchTab(tabName) {
+        this.tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === tabName));
+        this.tabContents.forEach(content => content.classList.toggle('active', content.id === `${tabName}-content`));
+      }
+
+      renderFiles(files) {
+        if (files.length === 0) {
+          this.filesContent.innerHTML = '<div class="empty-state"><i class="fas fa-paperclip"></i><p>No files were attached.</p></div>';
+          return;
         }
 
-        show(contextData) {
-            this.currentContext = contextData;
-            const { files = [], sessions = [] } = contextData;
+        this.filesContent.innerHTML = files.map((file, index) => {
+          // Determine file icon based on type
+          let iconClass = 'fa-file';
+          if (file.type.startsWith('image/')) iconClass = 'fa-file-image';
+          else if (file.type.startsWith('video/')) iconClass = 'fa-file-video';
+          else if (file.type.startsWith('audio/')) iconClass = 'fa-file-audio';
+          else if (file.type === 'application/pdf') iconClass = 'fa-file-pdf';
+          else if (file.type.includes('word') || file.type.includes('document')) iconClass = 'fa-file-word';
+          else if (file.type.includes('excel') || file.type.includes('spreadsheet')) iconClass = 'fa-file-excel';
+          else if (file.type.includes('zip') || file.type.includes('archive')) iconClass = 'fa-file-archive';
+          else if (file.name.match(/\.(js|jsx|ts|tsx|py|java|cpp|c|cs|php|rb|go|rs|html|css|json)$/i)) iconClass = 'fa-file-code';
 
-            this.renderSessions(sessions);
-            this.renderFiles(files);
-            
-            this.tabs.forEach(tab => {
-                const tabName = tab.dataset.tab;
-                const hasContent = (tabName === 'files' && files.length > 0) || (tabName === 'sessions' && sessions.length > 0);
-                tab.style.display = hasContent ? 'flex' : 'none';
-            });
+          // Check if file has preview capability (either previewUrl or text content)
+          const hasPreview = file.previewUrl || file.isText || file.content;
 
-            if (sessions.length > 0) {
-                this.switchTab('sessions');
-            } else if (files.length > 0) {
-                this.switchTab('files');
-            } else {
-                this.switchTab('sessions');
-            }
-
-            this.modal.classList.remove('hidden');
-        }
-
-        hide() {
-            this.modal.classList.add('hidden');
-        }
-
-        switchTab(tabName) {
-            this.tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === tabName));
-            this.tabContents.forEach(content => content.classList.toggle('active', content.id === `${tabName}-content`));
-        }
-
-        renderFiles(files) {
-            if (files.length === 0) {
-                this.filesContent.innerHTML = '<div class="empty-state"><i class="fas fa-paperclip"></i><p>No files were attached.</p></div>';
-                return;
-            }
-            
-            this.filesContent.innerHTML = files.map((file, index) => {
-                // Determine file icon based on type
-                let iconClass = 'fa-file';
-                if (file.type.startsWith('image/')) iconClass = 'fa-file-image';
-                else if (file.type.startsWith('video/')) iconClass = 'fa-file-video';
-                else if (file.type.startsWith('audio/')) iconClass = 'fa-file-audio';
-                else if (file.type === 'application/pdf') iconClass = 'fa-file-pdf';
-                else if (file.type.includes('word') || file.type.includes('document')) iconClass = 'fa-file-word';
-                else if (file.type.includes('excel') || file.type.includes('spreadsheet')) iconClass = 'fa-file-excel';
-                else if (file.type.includes('zip') || file.type.includes('archive')) iconClass = 'fa-file-archive';
-                else if (file.name.match(/\.(js|jsx|ts|tsx|py|java|cpp|c|cs|php|rb|go|rs|html|css|json)$/i)) iconClass = 'fa-file-code';
-                
-                // Check if file has preview capability (either previewUrl or text content)
-                const hasPreview = file.previewUrl || file.isText || file.content;
-                
-                return `
+          return `
                     <div class="viewer-file-item">
                         <i class="fas ${iconClass}"></i>
                         <span class="item-name">${this.escapeHtml(file.name)}</span>
@@ -260,156 +282,156 @@
                         </div>
                     </div>
                 `;
-            }).join('');
-            
-            // Add click handlers for preview buttons
-            this.filesContent.querySelectorAll('.preview-context-file-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const fileIndex = parseInt(btn.dataset.fileIndex);
-                    const file = files[fileIndex];
-                    this.showFilePreview(file);
-                });
-            });
+        }).join('');
+
+        // Add click handlers for preview buttons
+        this.filesContent.querySelectorAll('.preview-context-file-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fileIndex = parseInt(btn.dataset.fileIndex);
+            const file = files[fileIndex];
+            this.showFilePreview(file);
+          });
+        });
+      }
+
+      renderSessions(sessions) {
+        if (sessions.length === 0) {
+          this.sessionsContent.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No sessions were used as context.</p></div>';
+          return;
         }
 
-        renderSessions(sessions) {
-            if (sessions.length === 0) {
-                this.sessionsContent.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No sessions were used as context.</p></div>';
-                return;
+        // Render session chips
+        this.sessionsContent.innerHTML = sessions.map((session, index) => {
+          // Support both session.runs and session.memory.runs structures
+          const runs = session.runs || session.memory?.runs || [];
+
+          // Get session title from first user message
+          let sessionTitle = `Session ${index + 1}`;
+          const topLevelRuns = runs.filter(run => !run.parent_run_id);
+
+          if (topLevelRuns.length > 0) {
+            const firstRun = topLevelRuns[0];
+            const userInput = firstRun.input?.input_content || firstRun.content || '';
+
+            if (userInput && userInput.trim()) {
+              let messageContent = userInput;
+              const marker = 'Current message:';
+              const markerIndex = messageContent.lastIndexOf(marker);
+              if (markerIndex !== -1) {
+                messageContent = messageContent.substring(markerIndex + marker.length).trim();
+              }
+
+              // Get first line as title
+              sessionTitle = messageContent.split('\n')[0].trim();
+              if (sessionTitle.length > 50) {
+                sessionTitle = sessionTitle.substring(0, 50) + '...';
+              }
             }
-            
-            // Render session chips
-            this.sessionsContent.innerHTML = sessions.map((session, index) => {
-                // Support both session.runs and session.memory.runs structures
-                const runs = session.runs || session.memory?.runs || [];
-                
-                // Get session title from first user message
-                let sessionTitle = `Session ${index + 1}`;
-                const topLevelRuns = runs.filter(run => !run.parent_run_id);
-                
-                if (topLevelRuns.length > 0) {
-                    const firstRun = topLevelRuns[0];
-                    const userInput = firstRun.input?.input_content || firstRun.content || '';
-                    
-                    if (userInput && userInput.trim()) {
-                        let messageContent = userInput;
-                        const marker = 'Current message:';
-                        const markerIndex = messageContent.lastIndexOf(marker);
-                        if (markerIndex !== -1) {
-                            messageContent = messageContent.substring(markerIndex + marker.length).trim();
-                        }
-                        
-                        // Get first line as title
-                        sessionTitle = messageContent.split('\n')[0].trim();
-                        if (sessionTitle.length > 50) {
-                            sessionTitle = sessionTitle.substring(0, 50) + '...';
-                        }
-                    }
-                }
-                
-                return `
+          }
+
+          return `
                     <div class="viewer-session-chip" data-session-index="${index}">
                         <span class="viewer-session-chip-title">${this.escapeHtml(sessionTitle)}</span>
                         <i class="fas fa-chevron-right viewer-session-chip-icon"></i>
                     </div>
                 `;
-            }).join('');
-            
-            // Add click handlers to chips
-            this.sessionsContent.querySelectorAll('.viewer-session-chip').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const sessionIndex = parseInt(chip.dataset.sessionIndex);
-                    this.showSessionDetail(sessions[sessionIndex], sessionIndex);
-                });
-            });
-        }
-        
-        showSessionDetail(session, index) {
-            // Support both session.runs and session.memory.runs structures
-            const runs = session.runs || session.memory?.runs || [];
-            const topLevelRuns = runs.filter(run => !run.parent_run_id);
-            
-            // Get session title
-            let sessionTitle = `Session ${index + 1}`;
-            if (topLevelRuns.length > 0) {
-                const firstRun = topLevelRuns[0];
-                const userInput = firstRun.input?.input_content || firstRun.content || '';
-                
-                if (userInput && userInput.trim()) {
-                    let messageContent = userInput;
-                    const marker = 'Current message:';
-                    const markerIndex = messageContent.lastIndexOf(marker);
-                    if (markerIndex !== -1) {
-                        messageContent = messageContent.substring(markerIndex + marker.length).trim();
-                    }
-                    sessionTitle = messageContent.split('\n')[0].trim();
-                    if (sessionTitle.length > 50) {
-                        sessionTitle = sessionTitle.substring(0, 50) + '...';
-                    }
-                }
+        }).join('');
+
+        // Add click handlers to chips
+        this.sessionsContent.querySelectorAll('.viewer-session-chip').forEach(chip => {
+          chip.addEventListener('click', (e) => {
+            const sessionIndex = parseInt(chip.dataset.sessionIndex);
+            this.showSessionDetail(sessions[sessionIndex], sessionIndex);
+          });
+        });
+      }
+
+      showSessionDetail(session, index) {
+        // Support both session.runs and session.memory.runs structures
+        const runs = session.runs || session.memory?.runs || [];
+        const topLevelRuns = runs.filter(run => !run.parent_run_id);
+
+        // Get session title
+        let sessionTitle = `Session ${index + 1}`;
+        if (topLevelRuns.length > 0) {
+          const firstRun = topLevelRuns[0];
+          const userInput = firstRun.input?.input_content || firstRun.content || '';
+
+          if (userInput && userInput.trim()) {
+            let messageContent = userInput;
+            const marker = 'Current message:';
+            const markerIndex = messageContent.lastIndexOf(marker);
+            if (markerIndex !== -1) {
+              messageContent = messageContent.substring(markerIndex + marker.length).trim();
             }
-            
-            // Build conversation HTML
-            const conversationHtml = topLevelRuns.map(run => {
-                const userInput = run.input?.input_content || '';
-                const assistantOutput = run.content || '';
-                
-                let html = '';
-                
-                // Add user message
-                if (userInput && userInput.trim()) {
-                    let messageContent = userInput;
-                    const marker = 'Current message:';
-                    const markerIndex = messageContent.lastIndexOf(marker);
-                    if (markerIndex !== -1) {
-                        messageContent = messageContent.substring(markerIndex + marker.length).trim();
-                    }
-                    
-                    html += `
+            sessionTitle = messageContent.split('\n')[0].trim();
+            if (sessionTitle.length > 50) {
+              sessionTitle = sessionTitle.substring(0, 50) + '...';
+            }
+          }
+        }
+
+        // Build conversation HTML
+        const conversationHtml = topLevelRuns.map(run => {
+          const userInput = run.input?.input_content || '';
+          const assistantOutput = run.content || '';
+
+          let html = '';
+
+          // Add user message
+          if (userInput && userInput.trim()) {
+            let messageContent = userInput;
+            const marker = 'Current message:';
+            const markerIndex = messageContent.lastIndexOf(marker);
+            if (markerIndex !== -1) {
+              messageContent = messageContent.substring(markerIndex + marker.length).trim();
+            }
+
+            html += `
                         <div class="viewer-session-turn">
                             <div class="viewer-session-role">User</div>
                             <div class="viewer-session-content">${this.escapeHtml(messageContent)}</div>
                         </div>
                     `;
-                }
-                
-                // Add assistant message
-                if (assistantOutput && assistantOutput.trim()) {
-                    html += `
+          }
+
+          // Add assistant message
+          if (assistantOutput && assistantOutput.trim()) {
+            html += `
                         <div class="viewer-session-turn">
                             <div class="viewer-session-role">Assistant</div>
                             <div class="viewer-session-content">${this.escapeHtml(assistantOutput)}</div>
                         </div>
                     `;
-                }
-                
-                // Legacy format support
-                if (!userInput && !assistantOutput && run.role && run.content) {
-                    const isUser = run.role === 'user';
-                    let messageContent = run.content;
-                    
-                    if (isUser) {
-                        const marker = 'Current message:';
-                        const markerIndex = messageContent.lastIndexOf(marker);
-                        if (markerIndex !== -1) {
-                            messageContent = messageContent.substring(markerIndex + marker.length).trim();
-                        }
-                    }
-                    
-                    html += `
+          }
+
+          // Legacy format support
+          if (!userInput && !assistantOutput && run.role && run.content) {
+            const isUser = run.role === 'user';
+            let messageContent = run.content;
+
+            if (isUser) {
+              const marker = 'Current message:';
+              const markerIndex = messageContent.lastIndexOf(marker);
+              if (markerIndex !== -1) {
+                messageContent = messageContent.substring(markerIndex + marker.length).trim();
+              }
+            }
+
+            html += `
                         <div class="viewer-session-turn">
                             <div class="viewer-session-role">${isUser ? 'User' : 'Assistant'}</div>
                             <div class="viewer-session-content">${this.escapeHtml(messageContent)}</div>
                         </div>
                     `;
-                }
-                
-                return html;
-            }).join('');
-            
-            // Render expanded view
-            this.sessionsContent.innerHTML = `
+          }
+
+          return html;
+        }).join('');
+
+        // Render expanded view
+        this.sessionsContent.innerHTML = `
                 <div class="viewer-session-expanded">
                     <div class="viewer-session-header">
                         <button class="viewer-session-back-btn">
@@ -422,33 +444,33 @@
                     </div>
                 </div>
             `;
-            
-            // Add back button handler
-            const backBtn = this.sessionsContent.querySelector('.viewer-session-back-btn');
-            backBtn.addEventListener('click', () => {
-                this.renderSessions(this.currentContext.sessions);
-            });
-        }
-        
-        escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
 
-        // --- Preview Logic ---
-        showFilePreview(file) {
-            let contentHTML = '';
-            const fileExt = file.name.split('.').pop().toLowerCase();
-            
-            // Handle text files
-            if (file.isText || file.content) {
-                const content = file.content || '';
-                
-                // Handle Markdown files
-                if (fileExt === 'md' && typeof marked !== 'undefined') {
-                    const renderedMarkdown = marked.parse(content);
-                    contentHTML = `
+        // Add back button handler
+        const backBtn = this.sessionsContent.querySelector('.viewer-session-back-btn');
+        backBtn.addEventListener('click', () => {
+          this.renderSessions(this.currentContext.sessions);
+        });
+      }
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // --- Preview Logic ---
+      showFilePreview(file) {
+        let contentHTML = '';
+        const fileExt = file.name.split('.').pop().toLowerCase();
+
+        // Handle text files
+        if (file.isText || file.content) {
+          const content = file.content || '';
+
+          // Handle Markdown files
+          if (fileExt === 'md' && typeof marked !== 'undefined') {
+            const renderedMarkdown = marked.parse(content);
+            contentHTML = `
                         <div class="preview-header">
                             <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
                         </div>
@@ -456,11 +478,11 @@
                             ${renderedMarkdown}
                         </div>
                     `;
-                }
-                // Handle CSV files
-                else if (fileExt === 'csv') {
-                    const tableHTML = this.renderCSVTable(content);
-                    contentHTML = `
+          }
+          // Handle CSV files
+          else if (fileExt === 'csv') {
+            const tableHTML = this.renderCSVTable(content);
+            contentHTML = `
                         <div class="preview-header">
                             <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
                         </div>
@@ -468,11 +490,11 @@
                             ${tableHTML}
                         </div>
                     `;
-                }
-                // Handle other text files
-                else {
-                    const escapedContent = this.escapeHtml(content);
-                    contentHTML = `
+          }
+          // Handle other text files
+          else {
+            const escapedContent = this.escapeHtml(content);
+            contentHTML = `
                         <div class="preview-header">
                             <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
                         </div>
@@ -480,31 +502,31 @@
                             <pre><code>${escapedContent}</code></pre>
                         </div>
                     `;
-                }
-            }
-            // Handle media files with previewUrl
-            else if (file.previewUrl) {
-                if (file.type.startsWith('image/')) {
-                    contentHTML = `
+          }
+        }
+        // Handle media files with previewUrl
+        else if (file.previewUrl) {
+          if (file.type.startsWith('image/')) {
+            contentHTML = `
                         <div class="preview-header">
                             <h3 class="preview-title">${this.escapeHtml(file.name)}</h3>
                         </div>
                         <img src="${file.previewUrl}" alt="Preview of ${this.escapeHtml(file.name)}">
                     `;
-                } else if (file.type.startsWith('video/')) {
-                    contentHTML = `<video src="${file.previewUrl}" controls autoplay></video>`;
-                } else if (file.type.startsWith('audio/')) {
-                    contentHTML = `<audio src="${file.previewUrl}" controls autoplay></audio>`;
-                } else if (file.type === 'application/pdf') {
-                    contentHTML = `<iframe class="pdf-preview" src="${file.previewUrl}"></iframe>`;
-                } else {
-                    contentHTML = `<p>Preview is not available for this file type.</p>`;
-                }
-            }
-            // Handle binary document files (docx, xlsx, etc.)
-            else if (file.type.includes('word') || file.type.includes('excel') || file.type.includes('powerpoint') || 
-                     file.type.includes('document') || file.type.includes('spreadsheet') || file.type.includes('presentation')) {
-                contentHTML = `
+          } else if (file.type.startsWith('video/')) {
+            contentHTML = `<video src="${file.previewUrl}" controls autoplay></video>`;
+          } else if (file.type.startsWith('audio/')) {
+            contentHTML = `<audio src="${file.previewUrl}" controls autoplay></audio>`;
+          } else if (file.type === 'application/pdf') {
+            contentHTML = `<iframe class="pdf-preview" src="${file.previewUrl}"></iframe>`;
+          } else {
+            contentHTML = `<p>Preview is not available for this file type.</p>`;
+          }
+        }
+        // Handle binary document files (docx, xlsx, etc.)
+        else if (file.type.includes('word') || file.type.includes('excel') || file.type.includes('powerpoint') ||
+          file.type.includes('document') || file.type.includes('spreadsheet') || file.type.includes('presentation')) {
+          contentHTML = `
                     <div class="preview-unavailable">
                         <i class="fas fa-file-alt"></i>
                         <h3>${this.escapeHtml(file.name)}</h3>
@@ -512,81 +534,81 @@
                         <p class="preview-hint">This file will be sent to the AI for processing.</p>
                     </div>
                 `;
-            }
-            else {
-                contentHTML = `
+        }
+        else {
+          contentHTML = `
                     <div class="preview-unavailable">
                         <i class="fas fa-file"></i>
                         <h3>${this.escapeHtml(file.name)}</h3>
                         <p>Preview is not available for this file type.</p>
                     </div>
                 `;
-            }
-            
-            this.previewContentArea.innerHTML = contentHTML;
-            this.previewModal.classList.remove('hidden');
-        }
-        
-        renderCSVTable(csvContent) {
-            const lines = csvContent.split('\n').filter(line => line.trim());
-            if (lines.length === 0) return '<p>Empty CSV file</p>';
-            
-            // Parse CSV (simple parser, handles basic cases)
-            const parseCSVLine = (line) => {
-                const result = [];
-                let current = '';
-                let inQuotes = false;
-                
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        result.push(current.trim());
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                result.push(current.trim());
-                return result;
-            };
-            
-            const rows = lines.map(line => parseCSVLine(line));
-            const headers = rows[0];
-            const dataRows = rows.slice(1);
-            
-            // Limit to first 100 rows for performance
-            const limitedRows = dataRows.slice(0, 100);
-            const hasMore = dataRows.length > 100;
-            
-            let tableHTML = '<table class="csv-table"><thead><tr>';
-            headers.forEach(header => {
-                tableHTML += `<th>${this.escapeHtml(header)}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
-            
-            limitedRows.forEach(row => {
-                tableHTML += '<tr>';
-                row.forEach(cell => {
-                    tableHTML += `<td>${this.escapeHtml(cell)}</td>`;
-                });
-                tableHTML += '</tr>';
-            });
-            
-            tableHTML += '</tbody></table>';
-            
-            if (hasMore) {
-                tableHTML += `<p class="csv-note">Showing first 100 rows of ${dataRows.length} total rows</p>`;
-            }
-            
-            return tableHTML;
         }
 
-        hidePreview() {
-            this.previewModal.classList.add('hidden');
-            this.previewContentArea.innerHTML = '';
+        this.previewContentArea.innerHTML = contentHTML;
+        this.previewModal.classList.remove('hidden');
+      }
+
+      renderCSVTable(csvContent) {
+        const lines = csvContent.split('\n').filter(line => line.trim());
+        if (lines.length === 0) return '<p>Empty CSV file</p>';
+
+        // Parse CSV (simple parser, handles basic cases)
+        const parseCSVLine = (line) => {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        };
+
+        const rows = lines.map(line => parseCSVLine(line));
+        const headers = rows[0];
+        const dataRows = rows.slice(1);
+
+        // Limit to first 100 rows for performance
+        const limitedRows = dataRows.slice(0, 100);
+        const hasMore = dataRows.length > 100;
+
+        let tableHTML = '<table class="csv-table"><thead><tr>';
+        headers.forEach(header => {
+          tableHTML += `<th>${this.escapeHtml(header)}</th>`;
+        });
+        tableHTML += '</tr></thead><tbody>';
+
+        limitedRows.forEach(row => {
+          tableHTML += '<tr>';
+          row.forEach(cell => {
+            tableHTML += `<td>${this.escapeHtml(cell)}</td>`;
+          });
+          tableHTML += '</tr>';
+        });
+
+        tableHTML += '</tbody></table>';
+
+        if (hasMore) {
+          tableHTML += `<p class="csv-note">Showing first 100 rows of ${dataRows.length} total rows</p>`;
         }
+
+        return tableHTML;
+      }
+
+      hidePreview() {
+        this.previewModal.classList.add('hidden');
+        this.previewContentArea.innerHTML = '';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -727,7 +749,7 @@
 
         const action = item.dataset.menuAction;
         console.log('[UI] Input action menu clicked:', action);
-        
+
         if (action === 'attach') {
           closeDropdowns();
           window.fileAttachmentHandler?.openFilePicker?.();
@@ -770,7 +792,7 @@
       input?.addEventListener('input', () => {
         // Close the plus button menu when user starts typing
         closeDropdowns();
-        
+
         // Use requestAnimationFrame to batch layout changes and prevent jank
         requestAnimationFrame(() => {
           input.style.height = 'auto';
@@ -784,18 +806,20 @@
       });
     }
 
+
+
     // Register Service Worker for PWA functionality
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
             console.log('[PWA] Service Worker registered successfully:', registration.scope);
-            
+
             // Check for updates periodically
             setInterval(() => {
               registration.update();
             }, 60000); // Check every minute
-            
+
             // Handle service worker updates
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
@@ -815,39 +839,68 @@
             console.error('[PWA] Service Worker registration failed:', error);
           });
       });
-
-      // Handle PWA install prompt
-      let deferredPrompt;
-      window.addEventListener('beforeinstallprompt', (e) => {
-        console.log('[PWA] Install prompt available');
-        // Prevent the mini-infobar from appearing on mobile
-        e.preventDefault();
-        // Stash the event so it can be triggered later
-        deferredPrompt = e;
-        
-        // Optionally show your own install button/banner here
-        // You can add a custom UI element to trigger the install
-        window.showInstallPromotion = () => {
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-              if (choiceResult.outcome === 'accepted') {
-                console.log('[PWA] User accepted the install prompt');
-              } else {
-                console.log('[PWA] User dismissed the install prompt');
-              }
-              deferredPrompt = null;
-            });
-          }
-        };
-      });
-
-      // Track successful installation
-      window.addEventListener('appinstalled', () => {
-        console.log('[PWA] App was installed successfully');
-        deferredPrompt = null;
-      });
     }
+
+    // Handle PWA install prompt - OUTSIDE service worker block
+    let deferredPrompt;
+    const installBanner = document.getElementById('install-prompt-banner');
+    const installBtn = document.getElementById('install-prompt-install-btn');
+    const dismissBtn = document.getElementById('install-prompt-dismiss-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+
+      // Stash the event so it can be triggered later
+      deferredPrompt = e;
+
+      // Show the install banner after 1 second
+      setTimeout(() => {
+        if (installBanner) {
+          installBanner.classList.add('show');
+        }
+      }, 1000);
+    });
+
+    // Install button click handler
+    installBtn?.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        console.log('[PWA] No install prompt available');
+        return;
+      }
+
+      // Hide the banner
+      installBanner.classList.remove('show');
+
+      // Show the install prompt
+      deferredPrompt.prompt();
+
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+        console.log('[PWA] User accepted the install');
+      } else {
+        console.log('[PWA] User dismissed the install');
+      }
+
+      // Clear the deferredPrompt
+      deferredPrompt = null;
+    });
+
+    // Dismiss button click handler
+    dismissBtn?.addEventListener('click', () => {
+      installBanner.classList.remove('show');
+    });
+
+    // Track successful installation
+    window.addEventListener('appinstalled', () => {
+      if (installBanner) {
+        installBanner.classList.remove('show');
+      }
+      deferredPrompt = null;
+    });
   </script>
 </body>
+
 </html>
