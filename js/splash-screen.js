@@ -241,6 +241,12 @@ class SplashScreen {
             cancelAnimationFrame(this.animationFrame);
         }
         
+        // Show the app container
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) {
+            appContainer.style.opacity = '1';
+        }
+        
         // Fade out splash screen
         if (this.splashElement) {
             this.splashElement.classList.add('fade-out');
