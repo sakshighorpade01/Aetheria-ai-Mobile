@@ -1,5 +1,5 @@
 // sw.js - Production Service Worker for Aetheria AI PWA
-const CACHE_VERSION = 'aetheria-v1.0.8';
+const CACHE_VERSION = 'aetheria-v1.0.9';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -12,6 +12,7 @@ const STATIC_ASSETS = [
   '/assets/icon.png',
   
   // Core CSS
+  '/css/splash-screen.css',
   '/css/design-system.css',
   '/css/style.css',
   '/css/chat-variables.css',
@@ -30,6 +31,7 @@ const STATIC_ASSETS = [
   '/css/install-prompt.css',
   
   // Core JS modules
+  '/js/splash-screen.js',
   '/js/config.js',
   '/js/supabase-client.js',
   '/js/socket-service.js',
