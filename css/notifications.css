@@ -23,19 +23,19 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px;
-    border-radius: 10px;
+    border-radius: 50px;
     min-width: 200px;
     max-width: 360px;
     pointer-events: all;
     overflow: hidden;
 
-    /* Transparent glassmorphism effect - Light mode */
-    background: rgba(255, 255, 255, 0.25);
+    /* Light mode - Light dark glassmorphism */
+    background: rgba(50, 50, 50, 0.75);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(80, 80, 80, 0.3);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 
     /* Animation */
     opacity: 0;
@@ -44,12 +44,13 @@
 }
 
 .dark-mode .unified-notification {
-    background: rgba(0, 0, 0, 0.65);
+    /* Dark mode - Cream white glassmorphism */
+    background: rgba(245, 245, 220, 0.85);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 240, 0.3);
+    box-shadow: 0 4px 16px 0 rgba(245, 245, 220, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Show Animation */
@@ -67,15 +68,15 @@
 /* Hover Effect - Enhanced Glassmorphism */
 .unified-notification:hover {
     transform: translateY(0) scale(1.02);
-    background: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    background: rgba(60, 60, 60, 0.85);
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 .dark-mode .unified-notification:hover {
-    background: rgba(0, 0, 0, 0.75);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    background: rgba(245, 245, 220, 0.95);
+    box-shadow: 0 6px 20px 0 rgba(245, 245, 220, 0.4),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
 /* Icon - Minimalist compact */
@@ -97,7 +98,7 @@
 }
 
 .notification-message {
-    color: rgba(0, 0, 0, 0.9);
+    color: rgba(255, 255, 255, 0.95);
     font-size: 13px;
     line-height: 1.4;
     font-weight: 500;
@@ -108,7 +109,7 @@
 }
 
 .dark-mode .notification-message {
-    color: rgba(255, 255, 255, 0.95);
+    color: rgba(30, 30, 30, 0.95);
 }
 
 /* Close Button - Minimalist */
@@ -122,7 +123,7 @@
     background: transparent;
     border: none;
     border-radius: 4px;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 12px;
@@ -131,28 +132,22 @@
 }
 
 .notification-close:hover {
-    background: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.8);
-}
-
-.dark-mode .notification-close {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.dark-mode .notification-close:hover {
     background: rgba(255, 255, 255, 0.15);
     color: rgba(255, 255, 255, 0.95);
 }
 
-/* Progress Bar - Thinner and subtle */
+.dark-mode .notification-close {
+    color: rgba(30, 30, 30, 0.6);
+}
+
+.dark-mode .notification-close:hover {
+    background: rgba(30, 30, 30, 0.1);
+    color: rgba(30, 30, 30, 0.95);
+}
+
+/* Progress Bar - Removed */
 .notification-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.25);
-    transform-origin: left;
+    display: none;
 }
 
 @keyframes progress {
@@ -165,81 +160,45 @@
     }
 }
 
-/* Type Variants - Minimalist with subtle color accent */
-.notification-success {
-    border-left: 3px solid #10b981;
-}
-
+/* Type Variants - No colored borders, unified icons */
 .notification-success .notification-icon {
-    color: #059669;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode .notification-success .notification-icon {
-    color: #10b981;
-}
-
-.notification-success .notification-progress {
-    background: #10b981;
-}
-
-.notification-error {
-    border-left: 3px solid #ef4444;
+    color: rgba(30, 30, 30, 0.9);
 }
 
 .notification-error .notification-icon {
-    color: #dc2626;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode .notification-error .notification-icon {
-    color: #ef4444;
-}
-
-.notification-error .notification-progress {
-    background: #ef4444;
-}
-
-.notification-warning {
-    border-left: 3px solid #f59e0b;
+    color: rgba(30, 30, 30, 0.9);
 }
 
 .notification-warning .notification-icon {
-    color: #d97706;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode .notification-warning .notification-icon {
-    color: #f59e0b;
-}
-
-.notification-warning .notification-progress {
-    background: #f59e0b;
-}
-
-.notification-info {
-    border-left: 3px solid #3b82f6;
+    color: rgba(30, 30, 30, 0.9);
 }
 
 .notification-info .notification-icon {
-    color: #2563eb;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode .notification-info .notification-icon {
-    color: #3b82f6;
-}
-
-.notification-info .notification-progress {
-    background: #3b82f6;
-}
-
-.notification-connection {
-    border-left: 3px solid #8b5cf6;
+    color: rgba(30, 30, 30, 0.9);
 }
 
 .notification-connection .notification-icon {
-    color: #7c3aed;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .dark-mode .notification-connection .notification-icon {
-    color: #8b5cf6;
+    color: rgba(30, 30, 30, 0.9);
 }
 
 /* Retry Button */
@@ -248,27 +207,28 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.95);
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .notification-retry-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
 }
 
 .dark-mode .notification-retry-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(30, 30, 30, 0.15);
+    border: 1px solid rgba(30, 30, 30, 0.25);
+    color: rgba(30, 30, 30, 0.95);
 }
 
 .dark-mode .notification-retry-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(30, 30, 30, 0.25);
 }
 
 /* Responsive Design - Mobile optimized */
