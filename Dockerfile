@@ -23,11 +23,9 @@ COPY python-backend/ .
 
 EXPOSE 8765
 
-ENV PORT=8765
-
 ENV PYTHONUNBUFFERED=1
 
-# CRITICAL FIX: Use the JSON array "exec" form for CMD.
-# This bypasses the shell and prevents any misinterpretation of quotes.
-# CMD now points directly to the instantiated app in `app.py`.
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "--timeout", "300", "--keep-alive", "65", "--bind", "0.0.0.0:8765", "app:app"]
+# Railway will set PORT dynamically (usually 8000-9000 range)
+# Gunicorn binds to 0.0.0.0:$PORT which Railway provides
+# For local development, PORT defaults to 8765
+CMD ["sh", "-c", "gunicorn --worker-class eventlet -w 1 --timeout 300 --keep-alive 65 --bind 0.0.0.0:${PORT:-8765} app:app"]
