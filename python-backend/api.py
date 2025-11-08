@@ -50,25 +50,56 @@ def disconnect_integration():
 def get_user_sessions():
     """
     Retrieves the 15 most recent conversation sessions for the authenticated user.
-    OPTIMIZED: Only fetches essential fields, not the entire 'runs' array.
+    OPTIMIZED: Fetches runs but extracts only title from first message.
     """
     user, error = get_user_from_token(request)
     if error:
         return jsonify({"error": error[0]}), error[1]
     
     try:
-        # OPTIMIZATION: Only select essential fields, exclude heavy 'runs' array
-        # This reduces query time from 30s+ to <1s and prevents timeout errors
+        # Fetch sessions with runs to extract titles
         response = supabase_client.from_('agno_sessions')\
-            .select('session_id,created_at,user_id,updated_at')\
+            .select('session_id,created_at,user_id,updated_at,runs')\
             .eq('user_id', str(user.id))\
             .order('created_at', desc=True)\
             .limit(15)\
             .execute()
         
-        logger.info(f"Sessions query for user {user.id}: returned {len(response.data)} sessions")
+        # Process sessions to extract titles and remove heavy runs data
+        sessions_with_titles = []
+        for session in response.data:
+            # Extract title from first user message
+            title = f"Session {session['session_id'][:8]}"  # Default title
+            
+            runs = session.get('runs', [])
+            if runs:
+                # Find first top-level run
+                top_level_runs = [run for run in runs if not run.get('parent_run_id')]
+                if top_level_runs:
+                    first_run = top_level_runs[0]
+                    user_input = first_run.get('input', {}).get('input_content', '') or first_run.get('content', '')
+                    
+                    if user_input:
+                        # Extract first line as title
+                        lines = user_input.strip().split('\n')
+                        title = lines[0][:100]  # First 100 chars of first line
+                        
+                        # Clean up "Current message:" marker if present
+                        if 'Current message:' in title:
+                            title = title.split('Current message:')[-1].strip()
+            
+            # Return session without heavy runs array
+            sessions_with_titles.append({
+                'session_id': session['session_id'],
+                'created_at': session['created_at'],
+                'user_id': session['user_id'],
+                'updated_at': session.get('updated_at'),
+                'title': title
+            })
         
-        return jsonify(response.data), 200
+        logger.info(f"Sessions query for user {user.id}: returned {len(sessions_with_titles)} sessions")
+        
+        return jsonify(sessions_with_titles), 200
         
     except Exception as e:
         logger.error(f"Error fetching sessions for user {user.id}: {e}")

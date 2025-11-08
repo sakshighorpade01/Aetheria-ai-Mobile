@@ -414,36 +414,39 @@ class ContextHandler {
         sessionItem.className = 'session-item';
         sessionItem.dataset.sessionId = session.session_id;
 
-        // Support both session.runs and session.memory.runs structures
-        const runs = session.runs || session.memory?.runs || [];
+        // Use title from backend if available, otherwise extract from runs
+        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
+        
+        // Fallback: If no title and runs are available, extract from runs
+        if (!session.title) {
+            const runs = session.runs || session.memory?.runs || [];
+            if (runs.length > 0) {
+                // Try to find first user message from runs
+                let firstUserMessage = null;
+                for (const run of runs) {
+                    // Check if run has input content (new format)
+                    if (run.input && run.input.input_content) {
+                        firstUserMessage = run.input.input_content;
+                        break;
+                    }
+                    // Check if run is a user role message (legacy format)
+                    if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                        firstUserMessage = run.content;
+                        break;
+                    }
+                }
 
-        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-        if (runs.length > 0) {
-            // Try to find first user message from runs
-            let firstUserMessage = null;
-            for (const run of runs) {
-                // Check if run has input content (new format)
-                if (run.input && run.input.input_content) {
-                    firstUserMessage = run.input.input_content;
-                    break;
-                }
-                // Check if run is a user role message (legacy format)
-                if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                    firstUserMessage = run.content;
-                    break;
-                }
-            }
-
-            if (firstUserMessage) {
-                let rawTitle = firstUserMessage;
-                const marker = 'Current message:';
-                const index = rawTitle.lastIndexOf(marker);
-                if (index !== -1) {
-                    rawTitle = rawTitle.substring(index + marker.length).trim();
-                }
-                sessionName = rawTitle.split('\n')[0].trim();
-                if (sessionName.length > 45) {
-                    sessionName = sessionName.substring(0, 45) + '...';
+                if (firstUserMessage) {
+                    let rawTitle = firstUserMessage;
+                    const marker = 'Current message:';
+                    const index = rawTitle.lastIndexOf(marker);
+                    if (index !== -1) {
+                        rawTitle = rawTitle.substring(index + marker.length).trim();
+                    }
+                    sessionName = rawTitle.split('\n')[0].trim();
+                    if (sessionName.length > 45) {
+                        sessionName = sessionName.substring(0, 45) + '...';
+                    }
                 }
             }
         }
@@ -530,61 +533,114 @@ class ContextHandler {
         return this.loadedSessions.filter(session => selectedIds.has(session.session_id));
     }
 
-    showSessionDetails(sessionId) {
+    async showSessionDetails(sessionId) {
         console.log('═══════════════════════════════════════════════════════');
         console.log('[ContextHandler] ✓ showSessionDetails CALLED');
         console.log('[ContextHandler] Session ID:', sessionId);
         
-        const session = this.loadedSessions.find(s => s.session_id === sessionId);
-        console.log('[ContextHandler] Session found:', !!session);
-        console.log('[ContextHandler] Detail view exists:', !!this.elements.detailView);
+        if (!this.elements.detailView) {
+            console.error('[ContextHandler] ✗ Detail view element not found');
+            this.showNotification('Could not display session details.', 'error');
+            return;
+        }
+        
+        // Show loading state
+        this.elements.listView.classList.add('hidden');
+        this.elements.detailView.classList.remove('hidden');
+        this.elements.detailView.innerHTML = '<div class="session-item-loading">Loading session details...</div>';
+        
+        try {
+            // Fetch full session details from backend
+            console.log('[ContextHandler] Fetching full session details from backend...');
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session?.access_token) {
+                throw new Error('Please log in to view session details.');
+            }
+            
+            const response = await fetch(`${API_PROXY_URL}/api/sessions/${sessionId}`, {
+                headers: { Authorization: `Bearer ${session.access_token}` },
+                signal: AbortSignal.timeout(10000)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load session details (status ${response.status})`);
+            }
+            
+            const sessionData = await response.json();
+            console.log('[ContextHandler] Session details loaded:', sessionData);
+            
+            // Now render the session with full data
+            this.renderSessionDetails(sessionData);
+            
+        } catch (error) {
+            console.error('[ContextHandler] Error loading session details:', error);
+            this.elements.detailView.innerHTML = `
+                <div class="empty-state error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Failed to load session details</p>
+                    <p class="error-hint"><small>${error.message}</small></p>
+                    <button class="back-button" onclick="window.contextHandler.showSessionList(window.contextHandler.loadedSessions)">
+                        <i class="fas fa-arrow-left"></i> Back to Sessions
+                    </button>
+                </div>
+            `;
+        }
+    }
+    
+    renderSessionDetails(session) {
+        console.log('[ContextHandler] Rendering session details');
         
         if (!session || !this.elements.detailView) {
-            console.error('[ContextHandler] ✗ Cannot show session details - missing session or detailView');
-            this.showNotification('Could not find session details.', 'error');
+            console.error('[ContextHandler] ✗ Cannot render session details');
             return;
         }
 
         // Hide the header when showing detail view
         const contextHeader = this.elements.contextWindow?.querySelector('.context-header');
-        console.log('[ContextHandler] Context header found:', !!contextHeader);
         if (contextHeader) {
             contextHeader.classList.add('hidden-for-detail');
-            console.log('[ContextHandler] ✓ Header hidden (added hidden-for-detail class)');
         }
 
         const template = document.getElementById('session-detail-template');
-        if (!template) return;
+        if (!template) {
+            console.error('[ContextHandler] session-detail-template not found');
+            return;
+        }
 
         const view = template.content.cloneNode(true);
 
         // Support both session.runs and session.memory.runs structures
         const runs = session.runs || session.memory?.runs || [];
 
-        // Get session name for the inline header
-        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-        let firstUserMessage = null;
-        for (const run of runs) {
-            if (run.input && run.input.input_content) {
-                firstUserMessage = run.input.input_content;
-                break;
+        // Get session name - use title if available
+        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
+        
+        // Fallback: extract from runs if no title
+        if (!session.title && runs.length > 0) {
+            let firstUserMessage = null;
+            for (const run of runs) {
+                if (run.input && run.input.input_content) {
+                    firstUserMessage = run.input.input_content;
+                    break;
+                }
+                if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                    firstUserMessage = run.content;
+                    break;
+                }
             }
-            if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                firstUserMessage = run.content;
-                break;
-            }
-        }
 
-        if (firstUserMessage) {
-            let rawTitle = firstUserMessage;
-            const marker = 'Current message:';
-            const index = rawTitle.lastIndexOf(marker);
-            if (index !== -1) {
-                rawTitle = rawTitle.substring(index + marker.length).trim();
-            }
-            sessionName = rawTitle.split('\n')[0].trim();
-            if (sessionName.length > 45) {
-                sessionName = sessionName.substring(0, 45) + '...';
+            if (firstUserMessage) {
+                let rawTitle = firstUserMessage;
+                const marker = 'Current message:';
+                const index = rawTitle.lastIndexOf(marker);
+                if (index !== -1) {
+                    rawTitle = rawTitle.substring(index + marker.length).trim();
+                }
+                sessionName = rawTitle.split('\n')[0].trim();
+                if (sessionName.length > 45) {
+                    sessionName = sessionName.substring(0, 45) + '...';
+                }
             }
         }
 

@@ -112,11 +112,7 @@ def run_agent_and_stream(
         # 3. Process Input Data
         images, audio, videos, other_files = process_files(turn_data.get('files', []))
         
-        # --- DEBUG: Log processed media ---
-        print(f"[AGENT_RUNNER] Processed media - Images: {len(images)}, Audio: {len(audio)}, Videos: {len(videos)}, Files: {len(other_files)}")
-        if images:
-            for i, img in enumerate(images):
-                print(f"[AGENT_RUNNER] Image {i}: name={img.name}, has_content={bool(img.content)}, has_url={bool(img.url)}")
+        # Log processed media count (without accessing attributes that may not exist)
         logger.info(f"[AGENT_RUNNER] Processed media - Images: {len(images)}, Audio: {len(audio)}, Videos: {len(videos)}, Files: {len(other_files)}")
         
         current_session_state = {'turn_context': turn_data}
@@ -197,39 +193,51 @@ def run_agent_and_stream(
         # CRITICAL: Clean up media objects to prevent memory leaks
         # This ensures large file buffers are released immediately
         try:
+            cleanup_count = 0
+            
             # Clear media object references
-            if images:
+            if 'images' in locals() and images:
+                count = len(images)
                 for img in images:
                     if hasattr(img, 'content'):
                         img.content = None
                 images.clear()
-                logger.debug(f"Cleaned up {len(images)} image objects")
+                cleanup_count += count
+                logger.debug(f"Cleaned up {count} image objects")
             
-            if audio:
+            if 'audio' in locals() and audio:
+                count = len(audio)
                 for aud in audio:
                     if hasattr(aud, 'content'):
                         aud.content = None
                 audio.clear()
-                logger.debug(f"Cleaned up {len(audio)} audio objects")
+                cleanup_count += count
+                logger.debug(f"Cleaned up {count} audio objects")
             
-            if videos:
+            if 'videos' in locals() and videos:
+                count = len(videos)
                 for vid in videos:
                     if hasattr(vid, 'content'):
                         vid.content = None
                 videos.clear()
-                logger.debug(f"Cleaned up {len(videos)} video objects")
+                cleanup_count += count
+                logger.debug(f"Cleaned up {count} video objects")
             
-            if other_files:
+            if 'other_files' in locals() and other_files:
+                count = len(other_files)
                 for file in other_files:
                     if hasattr(file, 'content'):
                         file.content = None
                 other_files.clear()
-                logger.debug(f"Cleaned up {len(other_files)} file objects")
+                cleanup_count += count
+                logger.debug(f"Cleaned up {count} file objects")
             
             # Clear agent reference to allow garbage collection
-            agent = None
+            if 'agent' in locals():
+                agent = None
             
-            logger.info(f"Memory cleanup completed for message_id={message_id}")
+            if cleanup_count > 0:
+                logger.info(f"Memory cleanup completed: {cleanup_count} media objects released for message_id={message_id}")
             
         except Exception as cleanup_error:
             logger.error(f"Error during memory cleanup: {cleanup_error}")
