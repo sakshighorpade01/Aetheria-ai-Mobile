@@ -111,6 +111,14 @@ def run_agent_and_stream(
 
         # 3. Process Input Data
         images, audio, videos, other_files = process_files(turn_data.get('files', []))
+        
+        # --- DEBUG: Log processed media ---
+        print(f"[AGENT_RUNNER] Processed media - Images: {len(images)}, Audio: {len(audio)}, Videos: {len(videos)}, Files: {len(other_files)}")
+        if images:
+            for i, img in enumerate(images):
+                print(f"[AGENT_RUNNER] Image {i}: name={img.name}, has_content={bool(img.content)}, has_url={bool(img.url)}")
+        logger.info(f"[AGENT_RUNNER] Processed media - Images: {len(images)}, Audio: {len(audio)}, Videos: {len(videos)}, Files: {len(other_files)}")
+        
         current_session_state = {'turn_context': turn_data}
         user_message = turn_data.get("user_message", "")
         
@@ -164,6 +172,8 @@ def run_agent_and_stream(
             if chunk.event in (RunEvent.run_content.value, TeamRunEvent.run_content.value):
                 is_final = owner_name == "Aetheria_AI" and not getattr(chunk, 'member_responses', [])
                 socketio.emit("response", {"content": chunk.content, "streaming": True, "id": message_id, "agent_name": owner_name, "is_log": not is_final}, room=sid)
+                # Force immediate transmission without buffering
+                socketio.sleep(0)
             elif chunk.event in (RunEvent.tool_call_started.value, TeamRunEvent.tool_call_started.value):
                 socketio.emit("agent_step", {"type": "tool_start", "name": getattr(chunk.tool, 'tool_name', None), "agent_name": owner_name, "id": message_id}, room=sid)
             elif chunk.event in (RunEvent.tool_call_completed.value, TeamRunEvent.tool_call_completed.value):

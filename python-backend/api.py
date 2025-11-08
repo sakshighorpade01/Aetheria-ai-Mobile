@@ -88,3 +88,12 @@ def generate_upload_url():
 def health_check():
     """A simple health check endpoint for monitoring."""
     return "OK", 200
+
+@api_bp.route('/health')
+def health():
+    """Detailed health check endpoint."""
+    return jsonify({
+        "status": "ok",
+        "message": "Backend is running",
+        "service": "aios-web"
+    }), 200

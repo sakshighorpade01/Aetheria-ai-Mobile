@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://aios-web-production.up.railway.app/api/:path*"
+      "destination": "http://localhost:8765/api/:path*"
     },
     {
       "source": "/login/:path*",
-      "destination": "https://aios-web-production.up.railway.app/login/:path*"
+      "destination": "http://localhost:8765/login/:path*"
     },
     {
       "source": "/socket.io/:path*",
-      "destination": "https://aios-web-production.up.railway.app/socket.io/:path*"
+      "destination": "http://localhost:8765/socket.io/:path*"
     }
   ],
   "headers": [

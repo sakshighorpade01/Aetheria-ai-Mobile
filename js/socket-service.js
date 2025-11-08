@@ -3,8 +3,8 @@
 // This service manages the WebSocket connection to the backend.
 import { supabase } from './supabase-client.js';
 
-// The backend URL is centralized here - Railway deployment
-const BACKEND_URL = 'https://aios-web-production.up.railway.app';
+// The backend URL is centralized here - Local development
+const BACKEND_URL = 'http://localhost:8765';
 let socket = null;
 
 // Store callbacks for different events.

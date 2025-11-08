@@ -982,9 +982,20 @@ export const chatModule = {
                     f.type.includes('msword') || f.type.includes('ms-excel') ||
                     f.type.includes('ms-powerpoint') || f.type.includes('officedocument');
 
+                // Check if it's a media file (image, audio, video)
+                const isMediaFile = f.type.startsWith('image/') || f.type.startsWith('audio/') || f.type.startsWith('video/');
+
                 if (isBinaryDoc && f.path) {
                     // Binary documents: send with path (uploaded to Supabase)
                     binaryDocumentFiles.push({
+                        name: f.name,
+                        type: f.type,
+                        path: f.path,
+                        isText: false
+                    });
+                } else if (isMediaFile && f.path) {
+                    // Media files (images, audio, video): send with path
+                    backendSupportedFiles.push({
                         name: f.name,
                         type: f.type,
                         path: f.path,
