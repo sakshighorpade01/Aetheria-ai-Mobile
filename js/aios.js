@@ -19,6 +19,9 @@ export class AIOS {
 
         this.cacheElements();
         this.setupEventListeners();
+        
+        // Load saved theme preference
+        this.loadThemePreference();
         this.updateThemeUI();
 
         // Handle OAuth callback on page load
@@ -29,6 +32,15 @@ export class AIOS {
         await this.updateAuthUI(user);
         
         this.initialized = true;
+    }
+
+    loadThemePreference() {
+        const savedTheme = localStorage.getItem('theme-preference');
+        if (savedTheme) {
+            document.body.classList.remove('light-mode', 'dark-mode');
+            document.body.classList.add(`${savedTheme}-mode`);
+        }
+        // If no saved preference, keep the default from HTML (dark-mode)
     }
 
     cacheElements() {
@@ -134,6 +146,8 @@ export class AIOS {
     setTheme(theme) {
         document.body.classList.remove('light-mode', 'dark-mode');
         document.body.classList.add(`${theme}-mode`);
+        // Save theme preference to localStorage
+        localStorage.setItem('theme-preference', theme);
         this.updateThemeUI();
     }
 
