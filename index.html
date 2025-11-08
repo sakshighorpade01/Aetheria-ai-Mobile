@@ -835,12 +835,13 @@
               const newWorker = registration.installing;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New service worker available, show update notification
-                  console.log('[PWA] New version available! Refresh to update.');
-                  // Optionally show a notification to the user
-                  if (window.NotificationService) {
-                    // Use your existing notification service if available
-                  }
+                  // New service worker available
+                  console.log('[PWA] New version available! Reloading...');
+                  
+                  // Auto-reload after 2 seconds to apply updates
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
                 }
               });
             });
