@@ -49,15 +49,47 @@ def disconnect_integration():
 @api_bp.route('/sessions', methods=['GET'])
 def get_user_sessions():
     """
-    Retrieves the 15 most recent conversation sessions for the authenticated user.
+    Retrieves conversation sessions for the authenticated user with pagination support.
+    Query params:
+    - offset: Starting position (default: 0)
+    - limit: Number of sessions to return (default: 15, max: 50)
     """
     user, error = get_user_from_token(request)
     if error:
         return jsonify({"error": error[0]}), error[1]
-        
-    response = supabase_client.from_('agno_sessions').select('*').eq('user_id', str(user.id)).order('created_at', desc=True).limit(15).execute()
     
-    return jsonify(response.data), 200
+    # Get pagination parameters
+    try:
+        offset = int(request.args.get('offset', 0))
+        limit = int(request.args.get('limit', 15))
+        
+        # Validate parameters
+        offset = max(0, offset)  # Ensure non-negative
+        limit = max(1, min(limit, 50))  # Clamp between 1 and 50
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid pagination parameters"}), 400
+    
+    # Get paginated sessions
+    response = supabase_client.from_('agno_sessions').select('*').eq('user_id', str(user.id)).order('created_at', desc=True).range(offset, offset + limit - 1).execute()
+    
+    # Get total count - use a separate query without range
+    count_response = supabase_client.from_('agno_sessions').select('session_id', count='exact').eq('user_id', str(user.id)).execute()
+    
+    # Extract count from response
+    total_count = 0
+    if hasattr(count_response, 'count') and count_response.count is not None:
+        total_count = count_response.count
+    else:
+        # Fallback: count the data array
+        total_count = len(count_response.data) if count_response.data else 0
+    
+    return jsonify({
+        "sessions": response.data,
+        "total": total_count,
+        "offset": offset,
+        "limit": limit,
+        "hasMore": offset + limit < total_count
+    }), 200
 
 
 @api_bp.route('/generate-upload-url', methods=['POST'])

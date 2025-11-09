@@ -21,6 +21,13 @@ class ContextHandler {
         this.backgroundLoadTimer = null;
         this.isWindowOpen = false;
         this.pendingLoadPromise = null;
+        
+        // Pagination state
+        this.currentOffset = 0;
+        this.pageSize = 15;
+        this.totalSessions = 0;
+        this.hasMoreSessions = false;
+        this.isLoadingMore = false;
     }
 
     initializeElements() {
@@ -62,6 +69,11 @@ class ContextHandler {
         });
         this.elements.panel?.addEventListener('click', (e) => e.stopPropagation());
         this.elements.closeContextBtn?.addEventListener('click', () => this.toggleWindow(false));
+        
+        // Sync/refresh button
+        this.elements.syncBtn?.addEventListener('click', () => {
+            this.forceRefreshSessions();
+        });
 
         this.elements.sessionsContainer?.addEventListener('change', (e) => {
             if (e.target.matches('.session-checkbox')) {
@@ -71,6 +83,11 @@ class ContextHandler {
                     this.updateSelectionUI();
                 }
             }
+        });
+        
+        // Infinite scroll listener
+        this.elements.sessionsContainer?.addEventListener('scroll', () => {
+            this.handleScroll();
         });
     }
 
@@ -156,6 +173,10 @@ class ContextHandler {
         console.log('[ContextHandler] Setting state to loading');
         this.loadingState = 'loading';
         this.loadError = null;
+        
+        // Reset pagination on initial load
+        this.currentOffset = 0;
+        this.loadedSessions = [];
 
         if (this.isWindowOpen) {
             console.log('[ContextHandler] Window is open, rendering loading state');
@@ -181,8 +202,8 @@ class ContextHandler {
                     throw new Error('Please log in to view chat history.');
                 }
 
-                console.log('[ContextHandler] Fetching sessions from backend:', `${API_PROXY_URL}/api/sessions`);
-                const response = await fetch(`${API_PROXY_URL}/api/sessions`, {
+                console.log('[ContextHandler] Fetching sessions from backend:', `${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`);
+                const response = await fetch(`${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`, {
                     headers: { Authorization: `Bearer ${session.access_token}` },
                     signal: AbortSignal.timeout(15000) // 15 second timeout
                 });
@@ -211,14 +232,24 @@ class ContextHandler {
                     throw new Error(errorMessage);
                 }
 
-                const sessions = await response.json();
-                console.log('[ContextHandler] Sessions received from backend:', { count: sessions?.length, sessions });
+                const responseData = await response.json();
+                console.log('[ContextHandler] Sessions received from backend:', responseData);
                 
-                this.loadedSessions = Array.isArray(sessions) ? sessions : [];
+                // Handle both old format (array) and new format (object with sessions array)
+                const sessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
+                this.totalSessions = responseData.total || sessions.length;
+                this.hasMoreSessions = responseData.hasMore || false;
+                this.currentOffset = sessions.length;
+                
+                this.loadedSessions = sessions;
                 this.loadingState = 'loaded';
                 this.loadError = null;
 
-                console.log('[ContextHandler] Sessions loaded successfully:', this.loadedSessions.length);
+                console.log('[ContextHandler] Sessions loaded successfully:', {
+                    count: this.loadedSessions.length,
+                    total: this.totalSessions,
+                    hasMore: this.hasMoreSessions
+                });
 
                 if (this.isWindowOpen) {
                     console.log('[ContextHandler] Window is open, showing session list');
@@ -265,7 +296,106 @@ class ContextHandler {
     async forceRefreshSessions() {
         this.loadingState = 'idle';
         this.loadError = null;
+        this.currentOffset = 0;
+        this.loadedSessions = [];
         return this.loadSessionsInBackground({ force: true });
+    }
+    
+    async loadMoreSessions() {
+        if (this.isLoadingMore || !this.hasMoreSessions) {
+            console.log('[ContextHandler] Skip loadMore:', { isLoadingMore: this.isLoadingMore, hasMore: this.hasMoreSessions });
+            return;
+        }
+        
+        this.isLoadingMore = true;
+        this.showLoadingMoreIndicator();
+        
+        try {
+            await supabase.auth.refreshSession();
+            const { data, error } = await supabase.auth.getSession();
+            const session = data?.session;
+            
+            if (error || !session?.access_token) {
+                throw new Error('Session expired. Please log in again.');
+            }
+            
+            console.log('[ContextHandler] Loading more sessions, offset:', this.currentOffset);
+            const response = await fetch(`${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`, {
+                headers: { Authorization: `Bearer ${session.access_token}` },
+                signal: AbortSignal.timeout(15000)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to load more sessions (status ${response.status})`);
+            }
+            
+            const responseData = await response.json();
+            const newSessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
+            
+            console.log('[ContextHandler] Loaded more sessions:', newSessions.length);
+            
+            this.loadedSessions = [...this.loadedSessions, ...newSessions];
+            this.currentOffset += newSessions.length;
+            this.hasMoreSessions = responseData.hasMore || false;
+            this.totalSessions = responseData.total || this.loadedSessions.length;
+            
+            // Append new sessions to the list
+            this.appendSessionItems(newSessions);
+            
+        } catch (err) {
+            console.error('[ContextHandler] Failed to load more sessions:', err);
+            this.showNotification('Failed to load more sessions', 'error');
+        } finally {
+            this.isLoadingMore = false;
+            this.hideLoadingMoreIndicator();
+        }
+    }
+    
+    handleScroll() {
+        if (!this.elements.sessionsContainer || this.loadingState !== 'loaded') return;
+        
+        const container = this.elements.sessionsContainer;
+        const scrollTop = container.scrollTop;
+        const scrollHeight = container.scrollHeight;
+        const clientHeight = container.clientHeight;
+        
+        // Trigger load when user scrolls to within 200px of bottom
+        const threshold = 200;
+        const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+        
+        if (distanceFromBottom < threshold && this.hasMoreSessions && !this.isLoadingMore) {
+            console.log('[ContextHandler] Scroll threshold reached, loading more sessions');
+            this.loadMoreSessions();
+        }
+    }
+    
+    showLoadingMoreIndicator() {
+        if (!this.elements.listView) return;
+        
+        let indicator = this.elements.listView.querySelector('.loading-more-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.className = 'loading-more-indicator';
+            indicator.innerHTML = '<div class="session-item-loading">Loading more sessions…</div>';
+            this.elements.listView.appendChild(indicator);
+        }
+    }
+    
+    hideLoadingMoreIndicator() {
+        const indicator = this.elements.listView?.querySelector('.loading-more-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    appendSessionItems(sessions) {
+        if (!this.elements.listView || !sessions || sessions.length === 0) return;
+        
+        console.log('[ContextHandler] Appending', sessions.length, 'session items');
+        
+        sessions.forEach(session => {
+            this.elements.listView.appendChild(this.createSessionItem(session));
+        });
     }
 
     renderCurrentState() {
@@ -414,39 +544,36 @@ class ContextHandler {
         sessionItem.className = 'session-item';
         sessionItem.dataset.sessionId = session.session_id;
 
-        // Use title from backend if available, otherwise extract from runs
-        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
-        
-        // Fallback: If no title and runs are available, extract from runs
-        if (!session.title) {
-            const runs = session.runs || session.memory?.runs || [];
-            if (runs.length > 0) {
-                // Try to find first user message from runs
-                let firstUserMessage = null;
-                for (const run of runs) {
-                    // Check if run has input content (new format)
-                    if (run.input && run.input.input_content) {
-                        firstUserMessage = run.input.input_content;
-                        break;
-                    }
-                    // Check if run is a user role message (legacy format)
-                    if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                        firstUserMessage = run.content;
-                        break;
-                    }
-                }
+        // Support both session.runs and session.memory.runs structures
+        const runs = session.runs || session.memory?.runs || [];
 
-                if (firstUserMessage) {
-                    let rawTitle = firstUserMessage;
-                    const marker = 'Current message:';
-                    const index = rawTitle.lastIndexOf(marker);
-                    if (index !== -1) {
-                        rawTitle = rawTitle.substring(index + marker.length).trim();
-                    }
-                    sessionName = rawTitle.split('\n')[0].trim();
-                    if (sessionName.length > 45) {
-                        sessionName = sessionName.substring(0, 45) + '...';
-                    }
+        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
+        if (runs.length > 0) {
+            // Try to find first user message from runs
+            let firstUserMessage = null;
+            for (const run of runs) {
+                // Check if run has input content (new format)
+                if (run.input && run.input.input_content) {
+                    firstUserMessage = run.input.input_content;
+                    break;
+                }
+                // Check if run is a user role message (legacy format)
+                if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                    firstUserMessage = run.content;
+                    break;
+                }
+            }
+
+            if (firstUserMessage) {
+                let rawTitle = firstUserMessage;
+                const marker = 'Current message:';
+                const index = rawTitle.lastIndexOf(marker);
+                if (index !== -1) {
+                    rawTitle = rawTitle.substring(index + marker.length).trim();
+                }
+                sessionName = rawTitle.split('\n')[0].trim();
+                if (sessionName.length > 45) {
+                    sessionName = sessionName.substring(0, 45) + '...';
                 }
             }
         }
@@ -533,66 +660,18 @@ class ContextHandler {
         return this.loadedSessions.filter(session => selectedIds.has(session.session_id));
     }
 
-    async showSessionDetails(sessionId) {
+    showSessionDetails(sessionId) {
         console.log('═══════════════════════════════════════════════════════');
         console.log('[ContextHandler] ✓ showSessionDetails CALLED');
         console.log('[ContextHandler] Session ID:', sessionId);
         
-        if (!this.elements.detailView) {
-            console.error('[ContextHandler] ✗ Detail view element not found');
-            this.showNotification('Could not display session details.', 'error');
-            return;
-        }
-        
-        // Show loading state
-        this.elements.listView.classList.add('hidden');
-        this.elements.detailView.classList.remove('hidden');
-        this.elements.detailView.innerHTML = '<div class="session-item-loading">Loading session details...</div>';
-        
-        try {
-            // Fetch full session details from backend
-            console.log('[ContextHandler] Fetching full session details from backend...');
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (!session?.access_token) {
-                throw new Error('Please log in to view session details.');
-            }
-            
-            const response = await fetch(`${API_PROXY_URL}/api/sessions/${sessionId}`, {
-                headers: { Authorization: `Bearer ${session.access_token}` },
-                signal: AbortSignal.timeout(10000)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to load session details (status ${response.status})`);
-            }
-            
-            const sessionData = await response.json();
-            console.log('[ContextHandler] Session details loaded:', sessionData);
-            
-            // Now render the session with full data
-            this.renderSessionDetails(sessionData);
-            
-        } catch (error) {
-            console.error('[ContextHandler] Error loading session details:', error);
-            this.elements.detailView.innerHTML = `
-                <div class="empty-state error-state">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>Failed to load session details</p>
-                    <p class="error-hint"><small>${error.message}</small></p>
-                    <button class="back-button" onclick="window.contextHandler.showSessionList(window.contextHandler.loadedSessions)">
-                        <i class="fas fa-arrow-left"></i> Back to Sessions
-                    </button>
-                </div>
-            `;
-        }
-    }
-    
-    renderSessionDetails(session) {
-        console.log('[ContextHandler] Rendering session details');
+        const session = this.loadedSessions.find(s => s.session_id === sessionId);
+        console.log('[ContextHandler] Session found:', !!session);
+        console.log('[ContextHandler] Detail view exists:', !!this.elements.detailView);
         
         if (!session || !this.elements.detailView) {
-            console.error('[ContextHandler] ✗ Cannot render session details');
+            console.error('[ContextHandler] ✗ Cannot show session details - missing session or detailView');
+            this.showNotification('Could not find session details.', 'error');
             return;
         }
 
@@ -603,44 +682,37 @@ class ContextHandler {
         }
 
         const template = document.getElementById('session-detail-template');
-        if (!template) {
-            console.error('[ContextHandler] session-detail-template not found');
-            return;
-        }
+        if (!template) return;
 
         const view = template.content.cloneNode(true);
 
         // Support both session.runs and session.memory.runs structures
         const runs = session.runs || session.memory?.runs || [];
 
-        // Get session name - use title if available
-        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
-        
-        // Fallback: extract from runs if no title
-        if (!session.title && runs.length > 0) {
-            let firstUserMessage = null;
-            for (const run of runs) {
-                if (run.input && run.input.input_content) {
-                    firstUserMessage = run.input.input_content;
-                    break;
-                }
-                if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                    firstUserMessage = run.content;
-                    break;
-                }
+        // Get session name for the inline header
+        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
+        let firstUserMessage = null;
+        for (const run of runs) {
+            if (run.input && run.input.input_content) {
+                firstUserMessage = run.input.input_content;
+                break;
             }
+            if (run.role === 'user' && run.content && run.content.trim() !== '') {
+                firstUserMessage = run.content;
+                break;
+            }
+        }
 
-            if (firstUserMessage) {
-                let rawTitle = firstUserMessage;
-                const marker = 'Current message:';
-                const index = rawTitle.lastIndexOf(marker);
-                if (index !== -1) {
-                    rawTitle = rawTitle.substring(index + marker.length).trim();
-                }
-                sessionName = rawTitle.split('\n')[0].trim();
-                if (sessionName.length > 45) {
-                    sessionName = sessionName.substring(0, 45) + '...';
-                }
+        if (firstUserMessage) {
+            let rawTitle = firstUserMessage;
+            const marker = 'Current message:';
+            const index = rawTitle.lastIndexOf(marker);
+            if (index !== -1) {
+                rawTitle = rawTitle.substring(index + marker.length).trim();
+            }
+            sessionName = rawTitle.split('\n')[0].trim();
+            if (sessionName.length > 45) {
+                sessionName = sessionName.substring(0, 45) + '...';
             }
         }
 
@@ -804,6 +876,9 @@ class ContextHandler {
         this.loadingState = 'idle';
         this.loadedSessions = [];
         this.loadError = null;
+        this.currentOffset = 0;
+        this.hasMoreSessions = false;
+        this.isLoadingMore = false;
     }
 
     /**
