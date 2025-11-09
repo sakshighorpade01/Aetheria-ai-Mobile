@@ -46,10 +46,7 @@ class ImageTools(Toolkit):
         self.message_id = custom_tool_config.get('message_id')
 
         if not all([self.socketio, self.sid, self.message_id]):
-            logger.error(
-                "ImageTools: Missing critical communication configuration (socketio, sid, or message_id). "
-                "Image generation events will not be emitted."
-            )
+            logger.error("ImageTools: Missing config (socketio/sid/message_id)")
 
     def generate_image(self, prompt: str) -> str:
         """
@@ -64,30 +61,26 @@ class ImageTools(Toolkit):
             str: A status message containing a markdown reference to the generated image artifact,
                  or an error message if generation fails.
         """
-        logger.info(f"Generating image with prompt: '{prompt}'")
-
         if not all([self.socketio, self.sid, self.message_id]):
              return "Error: Image generation service is not properly configured. Cannot emit image event."
 
         try:
             # 1. Instantiate an internal, single-purpose Agent for image generation.
-            #    This keeps the main agent clean and encapsulates the generation logic.
             artist_agent = Agent(
                 name="artist_agent",
                 model=Gemini(
                     id="gemini-2.0-flash-exp-image-generation",
                     response_modalities=["Text", "Image"],
                 ),
-                debug_mode=True, # Recommended to see internal agent logs if needed.
+                debug_mode=False,
             )
-            logger.info(f"ImageTools: Instantiated internal agent for prompt: '{prompt}'")
 
             # 2. Execute the internal agent to generate the image.
             run_output: RunOutput = artist_agent.run(prompt)
 
             # 3. Validate the output and extract the raw image bytes.
             if not run_output or not run_output.images or not run_output.images[0].content:
-                logger.warning("Image generation failed: No image content found in the agent's response.")
+                logger.error("Image generation failed: No content")
                 return "Error: The image generation model did not return an image for this prompt."
 
             image_artifact: Image = run_output.images[0]
@@ -96,7 +89,6 @@ class ImageTools(Toolkit):
             # 4. Prepare the data for frontend consumption.
             artifact_id = f"image-artifact-{uuid.uuid4()}"
             base64_image = base64.b64encode(image_bytes).decode('utf-8')
-            logger.debug(f"Image generated successfully. Artifact ID: {artifact_id}")
 
             # 5. Construct the payload for the real-time event.
             event_payload = {
@@ -107,13 +99,11 @@ class ImageTools(Toolkit):
             }
 
             # 6. Emit the custom Socket.IO event directly to the specific frontend client.
-            #    This is the "out-of-band" communication that triggers the artifact viewer.
             try:
                 # Broadcast to all clients to avoid socket ID mismatch issues
                 self.socketio.emit("image_generated", event_payload, broadcast=True)
-                logger.info(f"Emitted 'image_generated' event for message {self.message_id}")
             except Exception as emit_error:
-                logger.error(f"Failed to emit image_generated event: {emit_error}")
+                logger.error(f"Image emit failed: {emit_error}")
 
             # 7. Return the markdown reference for the chat history.
             #    This is the "in-band" result that gets processed by the main agent and chat UI.

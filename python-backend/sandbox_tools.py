@@ -38,10 +38,8 @@ class SandboxTools(Toolkit):
         """
         active_id = self.session_info.get("active_sandbox_id")
         if active_id:
-            logger.info(f"Reusing existing sandbox for session: {active_id}")
             return active_id
 
-        logger.info("No active sandbox found for session, creating a new one.")
         try:
             response = requests.post(f"{self.sandbox_api_url}/sessions", timeout=30)
             response.raise_for_status()
@@ -56,14 +54,13 @@ class SandboxTools(Toolkit):
                 if new_sandbox_id not in self.session_info["sandbox_ids"]:
                     self.session_info["sandbox_ids"].append(new_sandbox_id)
                 
-                logger.info(f"Created and stored new sandbox ID: {new_sandbox_id}")
                 return new_sandbox_id
             else:
-                logger.error("Sandbox service did not return a valid ID.")
+                logger.error("Sandbox: No valid ID returned")
                 return None
 
         except requests.RequestException as e:
-            logger.error(f"Failed to create sandbox: {e}", exc_info=True)
+            logger.error(f"Sandbox creation failed: {e}")
             return None
 
     def execute_in_sandbox(self, command: str) -> str:

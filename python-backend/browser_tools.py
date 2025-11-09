@@ -51,16 +51,14 @@ class BrowserTools(Toolkit):
         )
 
     def _process_view_result(self, result: Dict[str, Any]) -> ToolResult:
-        # This helper function's logic remains the same.
         if result.get("status") == "success" and "screenshot_path" in result:
             screenshot_path = result.pop("screenshot_path")
             try:
-                logger.info(f"Downloading screenshot from Supabase path: {screenshot_path}")
                 image_bytes = supabase_client.storage.from_('media-uploads').download(screenshot_path)
                 image_artifact = Image(content=image_bytes)
                 return ToolResult(content=json.dumps(result), images=[image_artifact])
             except Exception as e:
-                logger.error(f"Failed to download or process screenshot from {screenshot_path}: {e}")
+                logger.error(f"Supabase screenshot download failed: {e}")
                 result["error"] = f"Error: Could not retrieve screenshot from path {screenshot_path}."
                 return ToolResult(content=json.dumps(result))
         
@@ -82,13 +80,10 @@ class BrowserTools(Toolkit):
             
             # 1. Send the command to the client
             self.socketio.emit('browser-command', command_payload, room=self.sid)
-            logger.info(f"Sent command '{command_payload['action']}' to client {self.sid} on channel {response_channel}")
 
             # 2. Wait for a message on the subscribed channel
-            # The listen() generator will block here until a message arrives or it times out.
             for message in pubsub.listen():
                 if message['type'] == 'message':
-                    logger.info(f"Received response for request_id {request_id}")
                     result = json.loads(message['data'])
                     
                     if "screenshot_path" in result:
@@ -97,8 +92,7 @@ class BrowserTools(Toolkit):
                     return ToolResult(content=json.dumps(result))
 
         except Exception as e:
-            # This will catch Redis errors or other unexpected issues.
-            logger.error(f"An error occurred during Redis Pub/Sub wait for {request_id}: {e}", exc_info=True)
+            logger.error(f"Browser command error: {e}")
             return {"status": "error", "error": f"An internal error occurred while waiting for the browser: {e}"}
         finally:
             # 3. Always clean up the subscription

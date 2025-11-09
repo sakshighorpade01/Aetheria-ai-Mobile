@@ -61,16 +61,12 @@ def create_app():
     sockets.set_dependencies(manager=connection_manager, redis_client=redis_client)
 
     # --- 4. Register OAuth Providers ---
-    # (This section is unchanged)
     if config.GITHUB_CLIENT_ID and config.GITHUB_CLIENT_SECRET:
         oauth.register(
             name='github', client_id=config.GITHUB_CLIENT_ID, client_secret=config.GITHUB_CLIENT_SECRET,
             access_token_url='https://github.com/login/oauth/access_token', authorize_url='https://github.com/login/oauth/authorize',
             api_base_url='https://api.github.com/', client_kwargs={'scope': 'repo user:email'}
         )
-        logger.info("GitHub OAuth provider registered.")
-    else:
-        logger.warning("GitHub OAuth credentials not set. GitHub integration will be disabled.")
 
     if config.GOOGLE_CLIENT_ID and config.GOOGLE_CLIENT_SECRET:
         oauth.register(
@@ -79,9 +75,6 @@ def create_app():
             api_base_url='https://www.googleapis.com/oauth2/v1/',
             client_kwargs={'scope': 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/drive', 'access_type': 'offline', 'prompt': 'consent'}
         )
-        logger.info("Google OAuth provider registered.")
-    else:
-        logger.warning("Google OAuth credentials not set. Google integration will be disabled.")
 
     if config.VERCEL_CLIENT_ID and config.VERCEL_CLIENT_SECRET:
         oauth.register(
@@ -89,9 +82,6 @@ def create_app():
             access_token_url='https://api.vercel.com/v2/oauth/access_token', authorize_url='https://vercel.com/oauth/authorize',
             api_base_url='https://api.vercel.com/', client_kwargs={'scope': 'users:read teams:read projects:read deployments:read'}
         )
-        logger.info("Vercel OAuth provider registered.")
-    else:
-        logger.warning("Vercel OAuth credentials not set. Vercel integration will be disabled.")
 
     if config.SUPABASE_CLIENT_ID and config.SUPABASE_CLIENT_SECRET:
         oauth.register(
@@ -99,9 +89,6 @@ def create_app():
             access_token_url='https://api.supabase.com/v1/oauth/token', authorize_url='https://api.supabase.com/v1/oauth/authorize',
             api_base_url='https://api.supabase.com/v1/', client_kwargs={'scope': 'organizations:read projects:read'}
         )
-        logger.info("Supabase OAuth provider registered.")
-    else:
-        logger.warning("Supabase OAuth credentials not set. Supabase integration will be disabled.")
 
     # --- 5. Register Blueprints (HTTP Routes) ---
     app.register_blueprint(auth_bp)

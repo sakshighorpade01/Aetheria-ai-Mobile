@@ -17,11 +17,8 @@ class OptimizedPostgresDb(PostgresDb):
         """
         Overrides the default upsert method to perform optimization.
         """
-        logger.debug(f"Running optimized upsert for session: {session.session_id}")
-
         try:
             # 1. Extract the runs from the session object.
-            # We work with the Pydantic model objects directly here.
             original_runs = session.runs or []
             static_config = {}
 
@@ -39,24 +36,17 @@ class OptimizedPostgresDb(PostgresDb):
                         run.messages = [msg for msg in run.messages if msg.role != "system"]
 
             # 4. Modify the session object IN-PLACE before passing it to the parent.
-            #    This is the core of the elegant solution.
             
             # 4.1. Update the runs list with the cleaned runs.
             session.runs = original_runs
 
             # 4.2. Store the extracted static config in the generic 'metadata' field.
-            #      The parent upsert method already knows how to handle this field.
             if session.metadata is None:
                 session.metadata = {}
             session.metadata["static_config"] = static_config
 
-            logger.info(f"Session {session.session_id} optimized. Passing to parent upsert method.")
-
         except Exception as e:
-            # If our optimization logic fails for any reason, log the error but
-            # proceed with the original, un-optimized session to prevent data loss.
-            logger.error(f"Could not optimize session {session.session_id}: {e}. Saving original session.")
+            logger.error(f"Session optimization failed: {e}")
 
         # 5. Call the parent class's original upsert method.
-        #    This reuses the framework's robust, battle-tested database logic.
         return super().upsert_session(session, deserialize)

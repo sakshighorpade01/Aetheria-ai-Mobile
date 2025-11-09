@@ -55,7 +55,7 @@ def get_llm_os(
     Planner_Agent: bool = True,
     enable_supabase: bool = False,
     use_memory: bool = False,
-    debug_mode: bool = True,
+    debug_mode: bool = False,
     enable_github: bool = False,
     enable_vercel: bool = False,
     enable_google_email: bool = False,
@@ -63,7 +63,7 @@ def get_llm_os(
     enable_browser: bool = False,
     browser_tools_config: Optional[Dict[str, Any]] = None,
     custom_tool_config: Optional[Dict[str, Any]] = None,
-) -> Team:  # <-- CRITICAL CHANGE: Return the standard Team object
+) -> Team:
     """
     Constructs the hierarchical Aetheria AI multi-agent system with integrated planner.
     """
@@ -92,7 +92,6 @@ def get_llm_os(
     if internet_search:
         direct_tools.append(GoogleSearchTools(fixed_max_results=15))
     if enable_browser and browser_tools_config:
-        logger.info("Browser tools are enabled and configured. Initializing BrowserTools.")
         direct_tools.append(BrowserTools(**browser_tools_config))
     if enable_vercel and user_id:
         direct_tools.append(VercelTools(user_id=user_id))
