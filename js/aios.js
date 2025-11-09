@@ -3,10 +3,8 @@
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
-// Backend URL for OAuth integrations - Production (Railway)
-const OAUTH_BACKEND_URL = 'https://aios-web-production.up.railway.app';
-// Backend URL for API calls - Local with fallback
-const API_BACKEND_URL = 'http://localhost:8765';
+// Backend URL for OAuth integrations and API calls - Production
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 
 export class AIOS {
     constructor() {
@@ -395,8 +393,8 @@ export class AIOS {
         }
 
         try {
-            // Build OAuth URL with session token - use Railway for OAuth
-            const authUrl = `${OAUTH_BACKEND_URL}/login/${provider}?token=${session.access_token}`;
+            // Build OAuth URL with session token
+            const authUrl = `${BACKEND_URL}/login/${provider}?token=${session.access_token}`;
 
             // Open OAuth popup window
             const authWindow = window.open(
