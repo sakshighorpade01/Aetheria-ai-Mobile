@@ -3,8 +3,8 @@
 // This service manages the WebSocket connection to the backend.
 import { supabase } from './supabase-client.js';
 
-// The backend URL is centralized here - Local development
-const BACKEND_URL = 'http://localhost:8765';
+// Backend URL - Production
+const BACKEND_URL = 'https://aios-web-production.up.railway.app';
 let socket = null;
 
 // Store callbacks for different events.
@@ -58,7 +58,7 @@ export const socketService = {
             return;
         }
 
-        console.log("Initializing socket connection...");
+        console.log("Initializing socket connection to:", BACKEND_URL);
         // The 'io' function is available globally from the script in index.html
         socket = io(BACKEND_URL, {
             transports: ['websocket'],

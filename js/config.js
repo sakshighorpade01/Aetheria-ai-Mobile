@@ -4,8 +4,8 @@
 const config = {
     // Backend connection settings
     backend: {
-        // URL for the Python backend - Local development
-        url: 'http://localhost:8765',
+        // URL for the Python backend - Production
+        url: 'https://aios-web-production.up.railway.app',
         
         // Maximum number of reconnection attempts
         maxReconnectAttempts: 50,

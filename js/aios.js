@@ -3,8 +3,10 @@
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
-// Backend URL for OAuth integrations and API calls - Local development
-const BACKEND_URL = 'http://localhost:8765';
+// Backend URL for OAuth integrations - Production (Railway)
+const OAUTH_BACKEND_URL = 'https://aios-web-production.up.railway.app';
+// Backend URL for API calls - Local with fallback
+const API_BACKEND_URL = 'http://localhost:8765';
 
 export class AIOS {
     constructor() {
@@ -19,18 +21,18 @@ export class AIOS {
 
         this.cacheElements();
         this.setupEventListeners();
-        
+
         // Load saved theme preference
         this.loadThemePreference();
         this.updateThemeUI();
 
         // Handle OAuth callback on page load
         await this.handleOAuthCallback();
-        
+
         // Get current user and update UI
         const { data: { user } } = await supabase.auth.getUser();
         await this.updateAuthUI(user);
-        
+
         this.initialized = true;
     }
 
@@ -50,7 +52,7 @@ export class AIOS {
             settingsView: document.getElementById('settings-view'),
             profilePhoto: document.getElementById('profile-photo'),
             profileIconDefault: document.getElementById('profile-icon-default'),
-            
+
             settingsMenuItems: document.querySelectorAll('.settings-menu-item'),
             settingsPanels: document.querySelectorAll('.settings-full-panel'),
             backButtons: document.querySelectorAll('.back-to-menu-btn'),
@@ -72,7 +74,9 @@ export class AIOS {
 
             githubConnectBtn: document.getElementById('connect-github-btn'),
             googleConnectBtn: document.getElementById('connect-google-btn'),
-            
+            vercelConnectBtn: document.getElementById('connect-vercel-btn'),
+            supabaseConnectBtn: document.getElementById('connect-supabase-btn'),
+
             // Google Sign-In Buttons
             googleSignInBtn: document.getElementById('google-signin-btn'),
             googleSignUpBtn: document.getElementById('google-signup-btn'),
@@ -133,7 +137,9 @@ export class AIOS {
 
         this.elements.githubConnectBtn?.addEventListener('click', (e) => this.handleIntegrationClick(e));
         this.elements.googleConnectBtn?.addEventListener('click', (e) => this.handleIntegrationClick(e));
-        
+        this.elements.vercelConnectBtn?.addEventListener('click', (e) => this.handleIntegrationClick(e));
+        this.elements.supabaseConnectBtn?.addEventListener('click', (e) => this.handleIntegrationClick(e));
+
         // Google Sign-In event listeners
         this.elements.googleSignInBtn?.addEventListener('click', () => this.handleGoogleSignIn());
         this.elements.googleSignUpBtn?.addEventListener('click', () => this.handleGoogleSignIn());
@@ -172,12 +178,12 @@ export class AIOS {
     openProfileMenu() {
         this.elements.profileDropdown.classList.remove('hidden');
         this.elements.profileMenuBtn.setAttribute('aria-expanded', 'true');
-        
+
         // Load settings view into dropdown
         if (this.elements.settingsView && !this.elements.profileDropdown.contains(this.elements.settingsView)) {
             this.elements.profileDropdown.appendChild(this.elements.settingsView);
         }
-        
+
         // Update integration status if user is on account section
         this.updateIntegrationStatus();
     }
@@ -192,7 +198,7 @@ export class AIOS {
         if (panel) {
             panel.classList.remove('hidden');
             this.closeProfileMenu();
-            
+
             // Update integration status when opening integrations panel
             if (section === 'integrations') {
                 this.updateIntegrationStatus();
@@ -284,7 +290,7 @@ export class AIOS {
         if (isAuthenticated) {
             const userName = user.user_metadata?.name || user.user_metadata?.full_name || 'User';
             const userEmail = user.email;
-            
+
             // Update profile header card
             if (this.elements.userNameDisplay) {
                 this.elements.userNameDisplay.textContent = userName;
@@ -292,10 +298,10 @@ export class AIOS {
             if (this.elements.userEmailDisplay) {
                 this.elements.userEmailDisplay.textContent = userEmail;
             }
-            
+
             // Update profile photo in top bar
             this.updateProfilePhoto(user);
-            
+
             // Update profile avatar in header card
             this.updateProfileAvatarLarge(user);
         } else {
@@ -308,14 +314,14 @@ export class AIOS {
 
     updateProfilePhoto(user) {
         // Get profile photo URL from user metadata
-        const photoUrl = user.user_metadata?.avatar_url || 
-                        user.user_metadata?.picture || 
-                        user.user_metadata?.photo_url;
-        
+        const photoUrl = user.user_metadata?.avatar_url ||
+            user.user_metadata?.picture ||
+            user.user_metadata?.photo_url;
+
         if (photoUrl && this.elements.profilePhoto) {
             this.elements.profilePhoto.src = photoUrl;
             this.elements.profilePhoto.classList.remove('hidden');
-            
+
             // Add error handler in case image fails to load
             this.elements.profilePhoto.onerror = () => {
                 this.clearProfilePhoto();
@@ -334,16 +340,16 @@ export class AIOS {
 
     updateProfileAvatarLarge(user) {
         // Get profile photo URL from user metadata
-        const photoUrl = user.user_metadata?.avatar_url || 
-                        user.user_metadata?.picture || 
-                        user.user_metadata?.photo_url;
-        
+        const photoUrl = user.user_metadata?.avatar_url ||
+            user.user_metadata?.picture ||
+            user.user_metadata?.photo_url;
+
         const avatarContainer = this.elements.profileAvatarLarge;
         if (!avatarContainer) return;
 
         // Clear existing content
         avatarContainer.innerHTML = '';
-        
+
         if (photoUrl) {
             // Create and add image element
             const img = document.createElement('img');
@@ -388,38 +394,44 @@ export class AIOS {
             return;
         }
 
-        // --- START OF THE FIX ---
-
-        // URL for the initial fetch request. This is a RELATIVE path.
-        // It will be proxied by Vercel as defined in vercel.json.
-        // This makes it a same-origin request from the browser's perspective.
-        const proxyLoginUrl = `${BACKEND_URL}/login/${provider}?token=${session.access_token}`;
-
-        // URL for the popup window. This is the ABSOLUTE path to the backend.
-        // The popup needs to navigate to the actual Render domain.
-        const absoluteLoginUrl = `${BACKEND_URL}/login/${provider}?token=${session.access_token}`;
-
         try {
-            // Step 1: Make a background request to the PROXY URL.
-            // `redirect: 'manual'` prevents the browser from following the redirect.
-            // Its only job is to get the session cookie from the backend.
-            const response = await fetch(proxyLoginUrl, {
-                method: 'GET',
-                redirect: 'manual'
-            });
+            // Build OAuth URL with session token - use Railway for OAuth
+            const authUrl = `${OAUTH_BACKEND_URL}/login/${provider}?token=${session.access_token}`;
 
-            // Step 2: Check if the backend is trying to redirect us.
-            // This is the expected successful outcome.
-            if (response.type === 'opaqueredirect') {
-                // The cookie is now set for the backend domain.
-                // We can now safely open the auth window using the ABSOLUTE URL.
-                window.open(absoluteLoginUrl, 'authWindow', 'width=600,height=700,scrollbars=yes');
-            } else {
-                // If we get here, the backend returned an error instead of a redirect.
-                const errorText = await response.text();
-                throw new Error(`Failed to initiate login. Server responded with: ${errorText}`);
+            // Open OAuth popup window
+            const authWindow = window.open(
+                authUrl,
+                `${provider}Auth`,
+                'width=600,height=700,scrollbars=yes,resizable=yes'
+            );
+
+            if (!authWindow) {
+                throw new Error('Popup blocked. Please allow popups for this site.');
             }
-            // --- END OF THE FIX ---
+
+            // Monitor popup for completion
+            const checkInterval = setInterval(() => {
+                try {
+                    // Check if popup was closed
+                    if (authWindow.closed) {
+                        clearInterval(checkInterval);
+                        // Refresh integration status after popup closes
+                        setTimeout(() => {
+                            this.updateIntegrationStatus();
+                        }, 1000);
+                    }
+                } catch (e) {
+                    // Cross-origin errors are expected
+                }
+            }, 500);
+
+            // Timeout after 5 minutes
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (!authWindow.closed) {
+                    authWindow.close();
+                }
+            }, 300000);
 
         } catch (error) {
             console.error('Integration connection error:', error);
@@ -433,12 +445,11 @@ export class AIOS {
         await supabase.auth.refreshSession();
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-            alert("Session expired. Please log in again.");
+            this.showNotification("Session expired. Please log in again.", 'error');
             return;
         }
 
         try {
-            // Use a relative path here as well to leverage the proxy
             const response = await fetch(`${BACKEND_URL}/api/integrations/disconnect`, {
                 method: 'POST',
                 headers: {
@@ -460,13 +471,15 @@ export class AIOS {
         await supabase.auth.refreshSession();
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
+            // Clear all integration buttons when not logged in
             this.updateButtonUI(this.elements.githubConnectBtn, false);
             this.updateButtonUI(this.elements.googleConnectBtn, false);
+            this.updateButtonUI(this.elements.vercelConnectBtn, false);
+            this.updateButtonUI(this.elements.supabaseConnectBtn, false);
             return;
         }
 
         try {
-            // Use a relative path here to leverage the proxy
             const response = await fetch(`${BACKEND_URL}/api/integrations`, {
                 headers: { 'Authorization': `Bearer ${session.access_token}` }
             });
@@ -477,10 +490,16 @@ export class AIOS {
             }
 
             const { integrations } = await response.json();
+
+            // Update all integration buttons
             this.updateButtonUI(this.elements.githubConnectBtn, integrations.includes('github'));
             this.updateButtonUI(this.elements.googleConnectBtn, integrations.includes('google'));
+            this.updateButtonUI(this.elements.vercelConnectBtn, integrations.includes('vercel'));
+            this.updateButtonUI(this.elements.supabaseConnectBtn, integrations.includes('supabase'));
+
         } catch (error) {
             console.error("Error fetching integration status:", error);
+            // Don't show error to user, just log it
         }
     }
 
@@ -517,11 +536,11 @@ export class AIOS {
     async handleGoogleSignIn() {
         this.elements.loginError.textContent = '';
         this.elements.signupError.textContent = '';
-        
+
         try {
             // Get current URL for redirect
             const redirectUrl = `${window.location.origin}${window.location.pathname}`;
-            
+
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
@@ -559,46 +578,46 @@ export class AIOS {
             // Check if we have OAuth parameters in the URL
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const searchParams = new URLSearchParams(window.location.search);
-            
+
             // Supabase returns tokens in hash for implicit flow or in search for PKCE flow
-            const hasOAuthParams = hashParams.has('access_token') || 
-                                   searchParams.has('code') || 
-                                   hashParams.has('error') || 
-                                   searchParams.has('error');
-            
+            const hasOAuthParams = hashParams.has('access_token') ||
+                searchParams.has('code') ||
+                hashParams.has('error') ||
+                searchParams.has('error');
+
             if (hasOAuthParams) {
                 // Check for errors first
                 const error = hashParams.get('error') || searchParams.get('error');
                 const errorDescription = hashParams.get('error_description') || searchParams.get('error_description');
-                
+
                 if (error) {
                     console.error('OAuth error:', error, errorDescription);
                     this.showNotification(
-                        `Sign-in failed: ${errorDescription || error}`, 
+                        `Sign-in failed: ${errorDescription || error}`,
                         'error'
                     );
                     // Clean up URL
                     window.history.replaceState({}, document.title, window.location.pathname);
                     return;
                 }
-                
+
                 // Let Supabase handle the OAuth callback automatically
                 // It will parse the tokens from the URL and set the session
                 const { data, error: sessionError } = await supabase.auth.getSession();
-                
+
                 if (sessionError) {
                     console.error('Error getting session after OAuth:', sessionError);
                     this.showNotification('Failed to complete sign-in. Please try again.', 'error');
                 } else if (data.session) {
                     console.log('OAuth callback successful, user signed in:', data.session.user);
                     this.showNotification('Successfully signed in with Google!', 'success');
-                    
+
                     // Close the profile menu after successful login
                     setTimeout(() => {
                         this.closeProfileMenu();
                     }, 1500);
                 }
-                
+
                 // Clean up URL to remove OAuth parameters
                 window.history.replaceState({}, document.title, window.location.pathname);
             }

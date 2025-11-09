@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 
-// Backend API URL for session management - Local development
+// Backend API URL for session management - Production
 const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
 
 class ContextHandler {
@@ -21,7 +21,7 @@ class ContextHandler {
         this.backgroundLoadTimer = null;
         this.isWindowOpen = false;
         this.pendingLoadPromise = null;
-        
+
         // Pagination state
         this.currentOffset = 0;
         this.pageSize = 15;
@@ -33,7 +33,7 @@ class ContextHandler {
     initializeElements() {
         console.log('[ContextHandler] Initializing elements...');
         this.elements.contextWindow = document.getElementById('context-window');
-        
+
         if (!this.elements.contextWindow) {
             console.error('[ContextHandler] context-window element not found in DOM!');
             return;
@@ -46,7 +46,7 @@ class ContextHandler {
         this.elements.listView = document.getElementById('context-list-view');
         this.elements.detailView = document.getElementById('context-detail-view');
         this.elements.contextBtn = document.querySelector('[data-tool="context"]');
-        
+
         console.log('[ContextHandler] Elements initialized:', {
             hasContextWindow: !!this.elements.contextWindow,
             hasPanel: !!this.elements.panel,
@@ -69,7 +69,7 @@ class ContextHandler {
         });
         this.elements.panel?.addEventListener('click', (e) => e.stopPropagation());
         this.elements.closeContextBtn?.addEventListener('click', () => this.toggleWindow(false));
-        
+
         // Sync/refresh button
         this.elements.syncBtn?.addEventListener('click', () => {
             this.forceRefreshSessions();
@@ -84,7 +84,7 @@ class ContextHandler {
                 }
             }
         });
-        
+
         // Infinite scroll listener
         this.elements.sessionsContainer?.addEventListener('scroll', () => {
             this.handleScroll();
@@ -93,7 +93,7 @@ class ContextHandler {
 
     toggleWindow(show, buttonElement = null) {
         console.log('[ContextHandler] toggleWindow called:', { show, hasElement: !!this.elements.contextWindow });
-        
+
         if (!this.elements.contextWindow) {
             console.error('[ContextHandler] contextWindow element not found!');
             return;
@@ -109,7 +109,7 @@ class ContextHandler {
 
             this.elements.contextWindow.classList.remove('hidden');
             console.log('[ContextHandler] Window classList after remove hidden:', this.elements.contextWindow.classList.toString());
-            
+
             this.renderCurrentState();
 
             if (this.loadingState === 'idle') {
@@ -150,7 +150,7 @@ class ContextHandler {
 
     async loadSessionsInBackground({ force = false } = {}) {
         console.log('[ContextHandler] loadSessionsInBackground called:', { force, loadingState: this.loadingState });
-        
+
         if (!force) {
             if (this.loadingState === 'loading' && this.pendingLoadPromise) {
                 console.log('[ContextHandler] Already loading, returning existing promise');
@@ -173,7 +173,7 @@ class ContextHandler {
         console.log('[ContextHandler] Setting state to loading');
         this.loadingState = 'loading';
         this.loadError = null;
-        
+
         // Reset pagination on initial load
         this.currentOffset = 0;
         this.loadedSessions = [];
@@ -197,7 +197,7 @@ class ContextHandler {
                 const { data, error } = await supabase.auth.getSession();
                 const session = data?.session;
                 console.log('[ContextHandler] Session retrieved:', { hasSession: !!session, hasToken: !!session?.access_token, error });
-                
+
                 if (error || !session?.access_token) {
                     throw new Error('Please log in to view chat history.');
                 }
@@ -209,10 +209,10 @@ class ContextHandler {
                 });
 
                 console.log('[ContextHandler] Backend response status:', response.status, response.statusText);
-                
+
                 if (!response.ok) {
                     let errorMessage = '';
-                    
+
                     if (response.status === 503) {
                         errorMessage = 'Backend service is temporarily unavailable. Please try again in a few moments.';
                     } else if (response.status === 500) {
@@ -228,19 +228,19 @@ class ContextHandler {
                             errorMessage = `Failed to load sessions (status ${response.status}).`;
                         }
                     }
-                    
+
                     throw new Error(errorMessage);
                 }
 
                 const responseData = await response.json();
                 console.log('[ContextHandler] Sessions received from backend:', responseData);
-                
+
                 // Handle both old format (array) and new format (object with sessions array)
                 const sessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
                 this.totalSessions = responseData.total || sessions.length;
                 this.hasMoreSessions = responseData.hasMore || false;
                 this.currentOffset = sessions.length;
-                
+
                 this.loadedSessions = sessions;
                 this.loadingState = 'loaded';
                 this.loadError = null;
@@ -262,7 +262,7 @@ class ContextHandler {
             } catch (err) {
                 console.error('[ContextHandler] Failed to load sessions:', err);
                 console.error('[ContextHandler] Error details:', { name: err.name, message: err.message, stack: err.stack });
-                
+
                 // Handle different error types
                 if (err.name === 'TimeoutError' || err.name === 'AbortError') {
                     this.loadError = 'Request timed out. The backend may be slow or unavailable. Please try again.';
@@ -273,10 +273,10 @@ class ContextHandler {
                 } else {
                     this.loadError = err?.message || 'An unexpected error occurred while loading sessions.';
                 }
-                
+
                 console.log('[ContextHandler] Setting error state:', this.loadError);
                 this.loadingState = 'error';
-                
+
                 if (this.isWindowOpen) {
                     console.log('[ContextHandler] Window is open, rendering error state');
                     this.renderErrorState();
@@ -300,48 +300,48 @@ class ContextHandler {
         this.loadedSessions = [];
         return this.loadSessionsInBackground({ force: true });
     }
-    
+
     async loadMoreSessions() {
         if (this.isLoadingMore || !this.hasMoreSessions) {
             console.log('[ContextHandler] Skip loadMore:', { isLoadingMore: this.isLoadingMore, hasMore: this.hasMoreSessions });
             return;
         }
-        
+
         this.isLoadingMore = true;
         this.showLoadingMoreIndicator();
-        
+
         try {
             await supabase.auth.refreshSession();
             const { data, error } = await supabase.auth.getSession();
             const session = data?.session;
-            
+
             if (error || !session?.access_token) {
                 throw new Error('Session expired. Please log in again.');
             }
-            
+
             console.log('[ContextHandler] Loading more sessions, offset:', this.currentOffset);
             const response = await fetch(`${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`, {
                 headers: { Authorization: `Bearer ${session.access_token}` },
                 signal: AbortSignal.timeout(15000)
             });
-            
+
             if (!response.ok) {
                 throw new Error(`Failed to load more sessions (status ${response.status})`);
             }
-            
+
             const responseData = await response.json();
             const newSessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
-            
+
             console.log('[ContextHandler] Loaded more sessions:', newSessions.length);
-            
+
             this.loadedSessions = [...this.loadedSessions, ...newSessions];
             this.currentOffset += newSessions.length;
             this.hasMoreSessions = responseData.hasMore || false;
             this.totalSessions = responseData.total || this.loadedSessions.length;
-            
+
             // Append new sessions to the list
             this.appendSessionItems(newSessions);
-            
+
         } catch (err) {
             console.error('[ContextHandler] Failed to load more sessions:', err);
             this.showNotification('Failed to load more sessions', 'error');
@@ -350,28 +350,28 @@ class ContextHandler {
             this.hideLoadingMoreIndicator();
         }
     }
-    
+
     handleScroll() {
         if (!this.elements.sessionsContainer || this.loadingState !== 'loaded') return;
-        
+
         const container = this.elements.sessionsContainer;
         const scrollTop = container.scrollTop;
         const scrollHeight = container.scrollHeight;
         const clientHeight = container.clientHeight;
-        
+
         // Trigger load when user scrolls to within 200px of bottom
         const threshold = 200;
         const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-        
+
         if (distanceFromBottom < threshold && this.hasMoreSessions && !this.isLoadingMore) {
             console.log('[ContextHandler] Scroll threshold reached, loading more sessions');
             this.loadMoreSessions();
         }
     }
-    
+
     showLoadingMoreIndicator() {
         if (!this.elements.listView) return;
-        
+
         let indicator = this.elements.listView.querySelector('.loading-more-indicator');
         if (!indicator) {
             indicator = document.createElement('div');
@@ -380,19 +380,19 @@ class ContextHandler {
             this.elements.listView.appendChild(indicator);
         }
     }
-    
+
     hideLoadingMoreIndicator() {
         const indicator = this.elements.listView?.querySelector('.loading-more-indicator');
         if (indicator) {
             indicator.remove();
         }
     }
-    
+
     appendSessionItems(sessions) {
         if (!this.elements.listView || !sessions || sessions.length === 0) return;
-        
+
         console.log('[ContextHandler] Appending', sessions.length, 'session items');
-        
+
         sessions.forEach(session => {
             this.elements.listView.appendChild(this.createSessionItem(session));
         });
@@ -441,7 +441,7 @@ class ContextHandler {
         this.elements.detailView?.classList.add('hidden');
 
         const message = this.loadError || 'Unable to load previous sessions.';
-        
+
         // Determine icon based on error type
         let icon = 'fa-exclamation-circle';
         if (message.includes('unavailable') || message.includes('503')) {
@@ -453,7 +453,7 @@ class ContextHandler {
         } else if (message.includes('Authentication')) {
             icon = 'fa-lock';
         }
-        
+
         this.elements.listView.innerHTML = `
             <div class="empty-state error-state">
                 <i class="fas ${icon}"></i>
@@ -476,12 +476,12 @@ class ContextHandler {
         console.log('═══════════════════════════════════════════════════════');
         console.log('[ContextHandler] ✓ showSessionList CALLED');
         console.log('[ContextHandler] Sessions count:', sessions?.length);
-        console.log('[ContextHandler] Elements check:', { 
-            hasListView: !!this.elements.listView, 
+        console.log('[ContextHandler] Elements check:', {
+            hasListView: !!this.elements.listView,
             hasDetailView: !!this.elements.detailView,
             hasContextWindow: !!this.elements.contextWindow
         });
-        
+
         if (!this.elements.listView || !this.elements.detailView) {
             console.error('[ContextHandler] ✗ Missing required elements for session list!');
             return;
@@ -664,11 +664,11 @@ class ContextHandler {
         console.log('═══════════════════════════════════════════════════════');
         console.log('[ContextHandler] ✓ showSessionDetails CALLED');
         console.log('[ContextHandler] Session ID:', sessionId);
-        
+
         const session = this.loadedSessions.find(s => s.session_id === sessionId);
         console.log('[ContextHandler] Session found:', !!session);
         console.log('[ContextHandler] Detail view exists:', !!this.elements.detailView);
-        
+
         if (!session || !this.elements.detailView) {
             console.error('[ContextHandler] ✗ Cannot show session details - missing session or detailView');
             this.showNotification('Could not find session details.', 'error');
@@ -725,22 +725,22 @@ class ContextHandler {
         // Add inline back button and title at the top
         const headerDiv = document.createElement('div');
         headerDiv.className = 'conversation-inline-header';
-        
+
         // Create back button element
         const backButton = document.createElement('button');
         backButton.className = 'back-button';
         backButton.title = 'Back to sessions';
         backButton.innerHTML = '<i class="fas fa-arrow-left"></i>';
-        
+
         // Create title element
         const titleElement = document.createElement('h3');
         titleElement.className = 'conversation-title';
         titleElement.textContent = sessionName;
-        
+
         // Append elements to header
         headerDiv.appendChild(backButton);
         headerDiv.appendChild(titleElement);
-        
+
         // Bind click event immediately
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
@@ -748,9 +748,9 @@ class ContextHandler {
             console.log('[ContextHandler] Back button clicked - returning to session list');
             this.showSessionList(this.loadedSessions);
         });
-        
+
         console.log('[ContextHandler] Back button created and event listener attached');
-        
+
         conversationContainer.insertBefore(headerDiv, conversationContainer.firstChild);
 
         // Check if session has runs data
@@ -820,11 +820,11 @@ class ContextHandler {
         console.log('[ContextHandler] Appending view to detailView element');
         this.elements.detailView.innerHTML = '';
         this.elements.detailView.appendChild(view);
-        
+
         console.log('[ContextHandler] Switching views - hiding list, showing detail');
         this.elements.listView.classList.add('hidden');
         this.elements.detailView.classList.remove('hidden');
-        
+
         // Verify back button is in DOM
         const verifyButton = this.elements.detailView.querySelector('.conversation-inline-header .back-button');
         console.log('[ContextHandler] Back button verification:', {
@@ -887,7 +887,7 @@ class ContextHandler {
     renderSessionChips() {
         const contextFilesBar = document.getElementById('context-files-bar');
         const contextFilesContent = document.querySelector('.context-files-content');
-        
+
         if (!contextFilesBar || !contextFilesContent) return;
 
         // Remove existing session chips
@@ -910,18 +910,18 @@ class ContextHandler {
 
         const chip = document.createElement('div');
         chip.className = 'session-chip';
-        
+
         const icon = document.createElement('i');
         icon.className = 'fas fa-comments session-chip-icon';
-        
+
         const title = document.createElement('span');
         title.className = 'session-chip-title';
-        
+
         const runs = session.runs || session.memory?.runs || [];
         const topLevelRuns = runs.filter(run => !run.parent_run_id);
         const firstMessage = topLevelRuns[0]?.input?.input_content || `Session ${index + 1}`;
         title.textContent = firstMessage.substring(0, 25) + (firstMessage.length > 25 ? '...' : '');
-        
+
         const removeBtn = document.createElement('button');
         removeBtn.className = 'session-chip-remove';
         removeBtn.innerHTML = '<i class="fas fa-times"></i>';
@@ -930,11 +930,11 @@ class ContextHandler {
             e.stopPropagation();
             this.removeSelectedSession(index);
         });
-        
+
         chip.appendChild(icon);
         chip.appendChild(title);
         chip.appendChild(removeBtn);
-        
+
         contextFilesContent.appendChild(chip);
     }
 
@@ -954,7 +954,7 @@ class ContextHandler {
     updateContextFilesBarVisibility() {
         const contextFilesBar = document.getElementById('context-files-bar');
         const inputContainer = document.getElementById('floating-input-container');
-        
+
         if (!contextFilesBar || !inputContainer) return;
 
         const hasFiles = window.fileAttachmentHandler && window.fileAttachmentHandler.attachedFiles && window.fileAttachmentHandler.attachedFiles.length > 0;
