@@ -26,7 +26,6 @@ def process_files(files_data: List[Dict[str, Any]]) -> Tuple[List[Image], List[A
     Supabase storage or encoding text content, and converting them into
     Agno media objects.
     """
-    # This function's logic remains correct and does not require changes.
     images, audio, videos, other_files = [], [], [], []
     if not files_data:
         return images, audio, videos, other_files
@@ -37,7 +36,6 @@ def process_files(files_data: List[Dict[str, Any]]) -> Tuple[List[Image], List[A
 
         if 'path' in file_data:
             try:
-                logger.info(f"Downloading file from Supabase storage: {file_data['path']}")
                 file_bytes = supabase_client.storage.from_('media-uploads').download(file_data['path'])
                 
                 if file_type.startswith('image/'):
@@ -49,10 +47,9 @@ def process_files(files_data: List[Dict[str, Any]]) -> Tuple[List[Image], List[A
                 else:
                     other_files.append(File(content=file_bytes, name=file_name, mime_type=file_type))
             except Exception as e:
-                logger.error(f"Error downloading file {file_data['path']} from Supabase: {e}")
+                logger.error(f"Supabase file download failed ({file_name}): {e}")
         
         elif file_data.get('isText') and 'content' in file_data:
-            logger.info(f"Processing text file content for: {file_name}")
             other_files.append(File(content=file_data['content'].encode('utf-8'), name=file_name, mime_type=file_type))
 
     return images, audio, videos, other_files
@@ -73,47 +70,36 @@ def run_agent_and_stream(
     necessary per-request dependencies for communication.
     """
     try:
-        # --- DEBUG LOG ---
-        print(f"[AGENT_RUNNER] START RUN: message_id={message_id}, sid={sid}")
-        logger.info(f"[AGENT_RUNNER] START RUN: message_id={message_id}, sid={sid}")
-
         # 1. Retrieve Session and User Data
         session_data = connection_manager.get_session(conversation_id)
         if not session_data:
-            raise Exception(f"Session data not found for conversation {conversation_id}")
+            raise Exception(f"Session not found: {conversation_id}")
         user_id = session_data['user_id']
 
-        # --- MODIFICATION START: Create a dedicated config for real-time tools ---
-        # This new dictionary will contain ALL dependencies needed by any tool that
-        # communicates directly with the frontend or uses Redis Pub/Sub.
+        # Create realtime tool config for browser and image tools
         realtime_tool_config = {
             'socketio': socketio,
             'sid': sid,
             'message_id': message_id,
             'redis_client': redis_client
         }
-        # --- DEBUG LOG ---
-        print(f"[AGENT_RUNNER] Created realtime_tool_config: { {k: type(v).__name__ for k, v in realtime_tool_config.items()} }")
-        logger.info(f"[AGENT_RUNNER] Created realtime_tool_config with keys: {list(realtime_tool_config.keys())}")
 
         # 2. Initialize the Agent
-        # --- MODIFICATION START: Pass the new, complete config dictionary ---
-        # Both BrowserTools and ImageTools now receive the same complete set of
-        # dependencies, ensuring they are initialized correctly.
         agent = get_llm_os(
             user_id=user_id,
             session_info=session_data,
             browser_tools_config=realtime_tool_config,
-            custom_tool_config=realtime_tool_config, # Pass the complete config to ImageTools
+            custom_tool_config=realtime_tool_config,
             **session_data['config']
         )
-        # --- MODIFICATION END ---
 
         # 3. Process Input Data
         images, audio, videos, other_files = process_files(turn_data.get('files', []))
         
-        # Log processed media count (without accessing attributes that may not exist)
-        logger.info(f"[AGENT_RUNNER] Processed media - Images: {len(images)}, Audio: {len(audio)}, Videos: {len(videos)}, Files: {len(other_files)}")
+        # Log media processing if files were attached
+        total_files = len(images) + len(audio) + len(videos) + len(other_files)
+        if total_files > 0:
+            logger.info(f"{sid[:8]} | Files: {total_files} (img={len(images)}, aud={len(audio)}, vid={len(videos)}, doc={len(other_files)})")
         
         current_session_state = {'turn_context': turn_data}
         user_message = turn_data.get("user_message", "")
@@ -121,7 +107,7 @@ def run_agent_and_stream(
         # 4. Fetch and Prepend Historical Context
         historical_context_str = ""
         if context_session_ids:
-            logger.info(f"Fetching context from {len(context_session_ids)} sessions.")
+            logger.info(f"{sid[:8]} | Loading context: {len(context_session_ids)} sessions")
             historical_context_str = "CONTEXT FROM PREVIOUS CHATS:\n---\n"
             for session_id in context_session_ids:
                 try:
@@ -135,15 +121,12 @@ def run_agent_and_stream(
                             if user_input:
                                 historical_context_str += f"User: {user_input}\nAssistant: {assistant_output}\n---\n"
                 except Exception as e:
-                    logger.error(f"Failed to fetch or process context for session_id {session_id}: {e}")
+                    logger.error(f"{sid[:8]} | Supabase context fetch failed: {e}")
             historical_context_str += "\n"
         
         final_user_message = f"{historical_context_str}CURRENT QUESTION:\n{user_message}" if historical_context_str else user_message
 
         # 5. Run the Agent and Stream Results
-        # --- DEBUG LOG ---
-        print(f"[AGENT_RUNNER] Starting agent.run() for message_id={message_id}")
-        logger.info(f"[AGENT_RUNNER] Starting agent.run() for message_id={message_id}")
         run_output: TeamRunOutput | None = None
         for chunk in agent.run(
             input=final_user_message,
@@ -177,21 +160,25 @@ def run_agent_and_stream(
 
         # 6. Finalize the Stream and Log Metrics
         socketio.emit("response", {"done": True, "id": message_id}, room=sid)
+        logger.info(f"{sid[:8]} | Message sent")
         
         if run_output and run_output.metrics and (run_output.metrics.input_tokens > 0 or run_output.metrics.output_tokens > 0):
-            supabase_client.from_('request_logs').insert({
-                'user_id': user_id,
-                'input_tokens': run_output.metrics.input_tokens,
-                'output_tokens': run_output.metrics.output_tokens
-            }).execute()
+            try:
+                supabase_client.from_('request_logs').insert({
+                    'user_id': user_id,
+                    'input_tokens': run_output.metrics.input_tokens,
+                    'output_tokens': run_output.metrics.output_tokens
+                }).execute()
+                logger.info(f"{sid[:8]} | Supabase: Logged tokens (in={run_output.metrics.input_tokens}, out={run_output.metrics.output_tokens})")
+            except Exception as db_error:
+                logger.error(f"{sid[:8]} | Supabase token log failed: {db_error}")
 
     except Exception as e:
-        logger.error(f"Agent run failed for conversation {conversation_id}: {e}\n{traceback.format_exc()}")
+        logger.error(f"{sid[:8]} | Agent error: {str(e)}")
         socketio.emit("error", {"message": f"An error occurred: {str(e)}. Your conversation is preserved."}, room=sid)
     
     finally:
         # CRITICAL: Clean up media objects to prevent memory leaks
-        # This ensures large file buffers are released immediately
         try:
             cleanup_count = 0
             
@@ -203,7 +190,6 @@ def run_agent_and_stream(
                         img.content = None
                 images.clear()
                 cleanup_count += count
-                logger.debug(f"Cleaned up {count} image objects")
             
             if 'audio' in locals() and audio:
                 count = len(audio)
@@ -212,7 +198,6 @@ def run_agent_and_stream(
                         aud.content = None
                 audio.clear()
                 cleanup_count += count
-                logger.debug(f"Cleaned up {count} audio objects")
             
             if 'videos' in locals() and videos:
                 count = len(videos)
@@ -221,7 +206,6 @@ def run_agent_and_stream(
                         vid.content = None
                 videos.clear()
                 cleanup_count += count
-                logger.debug(f"Cleaned up {count} video objects")
             
             if 'other_files' in locals() and other_files:
                 count = len(other_files)
@@ -230,14 +214,14 @@ def run_agent_and_stream(
                         file.content = None
                 other_files.clear()
                 cleanup_count += count
-                logger.debug(f"Cleaned up {count} file objects")
             
             # Clear agent reference to allow garbage collection
             if 'agent' in locals():
                 agent = None
             
+            # Only log if we actually cleaned up media
             if cleanup_count > 0:
-                logger.info(f"Memory cleanup completed: {cleanup_count} media objects released for message_id={message_id}")
+                logger.info(f"{sid[:8]} | Cleaned {cleanup_count} media objects")
             
         except Exception as cleanup_error:
-            logger.error(f"Error during memory cleanup: {cleanup_error}")
+            logger.error(f"{sid[:8]} | Cleanup error: {cleanup_error}")

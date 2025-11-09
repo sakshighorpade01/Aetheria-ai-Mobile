@@ -1,7 +1,11 @@
 # python-backend/app.py
 import os
+from logging_config import setup_logging
 from factory import create_app
 from extensions import socketio
+
+# Setup clean logging
+setup_logging()
 
 # Create the application instance using the factory
 app = create_app()

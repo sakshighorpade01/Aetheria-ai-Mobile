@@ -38,7 +38,6 @@ class ConnectionManager:
             redis_client (RedisClient): An initialized Redis client.
         """
         self.redis_client = redis_client
-        logger.info(f"ConnectionManager initialized with TTL={self.SESSION_TTL}s, max_sandboxes={self.MAX_SANDBOX_IDS}")
 
     def create_session(self, conversation_id: str, user_id: str, agent_config: dict) -> dict:
         """
@@ -52,8 +51,6 @@ class ConnectionManager:
         Returns:
             dict: The newly created session data.
         """
-        logger.info(f"Creating new session in Redis: {conversation_id}")
-        
         # Cleanup old sessions before creating new one (memory optimization)
         self._cleanup_expired_sessions(user_id)
         
@@ -83,7 +80,6 @@ class ConnectionManager:
         self.redis_client.sadd(f"user_sessions:{user_id}", conversation_id)
         self.redis_client.expire(f"user_sessions:{user_id}", self.SESSION_TTL)
         
-        logger.info(f"Session created with TTL={self.SESSION_TTL}s")
         return session_data
 
     def terminate_session(self, conversation_id: str):
@@ -96,7 +92,6 @@ class ConnectionManager:
         """
         session_json = self.redis_client.get(f"session:{conversation_id}")
         if not session_json:
-            logger.warning(f"Session {conversation_id} not found for termination")
             return
             
         session_data = json.loads(session_json)
@@ -106,16 +101,14 @@ class ConnectionManager:
         if config.SANDBOX_API_URL:
             sandbox_ids = session_data.get("sandbox_ids", [])
             if sandbox_ids:
-                logger.info(f"Cleaning up {len(sandbox_ids)} sandboxes for session {conversation_id}")
                 for sandbox_id in sandbox_ids:
                     try:
                         requests.delete(
                             f"{config.SANDBOX_API_URL}/sessions/{sandbox_id}", 
-                            timeout=10  # Reduced timeout
+                            timeout=10
                         )
-                        logger.info(f"Cleaned up sandbox {sandbox_id}")
                     except requests.RequestException as e:
-                        logger.error(f"Failed to clean up sandbox {sandbox_id}: {e}")
+                        logger.error(f"Sandbox cleanup failed ({sandbox_id}): {e}")
         
         # Remove from user's session index
         if user_id:
@@ -123,7 +116,6 @@ class ConnectionManager:
         
         # Delete the session from Redis
         self.redis_client.delete(f"session:{conversation_id}")
-        logger.info(f"Terminated session {conversation_id}")
 
     def get_session(self, conversation_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -164,14 +156,13 @@ class ConnectionManager:
         """
         session_data = self.get_session(conversation_id)
         if not session_data:
-            logger.error(f"Cannot add sandbox: session {conversation_id} not found")
+            logger.error(f"Sandbox add failed: session not found")
             return False
         
         sandbox_ids = session_data.get("sandbox_ids", [])
         
         # Enforce sandbox limit
         if len(sandbox_ids) >= self.MAX_SANDBOX_IDS:
-            logger.warning(f"Session {conversation_id} reached max sandboxes ({self.MAX_SANDBOX_IDS})")
             # Clean up oldest sandbox
             oldest_sandbox = sandbox_ids.pop(0)
             self._cleanup_sandbox(oldest_sandbox)
@@ -187,7 +178,6 @@ class ConnectionManager:
             ex=self.SESSION_TTL
         )
         
-        logger.info(f"Added sandbox {sandbox_id} to session {conversation_id}")
         return True
     
     def _cleanup_sandbox(self, sandbox_id: str):
@@ -205,9 +195,8 @@ class ConnectionManager:
                 f"{config.SANDBOX_API_URL}/sessions/{sandbox_id}", 
                 timeout=5
             )
-            logger.info(f"Cleaned up sandbox {sandbox_id}")
         except requests.RequestException as e:
-            logger.error(f"Failed to clean up sandbox {sandbox_id}: {e}")
+            logger.error(f"Sandbox cleanup failed ({sandbox_id[:8]}): {e}")
     
     def _cleanup_expired_sessions(self, user_id: str):
         """
@@ -231,10 +220,10 @@ class ConnectionManager:
                     cleaned += 1
             
             if cleaned > 0:
-                logger.info(f"Cleaned up {cleaned} expired sessions for user {user_id}")
+                logger.info(f"Cleaned {cleaned} expired sessions")
                 
         except Exception as e:
-            logger.error(f"Error during session cleanup for user {user_id}: {e}")
+            logger.error(f"Session cleanup error: {e}")
     
     def get_active_session_count(self, user_id: str) -> int:
         """
@@ -252,7 +241,7 @@ class ConnectionManager:
             active = sum(1 for sid in session_ids if self.redis_client.exists(f"session:{sid}"))
             return active
         except Exception as e:
-            logger.error(f"Error counting sessions for user {user_id}: {e}")
+            logger.error(f"Session count error: {e}")
             return 0
     
     def cleanup_all_expired_sessions(self):
@@ -275,7 +264,7 @@ class ConnectionManager:
                         total_cleaned += 1
             
             if total_cleaned > 0:
-                logger.info(f"Global cleanup: removed {total_cleaned} expired session references")
+                logger.info(f"Global cleanup: {total_cleaned} expired sessions")
                 
         except Exception as e:
-            logger.error(f"Error during global session cleanup: {e}")
+            logger.error(f"Global cleanup error: {e}")

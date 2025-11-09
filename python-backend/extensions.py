@@ -15,15 +15,12 @@ from celery_app import celery_app as celery
 
 # SocketIO: Uninitialized, will be configured in the factory.
 # Increased max_http_buffer_size to handle large image payloads (up to 10MB)
-# ping_timeout and ping_interval optimized for real-time streaming
 socketio = SocketIO(
     cors_allowed_origins="*", 
     async_mode="eventlet",
     max_http_buffer_size=10 * 1024 * 1024,  # 10MB limit
-    ping_timeout=60,  # Increased timeout for long-running operations
-    ping_interval=25,  # Keep connection alive
-    logger=True,  # Enable logging for debugging
-    engineio_logger=True  # Enable engine.io logging
+    logger=False,  # Disable verbose socket.io logging
+    engineio_logger=False  # Disable engine.io logging
 )
 
 # OAuth: Uninitialized, will be configured in the factory.

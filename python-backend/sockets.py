@@ -28,7 +28,6 @@ def set_dependencies(manager: ConnectionManager, redis_client: Redis):
     global connection_manager_service, redis_client_instance
     connection_manager_service = manager
     redis_client_instance = redis_client
-    logger.info("Dependencies (ConnectionManager, RedisClient) injected into sockets module.")
 
 
 # ==============================================================================
@@ -37,13 +36,14 @@ def set_dependencies(manager: ConnectionManager, redis_client: Redis):
 
 @socketio.on("connect")
 def on_connect():
-    logger.info(f"Client connected: {request.sid}")
+    logger.info(f"Client connected: {request.sid[:8]}")
     socketio.emit("status", {"message": "Connected to server"}, room=request.sid)
 
 
 @socketio.on("disconnect")
 def on_disconnect():
-    logger.info(f"Client disconnected: {request.sid}")
+    logger.info(f"Client disconnected: {request.sid[:8]}")
+    pass  # Connection lifecycle managed by socket.io
 
 
 @socketio.on('browser-command-result')
@@ -53,7 +53,7 @@ def handle_browser_command_result(data: Dict[str, Any]):
     Redis channel, waking up the waiting agent tool.
     """
     if not redis_client_instance:
-        logger.error("Redis client not initialized. Cannot handle browser command result.")
+        logger.error("Redis not initialized")
         return
 
     request_id = data.get('request_id')
@@ -63,11 +63,10 @@ def handle_browser_command_result(data: Dict[str, Any]):
         response_channel = f"browser-response:{request_id}"
         try:
             redis_client_instance.publish(response_channel, json.dumps(result_payload))
-            logger.info(f"Published result for request_id {request_id} to Redis channel {response_channel}")
         except Exception as e:
-            logger.error(f"Failed to publish browser result to Redis for {request_id}: {e}")
+            logger.error(f"Redis publish failed: {e}")
     else:
-        logger.warning("Received browser command result with no request_id.")
+        logger.error("Browser result missing request_id")
 
 
 @socketio.on("send_message")
@@ -75,7 +74,7 @@ def on_send_message(data: str):
     """The main message handler for incoming chat messages."""
     sid = request.sid
     if not connection_manager_service or not redis_client_instance:
-        logger.error("Services not initialized. Cannot handle message.")
+        logger.error("Services not initialized")
         return
 
     try:
@@ -94,6 +93,7 @@ def on_send_message(data: str):
 
         if data.get("type") == "terminate_session":
             connection_manager_service.terminate_session(conversation_id)
+            logger.info(f"{sid[:8]} | Session terminated")
             return socketio.emit("status", {"message": f"Session {conversation_id} terminated"}, room=sid)
 
         if not connection_manager_service.get_session(conversation_id):
@@ -103,12 +103,12 @@ def on_send_message(data: str):
         context_session_ids = data.get("context_session_ids", [])
         message_id = data.get("id") or str(uuid.uuid4())
         
+        # Log message received
+        msg_preview = data.get("message", "")[:50]
+        logger.info(f"{sid[:8]} | Message received: {msg_preview}{'...' if len(data.get('message', '')) > 50 else ''}")
+        
         browser_tools_config = {'sid': sid, 'socketio': socketio, 'redis_client': redis_client_instance}
         
-        # --- FIX APPLIED HERE ---
-        # The obsolete `custom_tool_config` variable and its corresponding argument
-        # in the spawn call have been removed to match the new 8-argument signature
-        # of `run_agent_and_stream`.
         eventlet.spawn(
             run_agent_and_stream,
             sid,
@@ -120,11 +120,10 @@ def on_send_message(data: str):
             connection_manager_service,
             redis_client_instance
         )
-        logger.info(f"Spawned agent run for conversation: {conversation_id}")
 
     except AuthApiError as e:
-        logger.error(f"Invalid token for SID {sid}: {e.message}")
+        logger.error(f"{sid[:8]} | Auth failed: {e.message}")
         socketio.emit("error", {"message": "Your session has expired. Please log in again."}, room=sid)
     except Exception as e:
-        logger.error(f"Error in message handler: {e}\n{traceback.format_exc()}")
+        logger.error(f"{sid[:8]} | Error: {str(e)}")
         socketio.emit("error", {"message": "An error occurred. Your conversation is preserved. Please try again."}, room=sid)
