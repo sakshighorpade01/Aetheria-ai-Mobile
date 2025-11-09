@@ -1,5 +1,5 @@
 // sw.js - Production Service Worker for Aetheria AI PWA
-const CACHE_VERSION = 'aetheria-v1.1.3';
+const CACHE_VERSION = 'aetheria-v1.1.4';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -13,7 +13,7 @@ const STATIC_ASSETS = [
   '/assets/splash-512.png',
   '/assets/splash-1024.png',
   '/assets/splash-2048.png',
-  
+
   // Core CSS
   '/css/splash-screen.css',
   '/css/design-system.css',
@@ -32,7 +32,7 @@ const STATIC_ASSETS = [
   '/css/mobile.css',
   '/css/modals.css',
   '/css/install-prompt.css',
-  
+
   // Core JS modules
   '/js/splash-screen.js',
   '/js/config.js',
@@ -68,7 +68,7 @@ const CDN_RESOURCES = [
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
-  
+
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
@@ -79,7 +79,7 @@ self.addEventListener('install', (event) => {
             console.warn('[SW] Failed to cache some static assets:', err);
             // Cache individually to avoid complete failure
             return Promise.allSettled(
-              STATIC_ASSETS.map(url => 
+              STATIC_ASSETS.map(url =>
                 cache.add(new Request(url, { cache: 'reload' }))
                   .catch(e => console.warn(`[SW] Failed to cache ${url}:`, e))
               )
@@ -97,7 +97,7 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker...');
-  
+
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -105,8 +105,8 @@ self.addEventListener('activate', (event) => {
           cacheNames
             .filter((name) => {
               // Delete caches that don't match current version
-              return name.startsWith('aetheria-') && 
-                     !name.startsWith(CACHE_VERSION);
+              return name.startsWith('aetheria-') &&
+                !name.startsWith(CACHE_VERSION);
             })
             .map((name) => {
               console.log('[SW] Deleting old cache:', name);
@@ -126,51 +126,51 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-  
+
   // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
-  
+
   // Skip chrome-extension and other non-http(s) requests
   if (!url.protocol.startsWith('http')) {
     return;
   }
-  
+
   // CRITICAL: Never cache real-time endpoints (socket.io, sessions API)
   // This prevents stale connection states and ensures fresh data
-  if (url.pathname.includes('socket.io') || 
-      url.pathname.includes('/api/sessions') ||
-      url.pathname.includes('/api/integrations')) {
+  if (url.pathname.includes('socket.io') ||
+    url.pathname.includes('/api/sessions') ||
+    url.pathname.includes('/api/integrations')) {
     // Direct network request, no caching
     event.respondWith(fetch(request));
     return;
   }
-  
+
   // Strategy 1: Network-first for other API calls (with timeout)
-  if (url.pathname.startsWith('/api/') || 
-      url.pathname.startsWith('/login/') ||
-      url.hostname.includes('onrender.com') ||
-      url.hostname.includes('supabase.co') ||
-      url.hostname.includes('railway.app')) {
+  if (url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/login/') ||
+    url.hostname.includes('onrender.com') ||
+    url.hostname.includes('supabase.co') ||
+    url.hostname.includes('railway.app')) {
     event.respondWith(networkFirstWithTimeout(request, 5000));
     return;
   }
-  
+
   // Strategy 2: Cache-first for static assets
   if (STATIC_ASSETS.some(asset => url.pathname === asset || url.pathname.endsWith(asset))) {
     event.respondWith(cacheFirst(request, STATIC_CACHE));
     return;
   }
-  
+
   // Strategy 3: Stale-while-revalidate for CDN resources
-  if (CDN_RESOURCES.some(cdn => request.url.startsWith(cdn)) || 
-      url.hostname.includes('cdnjs.cloudflare.com') ||
-      url.hostname.includes('cdn.jsdelivr.net')) {
+  if (CDN_RESOURCES.some(cdn => request.url.startsWith(cdn)) ||
+    url.hostname.includes('cdnjs.cloudflare.com') ||
+    url.hostname.includes('cdn.jsdelivr.net')) {
     event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE));
     return;
   }
-  
+
   // Strategy 4: Network-first with cache fallback for everything else
   event.respondWith(networkFirst(request, RUNTIME_CACHE));
 });
@@ -183,7 +183,7 @@ async function cacheFirst(request, cacheName) {
   if (cached) {
     return cached;
   }
-  
+
   try {
     const response = await fetch(request);
     if (response.ok) {
@@ -221,7 +221,7 @@ async function networkFirstWithTimeout(request, timeout) {
   try {
     const response = await Promise.race([
       fetch(request),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Network timeout')), timeout)
       )
     ]);
@@ -235,7 +235,7 @@ async function networkFirstWithTimeout(request, timeout) {
     // For API calls, return error response instead of offline page
     return new Response(
       JSON.stringify({ error: 'Network unavailable', offline: true }),
-      { 
+      {
         status: 503,
         headers: { 'Content-Type': 'application/json' }
       }
@@ -246,7 +246,7 @@ async function networkFirstWithTimeout(request, timeout) {
 // Stale-while-revalidate: Return cache immediately, update in background
 async function staleWhileRevalidate(request, cacheName) {
   const cached = await caches.match(request);
-  
+
   const fetchPromise = fetch(request).then((response) => {
     if (response.ok) {
       // Clone the response before using it, as response body can only be consumed once
@@ -260,14 +260,14 @@ async function staleWhileRevalidate(request, cacheName) {
     console.warn('[SW] Background fetch failed:', err);
     return cached;
   });
-  
+
   return cached || fetchPromise;
 }
 
 // Offline fallback
 async function offlineFallback(request) {
   const url = new URL(request.url);
-  
+
   // For navigation requests, return cached index.html
   if (request.mode === 'navigate' || request.destination === 'document') {
     const cached = await caches.match('/index.html');
@@ -275,7 +275,7 @@ async function offlineFallback(request) {
       return cached;
     }
   }
-  
+
   // For images, return cached icon as placeholder
   if (request.destination === 'image') {
     const cached = await caches.match('/assets/icon.png');
@@ -283,7 +283,7 @@ async function offlineFallback(request) {
       return cached;
     }
   }
-  
+
   // Generic offline response
   return new Response(
     `<!DOCTYPE html>
@@ -348,12 +348,12 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'CACHE_URLS') {
     const urls = event.data.urls || [];
     caches.open(DYNAMIC_CACHE).then(cache => {
       urls.forEach(url => {
-        cache.add(url).catch(err => 
+        cache.add(url).catch(err =>
           console.warn(`[SW] Failed to cache ${url}:`, err)
         );
       });

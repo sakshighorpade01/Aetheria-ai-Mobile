@@ -3,8 +3,10 @@
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
 
-// Backend URL for OAuth integrations and API calls - Production
-const BACKEND_URL = 'https://aios-web-production.up.railway.app';
+// Backend URL for OAuth integrations - Production (Render)
+const OAUTH_BACKEND_URL = 'https://aios-web.onrender.com';
+// Backend URL for API calls - Local
+const API_BACKEND_URL = 'http://localhost:8765';
 
 export class AIOS {
     constructor() {
@@ -393,8 +395,8 @@ export class AIOS {
         }
 
         try {
-            // Build OAuth URL with session token
-            const authUrl = `${BACKEND_URL}/login/${provider}?token=${session.access_token}`;
+            // Build OAuth URL with session token - use Render for OAuth
+            const authUrl = `${OAUTH_BACKEND_URL}/login/${provider}?token=${session.access_token}`;
 
             // Open OAuth popup window
             const authWindow = window.open(
@@ -448,7 +450,7 @@ export class AIOS {
         }
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/integrations/disconnect`, {
+            const response = await fetch(`${API_BACKEND_URL}/api/integrations/disconnect`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -478,7 +480,7 @@ export class AIOS {
         }
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/integrations`, {
+            const response = await fetch(`${API_BACKEND_URL}/api/integrations`, {
                 headers: { 'Authorization': `Bearer ${session.access_token}` }
             });
 
