@@ -597,6 +597,18 @@
     grid-column: 1 / -1;
 }
 
+.loading-more-indicator {
+    grid-column: 1 / -1;
+    padding: 16px;
+    text-align: center;
+}
+
+.loading-more-indicator .session-item-loading {
+    padding: 16px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
 /* --- Conversation History in Detail View --- */
 .conversation-history {
     flex: 1;

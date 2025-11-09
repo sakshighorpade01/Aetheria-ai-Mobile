@@ -643,6 +643,18 @@ function handleDone(data) {
     ongoingStreams.delete(messageId);
     sessionActive = false;
 
+    // Restore send button to ready state (dot → plane)
+    const sendBtn = document.getElementById('send-message');
+    const sendIcon = sendBtn?.querySelector('i');
+    if (sendIcon) {
+        sendIcon.classList.remove('fa-circle');
+        sendIcon.classList.add('fa-paper-plane');
+    }
+    if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.classList.remove('sending');
+    }
+
     dispatchChatEvent('messageAdded', { role: 'assistant', messageId });
 }
 
@@ -930,6 +942,18 @@ export const chatModule = {
 
         sessionActive = true;
 
+        // Update send button to loading state (plane → dot)
+        const sendBtn = document.getElementById('send-message');
+        const sendIcon = sendBtn?.querySelector('i');
+        if (sendIcon) {
+            sendIcon.classList.remove('fa-paper-plane');
+            sendIcon.classList.add('fa-circle');
+        }
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.classList.add('sending');
+        }
+
         if (message || attachedFiles.length > 0) {
             addUserMessage(message || 'Attached context', attachedFiles, selectedSessions);
         }
@@ -1045,6 +1069,19 @@ export const chatModule = {
             if (errorMsgDiv) errorMsgDiv.innerHTML = `<div class="error-message"><strong>Error:</strong> ${err.message}</div>`;
             sessionActive = false;
             shouldResendWithHistory = true;
+            
+            // Restore send button on error (dot → plane)
+            const sendBtn = document.getElementById('send-message');
+            const sendIcon = sendBtn?.querySelector('i');
+            if (sendIcon) {
+                sendIcon.classList.remove('fa-circle');
+                sendIcon.classList.add('fa-paper-plane');
+            }
+            if (sendBtn) {
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('sending');
+            }
+            
             resetUserInputState();
         }
     },
