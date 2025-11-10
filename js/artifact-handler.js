@@ -21,7 +21,7 @@ class ArtifactHandler {
                 <div class="artifact-header">
                     <div id="artifact-title" class="artifact-title">Artifact Viewer</div>
                     <div class="artifact-controls">
-                        <button id="copy-artifact-btn" class="copy-artifact-btn" title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
+                        <button id="copy-artifact-btn" class="copy-artifact-btn" title="Copy to Clipboard"><i class="fi fi-tr-copy"></i></button>
                         <button id="download-artifact-btn" class="download-artifact-btn" title="Download"><i class="fas fa-download"></i></button>
                         <button id="close-artifact-btn" class="close-artifact-btn" title="Close"><i class="fas fa-times"></i></button>
                     </div>

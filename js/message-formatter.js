@@ -371,7 +371,7 @@ class MessageFormatter {
                     </div>
                     <div class="code-block-actions">
                         <button class="code-copy-btn" data-code-id="${codeId}" title="Copy code">
-                            <i class="fas fa-copy"></i>
+                            <i class="fi fi-tr-copy"></i>
                         </button>
                         <i class="fas fa-chevron-down code-block-chevron"></i>
                     </div>

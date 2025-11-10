@@ -124,8 +124,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Skip external CDN resources (Font Awesome, Highlight.js, etc.)
+  // Allow caching of CDN resources (Flaticon, Font Awesome, etc.)
   if (url.origin !== location.origin) {
+    // Cache CDN resources with stale-while-revalidate
+    if (url.hostname.includes('cdnjs.cloudflare.com') ||
+        url.hostname.includes('cdn.jsdelivr.net') ||
+        url.hostname.includes('cdn-uicons.flaticon.com')) {
+      event.respondWith(
+        caches.match(request).then((cached) => {
+          const fetchPromise = fetch(request).then((response) => {
+            if (response.ok) {
+              caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+            }
+            return response;
+          }).catch(() => cached);
+          return cached || fetchPromise;
+        })
+      );
+    }
     return;
   }
   

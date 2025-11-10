@@ -53,13 +53,13 @@ class MessageActions {
         const actions = [
             {
                 id: 'copy',
-                icon: 'fa-regular fa-copy',
+                icon: 'fi fi-tr-copy',
                 label: 'Copy',
                 handler: () => this.handleCopy(messageId)
             },
             {
                 id: 'share',
-                icon: 'fa-regular fa-share-from-square',
+                icon: 'fi fi-tr-share-square',
                 label: 'Share',
                 handler: () => this.handleShare(messageId)
             }
@@ -94,7 +94,7 @@ class MessageActions {
         button.setAttribute('aria-label', action.label);
         
         button.innerHTML = `
-            <i class="fas ${action.icon}"></i>
+            <i class="${action.icon}"></i>
             <span class="action-btn-text">${action.label}</span>
         `;
 
@@ -215,7 +215,7 @@ class MessageActions {
         const originalClass = icon.className;
         
         if (actionId === 'copy') {
-            icon.className = 'fa-regular fa-circle-check';
+            icon.className = 'fi fi-tr-check-circle';
         }
 
         // Remove after delay

@@ -1,5 +1,5 @@
 // sw.js - Production Service Worker for Aetheria AI PWA
-const CACHE_VERSION = 'aetheria-v1.1.7';
+const CACHE_VERSION = 'aetheria-v1.1.8';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -67,6 +67,7 @@ const CDN_RESOURCES = [
   'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js',
   'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js',
   'https://cdn.socket.io/4.7.5/socket.io.min.js',
+  'https://cdn-uicons.flaticon.com/2.6.0/uicons-thin-rounded/css/uicons-thin-rounded.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css'
 ];
@@ -172,7 +173,8 @@ self.addEventListener('fetch', (event) => {
   // Strategy 3: Stale-while-revalidate for CDN resources
   if (CDN_RESOURCES.some(cdn => request.url.startsWith(cdn)) ||
     url.hostname.includes('cdnjs.cloudflare.com') ||
-    url.hostname.includes('cdn.jsdelivr.net')) {
+    url.hostname.includes('cdn.jsdelivr.net') ||
+    url.hostname.includes('cdn-uicons.flaticon.com')) {
     event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE));
     return;
   }

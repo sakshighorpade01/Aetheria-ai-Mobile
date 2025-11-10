@@ -30,7 +30,11 @@
   <link rel="stylesheet" href="css/mobile.css" />
   <link rel="stylesheet" href="css/modals.css" />
   <link rel="stylesheet" href="css/install-prompt.css" />
+  
+  <!-- Icon Libraries -->
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-thin-rounded/css/uicons-thin-rounded.css'>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
@@ -62,22 +66,22 @@
     <div class="top-bar">
       <div class="top-bar-action">
         <button id="new-chat-btn" class="top-bar-btn" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-plus"></i>
+          <i class="fi fi-tr-comment-medical"></i>
         </button>
         <div id="new-chat-menu" class="top-bar-dropdown hidden" role="menu">
           <button class="dropdown-item" data-dropdown-action="new-chat" role="menuitem">
-            <i class="fas fa-comments"></i>
+            <i class="fi fi-tr-comment-medical"></i>
             <span>New chat</span>
           </button>
           <button class="dropdown-item" data-dropdown-action="new-task" role="menuitem">
-            <i class="fas fa-list-check"></i>
+            <i class="fi fi-tr-mail-plus-circle"></i>
             <span>New task</span>
           </button>
         </div>
       </div>
       <div class="top-bar-action">
         <button id="profile-menu-btn" class="top-bar-btn profile-btn" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-user-circle" id="profile-icon-default"></i>
+          <i class="fi fi-tr-circle-user" id="profile-icon-default"></i>
           <img id="profile-photo" class="profile-photo hidden" alt="Profile" />
         </button>
         <div id="profile-dropdown" class="profile-dropdown hidden" role="menu"></div>
@@ -104,11 +108,11 @@
           </div>
           <div class="input-field">
             <button id="attach-file-btn" class="input-action-btn circular-btn" aria-haspopup="true"
-              aria-expanded="false"><i class="fas fa-plus"></i></button>
+              aria-expanded="false"><i class="fa-regular fa-plus"></i></button>
             <div id="input-action-menu" class="input-action-menu hidden" role="menu" aria-label="Compose tools">
               <button type="button" class="input-action-menu-item active" data-menu-action="memory" role="menuitem"
                 aria-pressed="true">
-                <i class="fas fa-brain"></i>
+                <i class="fi fi-tr-brain"></i>
                 <span>Memory</span>
               </button>
               <button type="button" class="input-action-menu-item" data-menu-action="attach" role="menuitem">
@@ -116,7 +120,7 @@
                 <span>Attach file</span>
               </button>
               <button type="button" class="input-action-menu-item" data-menu-action="sessions" role="menuitem">
-                <i class="fas fa-comments"></i>
+                <i class="fi fi-tr-rectangle-vertical-history"></i>
                 <span>Chats</span>
               </button>
             </div>
@@ -166,7 +170,7 @@
       </div>
       <div class="context-viewer-tabs">
         <button class="viewer-tab active" data-tab="sessions">
-          <i class="fas fa-network-wired"></i>
+          <i class="fi fi-tr-rectangle-vertical-history"></i>
           <span>Sessions</span>
         </button>
         <button class="viewer-tab" data-tab="files">
