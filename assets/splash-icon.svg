@@ -5,8 +5,8 @@
   <!-- Subtle glow effect behind logo area -->
   <defs>
     <radialGradient id="glow" cx="50%" cy="42%" r="35%">
-      <stop offset="0%" style="stop-color:rgba(99, 102, 241, 0.15);stop-opacity:1" />
-      <stop offset="100%" style="stop-color:rgba(99, 102, 241, 0);stop-opacity:0" />
+      <stop offset="0%" style="stop-color:rgba(156, 163, 175, 0.15);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(156, 163, 175, 0);stop-opacity:0" />
     </radialGradient>
   </defs>
   <ellipse cx="256" cy="215" rx="180" ry="160" fill="url(#glow)"/>

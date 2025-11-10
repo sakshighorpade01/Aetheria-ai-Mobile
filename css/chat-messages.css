@@ -360,15 +360,15 @@
     padding: 8px 12px;
     font-size: 0.85rem;
     border-radius: 6px;
-    background: rgba(var(--accent-color-rgb, 104, 117, 245), 0.12);
-    border: 1px solid rgba(var(--accent-color-rgb, 104, 117, 245), 0.25);
-    color: var(--accent-color, #4f46e5);
+    background: rgba(var(--accent-color-rgb, 107, 114, 128), 0.12);
+    border: 1px solid rgba(var(--accent-color-rgb, 107, 114, 128), 0.25);
+    color: var(--accent-color, #374151);
 }
 
 .dark-mode .browser-command-note {
-    background: rgba(var(--accent-color-rgb, 129, 140, 248), 0.16);
-    border-color: rgba(var(--accent-color-rgb, 129, 140, 248), 0.35);
-    color: var(--accent-color, #a5b4fc);
+    background: rgba(var(--accent-color-rgb, 156, 163, 175), 0.16);
+    border-color: rgba(var(--accent-color-rgb, 156, 163, 175), 0.35);
+    color: var(--accent-color, #d1d5db);
 }
 
 .browser-command-note i {

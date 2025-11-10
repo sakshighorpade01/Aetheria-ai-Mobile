@@ -202,7 +202,7 @@
 }
 
 .file-preview-chip.uploading .file-status {
-    background: rgba(59, 130, 246, 0.9);
+    background: rgba(107, 114, 128, 0.9);
 }
 
 .file-preview-chip.failed {

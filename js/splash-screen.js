@@ -114,7 +114,7 @@ class SplashScreen {
             // Draw particle
             this.ctx.beginPath();
             this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-            this.ctx.fillStyle = 'rgba(99, 102, 241, 0.6)';
+            this.ctx.fillStyle = 'rgba(156, 163, 175, 0.6)';
             this.ctx.fill();
             
             // Draw connections to nearby particles
@@ -127,7 +127,7 @@ class SplashScreen {
                     this.ctx.beginPath();
                     this.ctx.moveTo(particle.x, particle.y);
                     this.ctx.lineTo(otherParticle.x, otherParticle.y);
-                    this.ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 * (1 - distance / 150)})`;
+                    this.ctx.strokeStyle = `rgba(156, 163, 175, ${0.2 * (1 - distance / 150)})`;
                     this.ctx.lineWidth = 1;
                     this.ctx.stroke();
                 }

@@ -39,15 +39,15 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
     /* Accent & Interactive Colors */
-    --accent-color: #3b82f6;
-    --accent-hover: #2563eb;
-    --accent-color-rgb: 59, 130, 246;
-    --accent-muted: rgba(59, 130, 246, 0.1);
+    --accent-color: #374151;
+    --accent-hover: #1f2937;
+    --accent-color-rgb: 55, 65, 81;
+    --accent-muted: rgba(55, 65, 81, 0.1);
     --icon-color: #64748b;
 
     /* Link Colors */
-    --link-color: #3b82f6;
-    --link-hover: #2563eb;
+    --link-color: #374151;
+    --link-hover: #1f2937;
 
     /* Code & Syntax Colors */
     --code-bg: #f8fafc;
@@ -61,7 +61,7 @@
     --table-stripe-bg: #f9fafb;
 
     /* Message Colors */
-    --message-user-bg: #3b82f6;
+    --message-user-bg: #1f2937;
     --message-bot-bg: #f8fafc;
 
     /* Animation Variables */
@@ -113,15 +113,15 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
 
     /* Accent & Interactive Colors */
-    --accent-color: #3b82f6;
-    --accent-hover: #2563eb;
-    --accent-color-rgb: 59, 130, 246;
-    --accent-muted: rgba(59, 130, 246, 0.15);
+    --accent-color: #d1d5db;
+    --accent-hover: #f3f4f6;
+    --accent-color-rgb: 209, 213, 219;
+    --accent-muted: rgba(209, 213, 219, 0.15);
     --icon-color: #94a3b8;
 
     /* Link Colors */
-    --link-color: #60a5fa;
-    --link-hover: #93c5fd;
+    --link-color: #d1d5db;
+    --link-hover: #f3f4f6;
 
     /* Code & Syntax Colors */
     --code-bg: #242424;
@@ -135,7 +135,7 @@
     --table-stripe-bg: #2e2e2e;
 
     /* Message Colors */
-    --message-user-bg: #3b82f6;
+    --message-user-bg: #e5e7eb;
     --message-bot-bg: #242424;
 
     /* Animation Variables (same for both themes) */
