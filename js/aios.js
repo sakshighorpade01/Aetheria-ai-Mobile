@@ -5,8 +5,8 @@ import NotificationService from './notification-service.js';
 
 // Backend URL for OAuth integrations - Production (Render)
 const OAUTH_BACKEND_URL = 'https://aios-web.onrender.com';
-// Backend URL for API calls - Local
-const API_BACKEND_URL = 'http://localhost:8765';
+// Backend URL for API calls - Production (Railway)
+const API_BACKEND_URL = 'https://aios-web-production.up.railway.app';
 
 export class AIOS {
     constructor() {
@@ -28,6 +28,9 @@ export class AIOS {
 
         // Handle OAuth callback on page load
         await this.handleOAuthCallback();
+
+        // Handle integration OAuth callback
+        this.handleIntegrationOAuthCallback();
 
         // Get current user and update UI
         const { data: { user } } = await supabase.auth.getUser();
@@ -84,6 +87,28 @@ export class AIOS {
     }
 
     setupEventListeners() {
+        // Listen for OAuth callback messages from popup windows
+        window.addEventListener('message', (event) => {
+            // Verify the message is from our own origin
+            if (event.origin !== window.location.origin) return;
+
+            // Handle OAuth callback message
+            if (event.data && event.data.type === 'oauth-callback') {
+                console.log('Received OAuth callback message from popup:', event.data);
+                
+                if (event.data.success) {
+                    this.showNotification(`Successfully connected to ${event.data.provider}!`, 'success');
+                    // Refresh integration status
+                    this.updateIntegrationStatus();
+                } else {
+                    this.showNotification(
+                        `Failed to connect: ${event.data.error || 'Unknown error'}`,
+                        'error'
+                    );
+                }
+            }
+        });
+
         // Profile menu toggle
         this.elements.profileMenuBtn?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -415,10 +440,7 @@ export class AIOS {
                     // Check if popup was closed
                     if (authWindow.closed) {
                         clearInterval(checkInterval);
-                        // Refresh integration status after popup closes
-                        setTimeout(() => {
-                            this.updateIntegrationStatus();
-                        }, 1000);
+                        console.log('OAuth popup closed');
                     }
                 } catch (e) {
                     // Cross-origin errors are expected
@@ -430,6 +452,7 @@ export class AIOS {
                 clearInterval(checkInterval);
                 if (!authWindow.closed) {
                     authWindow.close();
+                    this.showNotification('OAuth timeout. Please try again.', 'error');
                 }
             }, 300000);
 
@@ -623,6 +646,50 @@ export class AIOS {
             }
         } catch (error) {
             console.error('Error handling OAuth callback:', error);
+        }
+    }
+
+    /**
+     * Handle integration OAuth callback (GitHub, Google integrations, etc.)
+     * This is called when the OAuth popup redirects back with auth_success or auth_error
+     */
+    handleIntegrationOAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authSuccess = urlParams.get('auth_success');
+        const authError = urlParams.get('auth_error');
+        const provider = urlParams.get('provider');
+        const message = urlParams.get('message');
+
+        // Check if this is an OAuth callback in a popup window
+        if (authSuccess === 'true' || authError === 'true') {
+            // If we're in a popup (opened by window.open), notify the parent and close
+            if (window.opener && !window.opener.closed) {
+                console.log('OAuth callback detected in popup, notifying parent window');
+                
+                // Send message to parent window
+                window.opener.postMessage({
+                    type: 'oauth-callback',
+                    success: authSuccess === 'true',
+                    provider: provider,
+                    error: authError === 'true' ? message : null
+                }, window.location.origin);
+
+                // Close the popup after a short delay
+                setTimeout(() => {
+                    window.close();
+                }, 500);
+            } else {
+                // If not in a popup, just show notification and clean URL
+                if (authSuccess === 'true') {
+                    this.showNotification(`Successfully connected to ${provider}!`, 'success');
+                    this.updateIntegrationStatus();
+                } else if (authError === 'true') {
+                    this.showNotification(`Failed to connect: ${message || 'Unknown error'}`, 'error');
+                }
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
     }
 }

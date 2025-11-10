@@ -113,11 +113,127 @@ def auth_callback(provider):
         supabase_client.from_('user_integrations').upsert(integration_data).execute()
         logger.info(f"Supabase: Saved {provider} integration")
         
-        # Redirect back to the frontend with success message
-        frontend_url = config.FRONTEND_URL
-        return redirect(f"{frontend_url}/?auth_success=true&provider={provider}")
+        # Return a success page that notifies the parent window and closes
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Authentication Successful</title>
+            <style>
+                body {{
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                }}
+                .container {{
+                    text-align: center;
+                    padding: 2rem;
+                }}
+                .success-icon {{
+                    font-size: 4rem;
+                    margin-bottom: 1rem;
+                }}
+                h1 {{
+                    margin: 0 0 0.5rem 0;
+                    font-size: 1.5rem;
+                }}
+                p {{
+                    margin: 0;
+                    opacity: 0.9;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="success-icon">✓</div>
+                <h1>Authentication Successful!</h1>
+                <p>You have successfully connected your {provider.capitalize()} account.</p>
+                <p>This window will close automatically...</p>
+            </div>
+            <script>
+                // Notify parent window of success
+                if (window.opener) {{
+                    window.opener.postMessage({{
+                        type: 'oauth-callback',
+                        success: true,
+                        provider: '{provider}'
+                    }}, '{config.FRONTEND_URL}');
+                }}
+                // Close window after 1.5 seconds
+                setTimeout(function() {{
+                    window.close();
+                }}, 1500);
+            </script>
+        </body>
+        </html>
+        """
 
     except Exception as e:
         logger.error(f"{provider} auth error: {str(e)}")
-        frontend_url = config.FRONTEND_URL
-        return redirect(f"{frontend_url}/?auth_error=true&message=Authentication failed")
+        error_message = str(e)
+        
+        # Return an error page that notifies the parent window and closes
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Authentication Failed</title>
+            <style>
+                body {{
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    color: white;
+                }}
+                .container {{
+                    text-align: center;
+                    padding: 2rem;
+                }}
+                .error-icon {{
+                    font-size: 4rem;
+                    margin-bottom: 1rem;
+                }}
+                h1 {{
+                    margin: 0 0 0.5rem 0;
+                    font-size: 1.5rem;
+                }}
+                p {{
+                    margin: 0.5rem 0;
+                    opacity: 0.9;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="error-icon">✗</div>
+                <h1>Authentication Failed</h1>
+                <p>An error occurred during authentication.</p>
+                <p>This window will close automatically...</p>
+            </div>
+            <script>
+                // Notify parent window of error
+                if (window.opener) {{
+                    window.opener.postMessage({{
+                        type: 'oauth-callback',
+                        success: false,
+                        provider: '{provider}',
+                        error: 'Authentication failed'
+                    }}, '{config.FRONTEND_URL}');
+                }}
+                // Close window after 2 seconds
+                setTimeout(function() {{
+                    window.close();
+                }}, 2000);
+            </script>
+        </body>
+        </html>
+        """
