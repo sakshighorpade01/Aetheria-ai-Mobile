@@ -3,6 +3,7 @@
 import { supabase } from './supabase-client.js';
 import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
+import skeletonLoader from './skeleton-loader.js';
 
 // Backend API URL for session management - Production
 const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
@@ -432,7 +433,9 @@ class ContextHandler {
         if (!this.elements.listView) return;
         this.elements.listView.classList.remove('hidden');
         this.elements.detailView?.classList.add('hidden');
-        this.elements.listView.innerHTML = '<div class="session-item-loading">Loading sessions…</div>';
+        
+        // Show skeleton loading state
+        skeletonLoader.showContextWindowSkeleton(this.elements.listView, 6);
     }
 
     renderErrorState() {

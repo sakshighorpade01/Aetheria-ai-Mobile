@@ -14,11 +14,13 @@
   <link rel="stylesheet" href="css/splash-screen.css" />
   <link rel="stylesheet" href="css/design-system.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/skeleton.css" />
   <link rel="stylesheet" href="css/chat-variables.css" />
   <link rel="stylesheet" href="css/chat-layout.css" />
   <link rel="stylesheet" href="css/chat-messages.css" />
   <link rel="stylesheet" href="css/chat-context.css" />
   <link rel="stylesheet" href="css/chat-input.css" />
+  <link rel="stylesheet" href="css/message-actions.css" />
   <link rel="stylesheet" href="css/notifications.css" />
   <link rel="stylesheet" href="css/welcome-message.css" />
   <link rel="stylesheet" href="css/chat.css" />
@@ -196,6 +198,7 @@
     import ContextHandler from './js/context-handler.js';
     import FileAttachmentHandler from './js/add-files.js';
     import { messageFormatter } from './js/message-formatter.js';
+    import skeletonLoader from './js/skeleton-loader.js';
 
     // ★★★ NEW: Context Viewer Class (Expanded Logic) ★★★
     class ContextViewer {

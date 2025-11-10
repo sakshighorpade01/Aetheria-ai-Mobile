@@ -89,6 +89,8 @@
     line-height: 1.5;
     position: relative;
     padding-bottom: 64px;
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
 }
 
 .artifact-content pre {

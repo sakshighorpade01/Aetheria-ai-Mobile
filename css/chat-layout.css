@@ -65,6 +65,8 @@
     margin: 0 auto;
     padding: 20px 0;
     pointer-events: auto;
+    /* Smooth scroll anchoring - prevents jumpy scroll when content loads */
+    overflow-anchor: auto;
 }
 
 /* --- Context Active Indicator --- */

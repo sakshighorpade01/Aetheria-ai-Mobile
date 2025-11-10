@@ -10,6 +10,7 @@ import UnifiedPreviewHandler from './unified-preview-handler.js';
 import ContextHandler from './context-handler.js';
 import FileAttachmentHandler from './add-files.js';
 import { artifactHandler } from './artifact-handler.js';
+import messageActions from './message-actions.js';
 
 let sessionActive = false;
 let currentConversationId = null;
@@ -312,7 +313,11 @@ function addUserMessage(message, files = [], sessions = []) {
 
     messagesContainer.appendChild(wrapperDiv);
     wrapperDiv.dataset.messageId = messageId;
+    messageDiv.dataset.messageId = messageId;
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // No actions for user messages - they don't need to copy their own input
+    
     dispatchChatEvent('messageAdded', { role: 'user', messageId });
 }
 
@@ -643,16 +648,21 @@ function handleDone(data) {
     ongoingStreams.delete(messageId);
     sessionActive = false;
 
-    // Restore send button to ready state (dot → plane)
+    // Restore send button to ready state (triangle → plane)
     const sendBtn = document.getElementById('send-message');
     const sendIcon = sendBtn?.querySelector('i');
     if (sendIcon) {
-        sendIcon.classList.remove('fa-circle');
+        sendIcon.classList.remove('fa-play');
         sendIcon.classList.add('fa-paper-plane');
     }
     if (sendBtn) {
         sendBtn.disabled = false;
         sendBtn.classList.remove('sending');
+    }
+
+    // Add message actions to bot message (Copy and Share only)
+    if (window.messageActions && messageDiv) {
+        window.messageActions.addActionsToMessage(messageDiv, messageId);
     }
 
     dispatchChatEvent('messageAdded', { role: 'assistant', messageId });
@@ -942,12 +952,12 @@ export const chatModule = {
 
         sessionActive = true;
 
-        // Update send button to loading state (plane → dot)
+        // Update send button to loading state (plane → triangle)
         const sendBtn = document.getElementById('send-message');
         const sendIcon = sendBtn?.querySelector('i');
         if (sendIcon) {
             sendIcon.classList.remove('fa-paper-plane');
-            sendIcon.classList.add('fa-circle');
+            sendIcon.classList.add('fa-play');
         }
         if (sendBtn) {
             sendBtn.disabled = true;
@@ -1070,11 +1080,11 @@ export const chatModule = {
             sessionActive = false;
             shouldResendWithHistory = true;
             
-            // Restore send button on error (dot → plane)
+            // Restore send button on error (triangle → plane)
             const sendBtn = document.getElementById('send-message');
             const sendIcon = sendBtn?.querySelector('i');
             if (sendIcon) {
-                sendIcon.classList.remove('fa-circle');
+                sendIcon.classList.remove('fa-play');
                 sendIcon.classList.add('fa-paper-plane');
             }
             if (sendBtn) {

@@ -138,6 +138,8 @@ body:not(.dark-mode) .dropdown-item i {
     flex: 1;
     overflow-y: auto;
     background-color: var(--elevated-bg);
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
 }
 
 /* --- Chat Messages Container --- */

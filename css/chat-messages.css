@@ -8,6 +8,8 @@
     line-height: 1.6;
     font-size: 0.95rem;
     animation: messageIn var(--anim-normal) var(--easing-standard);
+    /* Enable scroll anchoring for individual messages */
+    overflow-anchor: auto;
 }
 
 @keyframes messageIn {

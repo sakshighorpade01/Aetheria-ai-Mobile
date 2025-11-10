@@ -60,6 +60,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
 }
 
 /* --- Input Area (Footer) --- */

@@ -34,7 +34,7 @@
 /* User Message Styling */
 .user-message {
     background: transparent;
-    color: var(--message-user-text);
+    color: var(--text-color);
     border-radius: 0;
     align-self: flex-end;
 }

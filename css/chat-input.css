@@ -351,25 +351,16 @@
     background: #e8e8e8;
 }
 
-/* Send button loading state (plane → dot) */
+/* Send button loading state (plane → triangle) */
 #send-message.sending {
     pointer-events: none;
     opacity: 0.8;
 }
 
-#send-message.sending i.fa-circle {
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 0.4;
-        transform: scale(0.8);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1);
-    }
+/* Triangle icon pointing upward - static, no animation */
+#send-message.sending i.fa-play {
+    transform: rotate(-90deg);
+    /* Static triangle pointing up, no pulsing */
 }
 
 /* Light mode - dark button with white icon */

@@ -72,8 +72,8 @@
   --input-focus-border: var(--neutral-400);
   --input-focus-ring: var(--neutral-100);
 
-  --message-user-bg: var(--neutral-800);
-  --message-user-text: white;
+  --message-user-bg: #1f2937;
+  --message-user-text: #ffffff;
   --message-bot-bg: #F5F3EB;
   --message-bot-text: var(--neutral-900);
 
@@ -118,8 +118,8 @@
   --input-focus-ring: rgba(156, 163, 175, 0.25);
 
   /* Component-specific colors for dark mode */
-  --message-user-bg: var(--neutral-200);
-  --message-user-text: var(--neutral-900);
+  --message-user-bg: #e5e7eb;
+  --message-user-text: #1f2937;
   --message-bot-bg: var(--neutral-800);
   --message-bot-text: var(--neutral-100);
 

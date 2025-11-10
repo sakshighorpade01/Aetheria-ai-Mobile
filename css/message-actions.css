@@ -1,0 +1,256 @@
+/* =================================================================
+ * MESSAGE ACTIONS - MOBILE-FIRST DESIGN
+ * ================================================================= */
+
+/*
+ * Action buttons that appear below messages for quick interactions
+ * Mobile-optimized with touch-friendly targets and smooth animations
+ */
+
+/* --- Message Actions Container --- */
+.message-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 6px;
+    padding: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+/* Show actions when message is in viewport or has been interacted with */
+.message.actions-visible .message-actions,
+.message:active .message-actions,
+.message.has-actions .message-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Always show actions for the last message */
+.message:last-child .message-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* --- Action Button Base Styles --- */
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.action-btn i {
+    font-size: 1rem;
+    font-weight: 300;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Hover/Active States */
+.action-btn:active {
+    transform: scale(0.9);
+    background: transparent;
+}
+
+.action-btn:active i {
+    color: var(--text-color);
+}
+
+/* --- Specific Action Button Styles --- */
+
+/* Copy Button */
+.action-btn.copy-btn.copied i {
+    color: var(--success-700);
+    transform: scale(1.15);
+}
+
+.dark-mode .action-btn.copy-btn.copied i {
+    color: var(--success-500);
+}
+
+
+
+/* Share Button */
+.action-btn.share-btn.shared i {
+    color: var(--success-700);
+}
+
+.dark-mode .action-btn.share-btn.shared i {
+    color: var(--success-500);
+}
+
+/* --- Bot Message Actions (Left-aligned, below message) --- */
+.bot-message .message-actions {
+    justify-content: flex-start;
+}
+
+/* --- Action Button Text (Hidden - icon only) --- */
+.action-btn-text {
+    display: none;
+}
+
+/* --- Feedback Animations --- */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.action-btn.success-feedback {
+    animation: successPulse 0.3s ease;
+}
+
+/* --- Loading State --- */
+.action-btn.loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.action-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+/* --- Disabled State --- */
+.action-btn:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* --- Intersection Observer Enhancement --- */
+/* Actions fade in when message enters viewport */
+.message.in-viewport .message-actions {
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Compact Mode for Small Screens --- */
+@media (max-width: 360px) {
+    .action-btn {
+        padding: 6px;
+        min-width: 28px;
+        min-height: 28px;
+    }
+    
+    .action-btn i {
+        font-size: 0.9rem;
+    }
+    
+    .message-actions {
+        gap: 0;
+    }
+}
+
+/* --- Accessibility --- */
+.action-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* --- Haptic Feedback Indicator --- */
+.action-btn.haptic-active {
+    transform: scale(0.92);
+}
+
+/* --- Message Wrapper Adjustments --- */
+.message-wrapper {
+    position: relative;
+}
+
+/* Ensure actions don't interfere with message selection */
+.message-content {
+    user-select: text;
+}
+
+/* --- Context Button Integration --- */
+/* Ensure existing context button works with new actions */
+.user-message-context-button {
+    margin-top: 6px;
+}
+
+/* When both context button and actions exist */
+.user-message-wrapper:has(.message-actions) .user-message-context-button {
+    margin-top: 4px;
+}
+
+/* --- Smooth Transitions --- */
+.message {
+    transition: background-color 0.2s ease;
+}
+
+/* Highlight message on action */
+.message.action-active {
+    background-color: rgba(var(--accent-color-rgb, 107, 114, 128), 0.05);
+    border-radius: 8px;
+    padding: 8px;
+    margin: -8px;
+}
+
+/* --- Action Tooltips (Optional) --- */
+.action-btn[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    padding: 4px 8px;
+    background: var(--elevated-bg);
+    color: var(--text-color);
+    font-size: 0.7rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+}
+
+.action-btn:active::before {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+/* --- Performance Optimization --- */
+.message-actions {
+    will-change: opacity, transform;
+}
+
+.action-btn {
+    will-change: transform;
+}
+
+/* Remove will-change after animation */
+.message-actions.animated {
+    will-change: auto;
+}
+
+/* --- Print Styles --- */
+@media print {
+    .message-actions {
+        display: none;
+    }
+}

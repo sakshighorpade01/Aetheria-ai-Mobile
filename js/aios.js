@@ -2,6 +2,7 @@
 
 import { supabase } from './supabase-client.js';
 import NotificationService from './notification-service.js';
+import skeletonLoader from './skeleton-loader.js';
 
 // Backend URL for OAuth integrations - Production (Render)
 const OAUTH_BACKEND_URL = 'https://aios-web.onrender.com';
