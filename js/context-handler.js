@@ -5,9 +5,6 @@ import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 import skeletonLoader from './skeleton-loader.js';
 
-// Backend API URL for session management - Production
-const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
-
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
         this.loadedSessions = [];
@@ -195,51 +192,42 @@ class ContextHandler {
                 }
 
                 console.log('[ContextHandler] Getting Supabase session...');
-                const { data, error } = await supabase.auth.getSession();
-                const session = data?.session;
-                console.log('[ContextHandler] Session retrieved:', { hasSession: !!session, hasToken: !!session?.access_token, error });
+                const { data: authData, error: authError } = await supabase.auth.getSession();
+                const session = authData?.session;
+                console.log('[ContextHandler] Session retrieved:', { hasSession: !!session, hasToken: !!session?.access_token, error: authError });
 
-                if (error || !session?.access_token) {
+                if (authError || !session?.access_token) {
                     throw new Error('Please log in to view chat history.');
                 }
 
-                console.log('[ContextHandler] Fetching sessions from backend:', `${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`);
-                const response = await fetch(`${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`, {
-                    headers: { Authorization: `Bearer ${session.access_token}` },
-                    signal: AbortSignal.timeout(15000) // 15 second timeout
-                });
+                const userId = session.user.id;
+                console.log('[ContextHandler] Fetching session titles from Supabase for user:', userId);
 
-                console.log('[ContextHandler] Backend response status:', response.status, response.statusText);
+                // Query session_titles table directly (lightweight - only titles)
+                const { data: titlesData, error: titlesError, count } = await supabase
+                    .from('session_titles')
+                    .select('session_id, tittle, created_at', { count: 'exact' })
+                    .eq('user_id', userId)
+                    .order('created_at', { ascending: false })
+                    .range(this.currentOffset, this.currentOffset + this.pageSize - 1);
 
-                if (!response.ok) {
-                    let errorMessage = '';
-
-                    if (response.status === 503) {
-                        errorMessage = 'Backend service is temporarily unavailable. Please try again in a few moments.';
-                    } else if (response.status === 500) {
-                        errorMessage = 'Server error occurred. Please try again later.';
-                    } else if (response.status === 401 || response.status === 403) {
-                        errorMessage = 'Authentication failed. Please log in again.';
-                    } else {
-                        try {
-                            const errorText = await response.text();
-                            const errorData = JSON.parse(errorText);
-                            errorMessage = errorData.error || errorData.message || errorText;
-                        } catch {
-                            errorMessage = `Failed to load sessions (status ${response.status}).`;
-                        }
-                    }
-
-                    throw new Error(errorMessage);
+                if (titlesError) {
+                    console.error('[ContextHandler] Error fetching session titles:', titlesError);
+                    throw new Error(`Failed to load session titles: ${titlesError.message}`);
                 }
 
-                const responseData = await response.json();
-                console.log('[ContextHandler] Sessions received from backend:', responseData);
+                console.log('[ContextHandler] Session titles received:', { count: titlesData?.length, total: count });
 
-                // Handle both old format (array) and new format (object with sessions array)
-                const sessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
-                this.totalSessions = responseData.total || sessions.length;
-                this.hasMoreSessions = responseData.hasMore || false;
+                // Transform titles data to match expected session format
+                const sessions = (titlesData || []).map(title => ({
+                    session_id: title.session_id,
+                    title: title.tittle, // Note: table has typo "tittle"
+                    created_at: new Date(title.created_at).getTime() / 1000, // Convert to Unix timestamp
+                    runs: [] // Empty runs - will be loaded on-demand when user clicks
+                }));
+
+                this.totalSessions = count || 0;
+                this.hasMoreSessions = (this.currentOffset + this.pageSize) < this.totalSessions;
                 this.currentOffset = sessions.length;
 
                 this.loadedSessions = sessions;
@@ -266,7 +254,7 @@ class ContextHandler {
 
                 // Handle different error types
                 if (err.name === 'TimeoutError' || err.name === 'AbortError') {
-                    this.loadError = 'Request timed out. The backend may be slow or unavailable. Please try again.';
+                    this.loadError = 'Request timed out. Please try again.';
                 } else if (err.message.includes('Failed to fetch') || err.message.includes('Network')) {
                     this.loadError = 'Network error. Please check your internet connection and try again.';
                 } else if (err.message.includes('offline')) {
@@ -313,32 +301,41 @@ class ContextHandler {
 
         try {
             await supabase.auth.refreshSession();
-            const { data, error } = await supabase.auth.getSession();
-            const session = data?.session;
+            const { data: authData, error: authError } = await supabase.auth.getSession();
+            const session = authData?.session;
 
-            if (error || !session?.access_token) {
+            if (authError || !session?.access_token) {
                 throw new Error('Session expired. Please log in again.');
             }
 
+            const userId = session.user.id;
             console.log('[ContextHandler] Loading more sessions, offset:', this.currentOffset);
-            const response = await fetch(`${API_PROXY_URL}/api/sessions?offset=${this.currentOffset}&limit=${this.pageSize}`, {
-                headers: { Authorization: `Bearer ${session.access_token}` },
-                signal: AbortSignal.timeout(15000)
-            });
 
-            if (!response.ok) {
-                throw new Error(`Failed to load more sessions (status ${response.status})`);
+            // Query session_titles table directly for pagination
+            const { data: titlesData, error: titlesError } = await supabase
+                .from('session_titles')
+                .select('session_id, tittle, created_at')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false })
+                .range(this.currentOffset, this.currentOffset + this.pageSize - 1);
+
+            if (titlesError) {
+                throw new Error(`Failed to load more sessions: ${titlesError.message}`);
             }
 
-            const responseData = await response.json();
-            const newSessions = Array.isArray(responseData) ? responseData : (responseData.sessions || []);
+            // Transform titles data to match expected session format
+            const newSessions = (titlesData || []).map(title => ({
+                session_id: title.session_id,
+                title: title.tittle,
+                created_at: new Date(title.created_at).getTime() / 1000,
+                runs: []
+            }));
 
             console.log('[ContextHandler] Loaded more sessions:', newSessions.length);
 
             this.loadedSessions = [...this.loadedSessions, ...newSessions];
             this.currentOffset += newSessions.length;
-            this.hasMoreSessions = responseData.hasMore || false;
-            this.totalSessions = responseData.total || this.loadedSessions.length;
+            this.hasMoreSessions = (this.currentOffset < this.totalSessions);
 
             // Append new sessions to the list
             this.appendSessionItems(newSessions);
@@ -547,43 +544,19 @@ class ContextHandler {
         sessionItem.className = 'session-item';
         sessionItem.dataset.sessionId = session.session_id;
 
-        // Support both session.runs and session.memory.runs structures
-        const runs = session.runs || session.memory?.runs || [];
-
-        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-        if (runs.length > 0) {
-            // Try to find first user message from runs
-            let firstUserMessage = null;
-            for (const run of runs) {
-                // Check if run has input content (new format)
-                if (run.input && run.input.input_content) {
-                    firstUserMessage = run.input.input_content;
-                    break;
-                }
-                // Check if run is a user role message (legacy format)
-                if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                    firstUserMessage = run.content;
-                    break;
-                }
-            }
-
-            if (firstUserMessage) {
-                let rawTitle = firstUserMessage;
-                const marker = 'Current message:';
-                const index = rawTitle.lastIndexOf(marker);
-                if (index !== -1) {
-                    rawTitle = rawTitle.substring(index + marker.length).trim();
-                }
-                sessionName = rawTitle.split('\n')[0].trim();
-                if (sessionName.length > 45) {
-                    sessionName = sessionName.substring(0, 45) + '...';
-                }
-            }
+        // Use title from session_titles table if available, otherwise fallback to session_id
+        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
+        
+        // Truncate long titles
+        if (sessionName.length > 45) {
+            sessionName = sessionName.substring(0, 45) + '...';
         }
 
         const creationDate = new Date(session.created_at * 1000);
         const formattedDate = creationDate.toLocaleDateString() + ' ' + creationDate.toLocaleTimeString();
-        const messageCount = runs.length;
+        
+        // Message count will be shown as "..." until session is loaded
+        const messageCount = '...';
 
         sessionItem.innerHTML = this.getSessionItemHTML(session, sessionName, formattedDate, messageCount);
 
@@ -663,7 +636,7 @@ class ContextHandler {
         return this.loadedSessions.filter(session => selectedIds.has(session.session_id));
     }
 
-    showSessionDetails(sessionId) {
+    async showSessionDetails(sessionId) {
         console.log('═══════════════════════════════════════════════════════');
         console.log('[ContextHandler] ✓ showSessionDetails CALLED');
         console.log('[ContextHandler] Session ID:', sessionId);
@@ -676,6 +649,54 @@ class ContextHandler {
             console.error('[ContextHandler] ✗ Cannot show session details - missing session or detailView');
             this.showNotification('Could not find session details.', 'error');
             return;
+        }
+
+        // Check if session already has runs data loaded
+        if (!session.runs || session.runs.length === 0) {
+            console.log('[ContextHandler] Session runs not loaded, fetching from agno_sessions...');
+            
+            // Show loading state in detail view
+            this.elements.listView.classList.add('hidden');
+            this.elements.detailView.classList.remove('hidden');
+            this.elements.detailView.innerHTML = '<div class="session-item-loading">Loading conversation...</div>';
+
+            try {
+                // Fetch full session data from agno_sessions table
+                const { data: sessionData, error: sessionError } = await supabase
+                    .from('agno_sessions')
+                    .select('runs, session_data, metadata')
+                    .eq('session_id', sessionId)
+                    .single();
+
+                if (sessionError) {
+                    console.error('[ContextHandler] Error fetching session data:', sessionError);
+                    throw new Error(`Failed to load conversation: ${sessionError.message}`);
+                }
+
+                console.log('[ContextHandler] Session data fetched:', sessionData);
+
+                // Update session object with runs data
+                session.runs = sessionData?.runs || [];
+                session.session_data = sessionData?.session_data;
+                session.metadata = sessionData?.metadata;
+
+                console.log('[ContextHandler] Session updated with runs:', session.runs.length);
+            } catch (err) {
+                console.error('[ContextHandler] Failed to load session details:', err);
+                this.elements.detailView.innerHTML = `
+                    <div class="empty-state error-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>${err.message || 'Failed to load conversation'}</p>
+                        <button class="retry-load-btn" type="button">
+                            <i class="fas fa-arrow-left"></i> Back to Sessions
+                        </button>
+                    </div>
+                `;
+                this.elements.detailView.querySelector('.retry-load-btn')?.addEventListener('click', () => {
+                    this.showSessionList(this.loadedSessions);
+                });
+                return;
+            }
         }
 
         // Hide the header when showing detail view
@@ -692,31 +713,12 @@ class ContextHandler {
         // Support both session.runs and session.memory.runs structures
         const runs = session.runs || session.memory?.runs || [];
 
-        // Get session name for the inline header
-        let sessionName = `Session ${session.session_id.substring(0, 8)}...`;
-        let firstUserMessage = null;
-        for (const run of runs) {
-            if (run.input && run.input.input_content) {
-                firstUserMessage = run.input.input_content;
-                break;
-            }
-            if (run.role === 'user' && run.content && run.content.trim() !== '') {
-                firstUserMessage = run.content;
-                break;
-            }
-        }
-
-        if (firstUserMessage) {
-            let rawTitle = firstUserMessage;
-            const marker = 'Current message:';
-            const index = rawTitle.lastIndexOf(marker);
-            if (index !== -1) {
-                rawTitle = rawTitle.substring(index + marker.length).trim();
-            }
-            sessionName = rawTitle.split('\n')[0].trim();
-            if (sessionName.length > 45) {
-                sessionName = sessionName.substring(0, 45) + '...';
-            }
+        // Use title from session object (already loaded from session_titles)
+        let sessionName = session.title || `Session ${session.session_id.substring(0, 8)}...`;
+        
+        // Truncate if needed
+        if (sessionName.length > 45) {
+            sessionName = sessionName.substring(0, 45) + '...';
         }
 
         const conversationContainer = view.querySelector('.conversation-messages');
@@ -920,10 +922,9 @@ class ContextHandler {
         const title = document.createElement('span');
         title.className = 'session-chip-title';
 
-        const runs = session.runs || session.memory?.runs || [];
-        const topLevelRuns = runs.filter(run => !run.parent_run_id);
-        const firstMessage = topLevelRuns[0]?.input?.input_content || `Session ${index + 1}`;
-        title.textContent = firstMessage.substring(0, 25) + (firstMessage.length > 25 ? '...' : '');
+        // Use title from session_titles table if available
+        const chipTitle = session.title || `Session ${index + 1}`;
+        title.textContent = chipTitle.substring(0, 25) + (chipTitle.length > 25 ? '...' : '');
 
         const removeBtn = document.createElement('button');
         removeBtn.className = 'session-chip-remove';
