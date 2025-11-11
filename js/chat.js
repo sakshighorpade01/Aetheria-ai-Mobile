@@ -263,14 +263,14 @@ function updateReasoningSummary(messageId) {
     const toolLogs = messageDiv.querySelectorAll('.tool-log-entry').length;
 
     if (agentBlocks === 0 && toolLogs === 0) {
-        summaryText.textContent = 'Reasoning: 0 agents, 0 tools';
+        summaryText.textContent = 'Reasoning: 0 tools, 0 agents';
         summary.classList.add('hidden');
         return;
     }
 
     const parts = [];
-    if (agentBlocks > 0) parts.push(`${agentBlocks} agent${agentBlocks > 1 ? 's' : ''}`);
     if (toolLogs > 0) parts.push(`${toolLogs} tool${toolLogs > 1 ? 's' : ''}`);
+    if (agentBlocks > 0) parts.push(`${agentBlocks} agent${agentBlocks > 1 ? 's' : ''}`);
     summaryText.textContent = `Reasoning: ${parts.join(', ')}`;
     summary.classList.remove('hidden');
 }
@@ -332,9 +332,8 @@ function createBotMessagePlaceholder(messageId) {
     const thinkingIndicator = document.createElement('div');
     thinkingIndicator.className = 'thinking-indicator';
     thinkingIndicator.innerHTML = `
-        <div class="thinking-steps-container"></div>
         <div class="reasoning-summary hidden" role="button" tabindex="0">
-            <span class="summary-text">Reasoning: 0 agents, 0 tools</span>
+            <span class="summary-text">Reasoning: 0 tools, 0 agents</span>
             <i class="fas fa-chevron-down summary-chevron"></i>
         </div>
     `;
@@ -562,7 +561,7 @@ function handleAgentStep(data) {
             logEntry.id = logEntryId;
             logEntry.className = 'tool-log-entry';
             logEntry.innerHTML = `
-                <i class="fas fa-wrench tool-log-icon"></i>
+                <i class="fi fi-tr-wisdom tool-log-icon"></i>
                 <div class="tool-log-details">
                     <span class="tool-log-action">Used tool: <strong>${toolName}</strong></span>
                 </div>
@@ -581,24 +580,7 @@ function handleAgentStep(data) {
         }
     }
 
-    const liveStepsContainer = messageDiv.querySelector('.thinking-steps-container');
-    if (!liveStepsContainer) return;
-    let liveStepDiv = liveStepsContainer.querySelector(`#${stepId}`);
-
-    if (type === 'tool_start') {
-        if (!liveStepDiv) {
-            liveStepDiv = document.createElement('div');
-            liveStepDiv.id = stepId;
-            liveStepDiv.className = 'thinking-step';
-            liveStepDiv.innerHTML = `<i class="fas fa-cog fa-spin step-icon"></i><span class="step-text"><strong>${ownerName}:</strong> Using ${toolName}...</span>`;
-            liveStepsContainer.appendChild(liveStepDiv);
-        }
-    } else if (type === 'tool_end') {
-        if (liveStepDiv) {
-            liveStepDiv.remove();
-        }
-    }
-
+    // Remove the live steps display during running state - no spinning icon or text above reasoning title
     updateReasoningSummary(messageId);
 }
 
@@ -617,21 +599,18 @@ function handleDone(data) {
         const logCount = messageDiv.querySelectorAll('.log-block').length;
         const toolLogCount = messageDiv.querySelectorAll('.tool-log-entry').length;
 
-        let summaryText = "Reasoning involved 0 steps";
+        let summaryText = "Reasoning: 0 tools, 0 agents";
         const parts = [];
-        if (logCount > 0) parts.push(`${logCount} agent step${logCount > 1 ? 's' : ''}`);
-        if (toolLogCount > 0) parts.push(`${toolLogCount} tool call${toolLogCount > 1 ? 's' : ''}`);
+        if (toolLogCount > 0) parts.push(`${toolLogCount} tool${toolLogCount > 1 ? 's' : ''}`);
+        if (logCount > 0) parts.push(`${logCount} agent${logCount > 1 ? 's' : ''}`);
         if (parts.length > 0) {
-            summaryText = `Reasoning involved ${parts.join(' and ')}`;
+            summaryText = `Reasoning: ${parts.join(', ')}`;
         }
 
         if (summary && summaryTextEl) {
             summaryTextEl.textContent = summaryText;
             summary.classList.remove('hidden');
         }
-
-        const stepsContainer = thinkingIndicator.querySelector('.thinking-steps-container');
-        stepsContainer?.classList.add('hidden');
     } else if (thinkingIndicator) {
         thinkingIndicator.remove();
     }

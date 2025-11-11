@@ -155,7 +155,7 @@ function handleAgentStep(data) {
             logEntry.id = logEntryId;
             logEntry.className = 'tool-log-entry';
             logEntry.innerHTML = `
-                <i class="fas fa-wrench tool-log-icon"></i>
+                <i class="fi fi-tr-wisdom tool-log-icon"></i>
                 <div class="tool-log-details">
                     <span class="tool-log-owner">${ownerName}</span>
                     <span class="tool-log-action">Used tool: <strong>${toolName}</strong></span>
@@ -175,23 +175,7 @@ function handleAgentStep(data) {
         }
     }
 
-    const liveStepsContainer = messageDiv.querySelector('.thinking-steps-container');
-    if (!liveStepsContainer) return;
-    let liveStepDiv = liveStepsContainer.querySelector(`#${stepId}`);
-
-    if (type === 'tool_start') {
-        if (!liveStepDiv) {
-            liveStepDiv = document.createElement('div');
-            liveStepDiv.id = stepId;
-            liveStepDiv.className = 'thinking-step';
-            liveStepDiv.innerHTML = `<i class="fas fa-cog fa-spin step-icon"></i><span class="step-text"><strong>${ownerName}:</strong> Using ${toolName}...</span>`;
-            liveStepsContainer.appendChild(liveStepDiv);
-        }
-    } else if (type === 'tool_end') {
-        if (liveStepDiv) {
-            liveStepDiv.remove();
-        }
-    }
+    // Remove the live steps display during running state - no spinning icon or text above reasoning title
 }
 
 function handleDone(data) {
@@ -208,12 +192,12 @@ function handleDone(data) {
         const logCount = messageDiv.querySelectorAll('.log-block').length;
         const toolLogCount = messageDiv.querySelectorAll('.tool-log-entry').length;
         
-        let summaryText = "Aetheria AI's Reasoning";
-        if (logCount > 0 || toolLogCount > 0) {
-            const parts = [];
-            if (logCount > 0) parts.push(`${logCount} agent step${logCount > 1 ? 's' : ''}`);
-            if (toolLogCount > 0) parts.push(`${toolLogCount} tool call${toolLogCount > 1 ? 's' : ''}`);
-            summaryText = `Reasoning involved ${parts.join(' and ')}`;
+        let summaryText = "Reasoning: 0 tools, 0 agents";
+        const parts = [];
+        if (toolLogCount > 0) parts.push(`${toolLogCount} tool${toolLogCount > 1 ? 's' : ''}`);
+        if (logCount > 0) parts.push(`${logCount} agent${logCount > 1 ? 's' : ''}`);
+        if (parts.length > 0) {
+            summaryText = `Reasoning: ${parts.join(', ')}`;
         }
 
         thinkingIndicator.innerHTML = `<span class="summary-text">${summaryText}</span><i class="fas fa-chevron-down summary-chevron"></i>`;

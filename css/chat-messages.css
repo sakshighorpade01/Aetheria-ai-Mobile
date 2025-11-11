@@ -135,33 +135,7 @@
     transition: all 0.3s ease;
 }
 
-.thinking-steps-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.thinking-step {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    animation: fadeIn 0.5s ease forwards;
-}
-
-.thinking-step .step-icon {
-    font-size: 0.8rem;
-    color: var(--accent-color);
-    animation: spin 1.5s linear infinite;
-}
-
-.step-icon-done {
-    font-size: 0.8rem;
-    color: var(--success-500);
-}
-
-/* OPTION B: Reasoning summary that's hidden during execution */
+/* Reasoning summary - shows tool and agent count */
 .reasoning-summary {
     display: flex;
     justify-content: space-between;
@@ -180,15 +154,67 @@
     display: none !important;
 }
 
-/* When steps are done, hide the live steps container */
-.thinking-indicator.steps-done .thinking-steps-container {
-    display: none;
-}
-
 .summary-text {
     font-weight: 500;
     font-size: 0.85rem;
+    position: relative;
+    background: linear-gradient(
+        90deg,
+        var(--text-secondary) 0%,
+        var(--text-secondary) 40%,
+        var(--accent-color) 50%,
+        var(--text-secondary) 60%,
+        var(--text-secondary) 100%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-text 8s ease-in-out infinite;
+}
+
+.dark-mode .summary-text {
+    background: linear-gradient(
+        90deg,
+        var(--text-secondary) 0%,
+        var(--text-secondary) 40%,
+        rgba(255, 255, 255, 0.9) 50%,
+        var(--text-secondary) 60%,
+        var(--text-secondary) 100%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-text 8s ease-in-out infinite;
+}
+
+/* Stop shimmer when AI response is complete */
+.thinking-indicator.steps-done .summary-text {
+    animation: none;
+    background: none;
+    background-clip: unset;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
     color: var(--text-secondary);
+}
+
+@keyframes shimmer-text {
+    0% {
+        background-position: 200% 0;
+    }
+    25% {
+        background-position: -200% 0;
+    }
+    50% {
+        background-position: 200% 0;
+    }
+    75% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 .summary-chevron {
