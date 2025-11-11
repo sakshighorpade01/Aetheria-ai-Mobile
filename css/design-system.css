@@ -184,6 +184,29 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Remove blue tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for content areas */
+p, span, div, pre, code, textarea, input[type="text"], input[type="email"], input[type="password"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Remove focus outline for interactive elements (mobile PWA) */
+button, a, [role="button"], input, select, textarea, [tabindex] {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Optional: Add custom focus styles for accessibility */
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
 html {
