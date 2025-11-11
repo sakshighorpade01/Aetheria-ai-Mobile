@@ -1,5 +1,5 @@
-const { createClient } = require('@supabase/supabase-js');
-const config = require('./config');
+import { createClient } from '@supabase/supabase-js';
+import { config } from './config.js';
 
 class AuthService {
     constructor() {
@@ -233,6 +233,4 @@ class AuthService {
 }
 
 // Create singleton instance
-const authService = new AuthService();
-
-module.exports = authService;
+export const authService = new AuthService();

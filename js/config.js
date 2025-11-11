@@ -1,7 +1,7 @@
 /**
  * Configuration for the AI-OS application
  */
-const config = {
+export const config = {
     // Backend connection settings
     backend: {
         // URL for the Python backend - Production
@@ -25,6 +25,4 @@ const config = {
         // Supabase anonymous key
         anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwbHV5b2tuYnl3dWhhaGNubGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcwNjMwMDEsImV4cCI6MjA2MjYzOTAwMX0.7o8ICrbVdndxi_gLafKf9aqyDgkqNrisZvrJT3XEUfA'
     }
-};
-
-module.exports = config; 
+}; 
