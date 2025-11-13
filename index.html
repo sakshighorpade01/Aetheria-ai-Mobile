@@ -11,7 +11,6 @@
   <link rel="apple-touch-icon" href="/assets/icon.png?v=2" />
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/splash-screen.css" />
   <link rel="stylesheet" href="css/design-system.css" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/skeleton.css" />
@@ -48,9 +47,6 @@
 </head>
 
 <body class="dark-mode">
-  <!-- Splash Screen Script - Load immediately -->
-  <script src="js/splash-screen.js"></script>
-  
   <script>
     // Load theme preference immediately to prevent flash
     (function() {
@@ -61,7 +57,7 @@
       }
     })();
   </script>
-  <div class="app-container" style="opacity: 0; transition: opacity 0.3s ease;">
+  <div class="app-container">
     <!-- Top Bar (Simplified) -->
     <div class="top-bar">
       <div class="top-bar-action">
@@ -689,11 +685,6 @@
 
       bindUIEvents();
       console.log("AI-OS Initialization Complete.");
-      
-      // Hide splash screen when app is fully loaded
-      if (window.splashScreen) {
-        window.splashScreen.forceComplete();
-      }
     });
 
     function bindUIEvents() {

@@ -4,8 +4,8 @@
   "description": "An AI-Powered Desktop Application, now as a PWA.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#333333",
+  "background_color": "#0f1116",
+  "theme_color": "#0f1116",
   "icons": [
     {
       "src": "/assets/icon.png?v=2",
@@ -14,22 +14,28 @@
       "purpose": "any maskable"
     },
     {
+      "src": "/assets/splash-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/assets/splash-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "/assets/splash-1024.png",
       "sizes": "1024x1024",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "/assets/splash-2048.png",
       "sizes": "2048x2048",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
