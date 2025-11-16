@@ -5,6 +5,40 @@ import { messageFormatter } from './message-formatter.js';
 import NotificationService from './notification-service.js';
 import skeletonLoader from './skeleton-loader.js';
 
+const convertTimestampToSeconds = (timestampValue) => {
+    if (timestampValue === null || timestampValue === undefined) {
+        return Math.floor(Date.now() / 1000);
+    }
+
+    if (typeof timestampValue === 'string') {
+        if (/^\d+$/.test(timestampValue)) {
+            return convertTimestampToSeconds(Number(timestampValue));
+        }
+
+        const parsedDate = Date.parse(timestampValue);
+        if (!Number.isNaN(parsedDate)) {
+            return Math.floor(parsedDate / 1000);
+        }
+
+        return Math.floor(Date.now() / 1000);
+    }
+
+    const numericValue = Number(timestampValue);
+    if (!Number.isFinite(numericValue)) {
+        return Math.floor(Date.now() / 1000);
+    }
+
+    if (numericValue > 1e15) {
+        return Math.floor(numericValue / 1e6); // microseconds
+    }
+
+    if (numericValue > 1e12) {
+        return Math.floor(numericValue / 1e3); // milliseconds
+    }
+
+    return Math.floor(numericValue);
+};
+
 class ContextHandler {
     constructor({ preloadDelay = 2500 } = {}) {
         this.loadedSessions = [];
@@ -201,36 +235,15 @@ class ContextHandler {
                 }
 
                 const userId = session.user.id;
-                console.log('[ContextHandler] Fetching session titles from Supabase for user:', userId);
+                console.log('[ContextHandler] Fetching sessions with title fallback for user:', userId);
 
-                // Query session_titles table directly (lightweight - only titles)
-                const { data: titlesData, error: titlesError, count } = await supabase
-                    .from('session_titles')
-                    .select('session_id, tittle, created_at', { count: 'exact' })
-                    .eq('user_id', userId)
-                    .order('created_at', { ascending: false })
-                    .range(this.currentOffset, this.currentOffset + this.pageSize - 1);
-
-                if (titlesError) {
-                    console.error('[ContextHandler] Error fetching session titles:', titlesError);
-                    throw new Error(`Failed to load session titles: ${titlesError.message}`);
-                }
-
-                console.log('[ContextHandler] Session titles received:', { count: titlesData?.length, total: count });
-
-                // Transform titles data to match expected session format
-                const sessions = (titlesData || []).map(title => ({
-                    session_id: title.session_id,
-                    title: title.tittle, // Note: table has typo "tittle"
-                    created_at: new Date(title.created_at).getTime() / 1000, // Convert to Unix timestamp
-                    runs: [] // Empty runs - will be loaded on-demand when user clicks
-                }));
-
-                this.totalSessions = count || 0;
-                this.hasMoreSessions = (this.currentOffset + this.pageSize) < this.totalSessions;
-                this.currentOffset = sessions.length;
+                const { sessions, total } = await this.fetchSessionsBatch(userId, this.currentOffset, this.pageSize);
 
                 this.loadedSessions = sessions;
+                this.currentOffset += sessions.length;
+                this.totalSessions = Number.isFinite(total) ? total : sessions.length;
+                this.hasMoreSessions = this.currentOffset < this.totalSessions;
+
                 this.loadingState = 'loaded';
                 this.loadError = null;
 
@@ -282,6 +295,54 @@ class ContextHandler {
         return loadPromise;
     }
 
+    async fetchSessionsBatch(userId, offset, limit) {
+        if (limit <= 0) {
+            return { sessions: [], total: 0 };
+        }
+
+        const rangeEnd = offset + limit - 1;
+        const { data: sessionRows, error: sessionsError, count } = await supabase
+            .from('agno_sessions')
+            .select('session_id, created_at', { count: 'exact' })
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .range(offset, rangeEnd);
+
+        if (sessionsError) {
+            console.error('[ContextHandler] Error fetching sessions from agno_sessions:', sessionsError);
+            throw new Error(`Failed to load sessions: ${sessionsError.message}`);
+        }
+
+        const sessionIds = (sessionRows || []).map(row => row.session_id);
+        let titlesMap = new Map();
+
+        if (sessionIds.length > 0) {
+            const { data: titlesData, error: titlesError } = await supabase
+                .from('session_titles')
+                .select('session_id, tittle')
+                .eq('user_id', userId)
+                .in('session_id', sessionIds);
+
+            if (titlesError) {
+                console.warn('[ContextHandler] Unable to fetch titles for some sessions:', titlesError);
+            } else {
+                titlesMap = new Map((titlesData || []).map(title => [title.session_id, title.tittle]));
+            }
+        }
+
+        const sessions = (sessionRows || []).map(row => ({
+            session_id: row.session_id,
+            title: titlesMap.get(row.session_id) || null,
+            created_at: convertTimestampToSeconds(row.created_at),
+            runs: []
+        }));
+
+        return {
+            sessions,
+            total: typeof count === 'number' ? count : (sessionRows?.length || 0)
+        };
+    }
+
     async forceRefreshSessions() {
         this.loadingState = 'idle';
         this.loadError = null;
@@ -311,35 +372,27 @@ class ContextHandler {
             const userId = session.user.id;
             console.log('[ContextHandler] Loading more sessions, offset:', this.currentOffset);
 
-            // Query session_titles table directly for pagination
-            const { data: titlesData, error: titlesError } = await supabase
-                .from('session_titles')
-                .select('session_id, tittle, created_at')
-                .eq('user_id', userId)
-                .order('created_at', { ascending: false })
-                .range(this.currentOffset, this.currentOffset + this.pageSize - 1);
+            const { sessions: newSessions, total } = await this.fetchSessionsBatch(
+                userId,
+                this.currentOffset,
+                this.pageSize
+            );
 
-            if (titlesError) {
-                throw new Error(`Failed to load more sessions: ${titlesError.message}`);
-            }
-
-            // Transform titles data to match expected session format
-            const newSessions = (titlesData || []).map(title => ({
-                session_id: title.session_id,
-                title: title.tittle,
-                created_at: new Date(title.created_at).getTime() / 1000,
-                runs: []
-            }));
+            this.totalSessions = Number.isFinite(total) ? total : this.totalSessions;
 
             console.log('[ContextHandler] Loaded more sessions:', newSessions.length);
 
+            if (newSessions.length === 0) {
+                this.hasMoreSessions = false;
+                return;
+            }
+
             this.loadedSessions = [...this.loadedSessions, ...newSessions];
             this.currentOffset += newSessions.length;
-            this.hasMoreSessions = (this.currentOffset < this.totalSessions);
+            this.hasMoreSessions = this.currentOffset < this.totalSessions;
 
             // Append new sessions to the list
             this.appendSessionItems(newSessions);
-
         } catch (err) {
             console.error('[ContextHandler] Failed to load more sessions:', err);
             this.showNotification('Failed to load more sessions', 'error');

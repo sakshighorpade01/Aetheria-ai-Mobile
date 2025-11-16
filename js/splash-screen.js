@@ -39,7 +39,7 @@ class SplashScreen {
                 </div>
                 
                 <div class="splash-logo-container">
-                    <img src="/assets/icon.png?v=2" alt="Aetheria AI" class="splash-logo">
+                    <img src="/assets/icon.png" alt="Aetheria ai" class="splash-logo">
                 </div>
                 
                 <div class="splash-loading-container">
@@ -51,7 +51,7 @@ class SplashScreen {
                 </div>
                 
                 <div class="splash-branding">
-                    <div class="splash-branding-text">Powered by Aetheria AI</div>
+                    <div class="splash-branding-text">Powered by Aetheria ai</div>
                 </div>
             </div>
         `;
