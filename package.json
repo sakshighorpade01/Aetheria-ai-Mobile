@@ -3,17 +3,9 @@
   "version": "1.0.4",
   "description": "Aetheria AI PWA: An AI-Powered Progressive Web Application",
   "scripts": {
-    "start": "http-server . -p 3000 -c-1",
-    "build": "echo 'No build step required for PWA'",
-    "cap:sync": "npx cap sync",
-    "cap:open:android": "npx cap open android",
-    "cap:open:ios": "npx cap open ios"
+    "start": "http-server . -p 3000 -c-1"
   },
   "dependencies": {
-    "@capacitor/android": "^7.4.4",
-    "@capacitor/cli": "^7.4.4",
-    "@capacitor/core": "^7.4.4",
-    "@capacitor/ios": "^7.4.4",
     "@supabase/supabase-js": "^2.49.10",
     "socket.io-client": "^4.8.1"
   },
