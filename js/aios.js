@@ -562,8 +562,8 @@ export class AIOS {
         this.elements.signupError.textContent = '';
 
         try {
-            // Get current URL for redirect
-            const redirectUrl = `${window.location.origin}${window.location.pathname}`;
+            // Use the aios://auth-callback redirect URL as configured in Supabase
+            const redirectUrl = 'aios://auth-callback';
 
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',

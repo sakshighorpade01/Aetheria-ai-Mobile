@@ -941,7 +941,7 @@ def get_llm_os(
     # This allows the `db` object to automatically handle session persistence.
     llm_os_team = Team(
         name="Aetheria_AI",
-        model=Gemini(id="gemini-2.5-flash"),
+        model=OpenRouter(id="x-ai/grok-4.1-fast:free"),
         members=main_team_members,
         tools=direct_tools,
         instructions=aetheria_instructions,
