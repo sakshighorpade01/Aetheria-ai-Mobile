@@ -4,8 +4,8 @@
   "description": "Aetheria AI PWA: An AI-Powered Progressive Web Application",
   "scripts": {
     "start": "http-server . -p 3000 -c-1",
-    "build": "node scripts/build.js",
-    "cap:sync": "npm run build && npx cap sync",
+    "build": "echo 'No build step required for PWA'",
+    "cap:sync": "npx cap sync",
     "cap:open:android": "npx cap open android",
     "cap:open:ios": "npx cap open ios"
   },
