@@ -596,7 +596,6 @@ export class AIOS {
 
     /**
      * Handle OAuth callback when user is redirected back from Google
-     * UPDATED: Now properly exchanges OAuth code/token for a session
      */
     async handleOAuthCallback() {
         try {
@@ -626,33 +625,16 @@ export class AIOS {
                     return;
                 }
 
-                // Exchange the code/token for a session
-                // This method handles both PKCE flow (with code) and implicit flow (with access_token)
-                const code = searchParams.get('code');
-                const accessToken = hashParams.get('access_token');
-
-                let data, sessionError;
-
-                if (code) {
-                    // PKCE flow - exchange code for session
-                    ({ data, error: sessionError } = await supabase.auth.exchangeCodeForSession(code));
-                } else if (accessToken) {
-                    // Implicit flow - session should already be set, just verify
-                    ({ data, error: sessionError } = await supabase.auth.getSession());
-                } else {
-                    // Try getSession as fallback for newer Supabase versions
-                    ({ data, error: sessionError } = await supabase.auth.getSession());
-                }
+                // Let Supabase handle the OAuth callback automatically
+                // It will parse the tokens from the URL and set the session
+                const { data, error: sessionError } = await supabase.auth.getSession();
 
                 if (sessionError) {
-                    console.error('Error exchanging code for session:', sessionError);
+                    console.error('Error getting session after OAuth:', sessionError);
                     this.showNotification('Failed to complete sign-in. Please try again.', 'error');
-                } else if (data?.session) {
+                } else if (data.session) {
                     console.log('OAuth callback successful, user signed in:', data.session.user);
                     this.showNotification('Successfully signed in with Google!', 'success');
-
-                    // Update UI immediately
-                    await this.updateAuthUI(data.session.user);
 
                     // Close the profile menu after successful login
                     setTimeout(() => {
@@ -665,10 +647,6 @@ export class AIOS {
             }
         } catch (error) {
             console.error('Error handling OAuth callback:', error);
-            this.showNotification('An error occurred during sign-in. Please try again.', 'error');
-            
-            // Clean up URL even on error
-            window.history.replaceState({}, document.title, window.location.pathname);
         }
     }
 
