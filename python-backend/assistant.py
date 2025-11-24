@@ -884,7 +884,7 @@ def get_llm_os(
         world_ai = Agent(
             name="World_Agent",
             role="Universal knowledge and research agent with access to world information.",
-            model=Gemini(id="gemini-2.5-flash-lite"),
+            model=Gemini(id="gemini-2.5-flash-lite-preview-06-17"),
             tools=[WikipediaTools(),HackerNewsTools(),ArxivTools(),CustomApiTools(),YouTubeTools()],
             instructions=[
                 "You are the World Agent with comprehensive access to global information sources.",
