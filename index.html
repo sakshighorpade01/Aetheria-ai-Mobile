@@ -199,7 +199,6 @@
     import FileAttachmentHandler from './js/add-files.js';
     import { messageFormatter } from './js/message-formatter.js';
     import skeletonLoader from './js/skeleton-loader.js';
-    import AudioInputHandler from './js/audio-input.js';
 
     // ★★★ NEW: Context Viewer Class (Expanded Logic) ★★★
     class ContextViewer {
@@ -796,17 +795,8 @@
         }
       });
 
-      // Initialize Audio Input Handler (Hold-to-Record)
-      const audioInputHandler = new AudioInputHandler({
-        inputElement: input,
-        sendButton: sendBtn,
-        onSend: () => {
-          window.chat.handleSendMessage();
-        }
-      });
-
-      // Store reference globally for debugging
-      window.audioInputHandler = audioInputHandler;
+      // Send button click handler removed - now handled by AudioInputHandler
+      // The AudioInputHandler manages both tap-to-send and slide-to-record
 
       input?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {

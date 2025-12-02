@@ -363,6 +363,87 @@
     /* Static triangle pointing up, no pulsing */
 }
 
+/* --- Audio Visualizer (Slide-to-Record) --- */
+.audio-visualizer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    height: 20px;
+    width: 30px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#send-message.is-recording .audio-visualizer {
+    display: flex;
+    opacity: 1;
+}
+
+#send-message.is-recording i.fa-paper-plane {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.visualizer-bar {
+    width: 3px;
+    height: 20%;
+    background: #f5f5f5;
+    border-radius: 2px;
+    transition: height 0.1s ease;
+    will-change: height;
+}
+
+/* Asymmetrical bar heights for visual interest */
+.visualizer-bar:nth-child(1) {
+    height: 30%;
+}
+
+.visualizer-bar:nth-child(2) {
+    height: 50%;
+}
+
+.visualizer-bar:nth-child(3) {
+    height: 40%;
+}
+
+.visualizer-bar:nth-child(4) {
+    height: 60%;
+}
+
+.visualizer-bar:nth-child(5) {
+    height: 35%;
+}
+
+/* Light mode - dark bars */
+body:not(.dark-mode) .visualizer-bar {
+    background: #1a1a1a;
+}
+
+/* Recording state visual feedback */
+#send-message.is-recording {
+    background: #f5f5f5;
+    box-shadow: 0 0 0 4px rgba(245, 245, 245, 0.2);
+}
+
+body:not(.dark-mode) #send-message.is-recording {
+    background: #1a1a1a;
+    box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.2);
+}
+
+/* Smooth slide animation */
+#send-message {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color 0.2s ease,
+                box-shadow 0.2s ease;
+    will-change: transform;
+    
+}
+
 /* Light mode - dark button with white icon */
 body:not(.dark-mode) #send-message {
     background: #1a1a1a;

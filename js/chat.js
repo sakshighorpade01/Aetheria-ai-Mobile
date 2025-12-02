@@ -11,6 +11,7 @@ import ContextHandler from './context-handler.js';
 import FileAttachmentHandler from './add-files.js';
 import { artifactHandler } from './artifact-handler.js';
 import messageActions from './message-actions.js';
+import AudioInputHandler from './audio-input.js';
 
 let sessionActive = false;
 let currentConversationId = null;
@@ -25,6 +26,7 @@ let welcomeDisplay = null;
 let notificationService = null;
 // ShuffleMenuController removed - not needed for PWA (Electron-only feature)
 let unifiedPreviewHandler = null;
+let audioInputHandler = null;
 
 const defaultToolsConfig = {
     internet_search: true,
@@ -74,13 +76,12 @@ function closeAllDropdowns() {
     });
 }
 
-function renderTurnFromEvents(events = [], { messageId = `replay_${Date.now()}`, autoScroll = false } = {}) {
+function renderTurnFromEvents(events = [], { messageId = `replay_${Date.now()}`, autoScroll = false, container = null } = {}) {
     if (!Array.isArray(events) || events.length === 0) return null;
 
     let botMessage = ongoingStreams.get(messageId);
     if (!botMessage) {
-        createBotMessagePlaceholder(messageId);
-        botMessage = ongoingStreams.get(messageId);
+        botMessage = createBotMessagePlaceholder(messageId, container);
     }
     if (!botMessage) return null;
 
@@ -115,7 +116,7 @@ function renderTurnFromEvents(events = [], { messageId = `replay_${Date.now()}`,
     handleDone({ id: messageId });
 
     if (autoScroll) {
-        const messagesContainer = document.getElementById('chat-messages');
+        const messagesContainer = container || document.getElementById('chat-messages');
         messagesContainer?.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
     }
 
@@ -259,7 +260,7 @@ function updateReasoningSummary(messageId) {
     const summaryText = summary.querySelector('.summary-text');
     if (!summaryText) return;
 
-    const agentBlocks = messageDiv.querySelectorAll('.log-block').length;
+    const agentBlocks = messageDiv.querySelectorAll('.detailed-logs > .log-block').length;
     const toolLogs = messageDiv.querySelectorAll('.tool-log-entry').length;
 
     if (agentBlocks === 0 && toolLogs === 0) {
@@ -321,9 +322,9 @@ function addUserMessage(message, files = [], sessions = []) {
     dispatchChatEvent('messageAdded', { role: 'user', messageId });
 }
 
-function createBotMessagePlaceholder(messageId) {
-    const messagesContainer = document.getElementById('chat-messages');
-    if (!messagesContainer) return;
+function createBotMessagePlaceholder(messageId, container = null) {
+    const messagesContainer = container || document.getElementById('chat-messages');
+    if (!messagesContainer) return null;
 
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message bot-message';
@@ -352,7 +353,8 @@ function createBotMessagePlaceholder(messageId) {
 
     messagesContainer.appendChild(messageDiv);
     ongoingStreams.set(messageId, messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Auto-scroll is now handled by the caller (e.g., renderTurnFromEvents)
 
     const summary = thinkingIndicator.querySelector('.reasoning-summary');
     summary?.addEventListener('click', () => {
@@ -364,6 +366,7 @@ function createBotMessagePlaceholder(messageId) {
             messageDiv.classList.toggle('expanded');
         }
     });
+    return messageDiv;
 }
 
 // Helper to normalize content from backend (handles objects, strings, etc.)
@@ -519,7 +522,7 @@ function populateBotMessage(data) {
         
         const formattedContent = streaming
             ? messageFormatter.formatStreaming(content, streamId)
-            : messageFormatter.format(content, { inlineArtifacts: useInlineMode });
+            : messageFormatter.format(content, { inlineArtifacts: true });
 
         innerContentDiv.innerHTML = formattedContent;
 
@@ -596,7 +599,7 @@ function handleDone(data) {
     const hasLogs = messageDiv.querySelector('.log-block, .tool-log-entry');
     if (thinkingIndicator && hasLogs) {
         thinkingIndicator.classList.add('steps-done');
-        const logCount = messageDiv.querySelectorAll('.log-block').length;
+        const logCount = messageDiv.querySelectorAll('.detailed-logs > .log-block').length;
         const toolLogCount = messageDiv.querySelectorAll('.tool-log-entry').length;
 
         let summaryText = "Reasoning: 0 tools, 0 agents";
@@ -856,6 +859,23 @@ export const chatModule = {
         unifiedPreviewHandler = new UnifiedPreviewHandler(contextHandler, fileAttachmentHandler);
         window.unifiedPreviewHandler = unifiedPreviewHandler;
 
+        // Initialize AudioInputHandler for slide-to-record functionality
+        const sendButton = document.getElementById('send-message');
+        const floatingInput = document.getElementById('floating-input');
+        
+        if (sendButton && floatingInput) {
+            audioInputHandler = new AudioInputHandler({
+                inputElement: floatingInput,
+                sendButton: sendButton,
+                onSend: () => this.handleSendMessage(),
+                notificationService: notificationService
+            });
+            window.audioInputHandler = audioInputHandler;
+            console.log('[Chat] AudioInputHandler initialized');
+        } else {
+            console.warn('[Chat] Could not initialize AudioInputHandler - elements not found');
+        }
+
         this.startNewConversation();
 
         // Preload sessions in background for instant context window display
@@ -882,6 +902,11 @@ export const chatModule = {
         contextHandler?.invalidateCache?.(); // Invalidate session cache for fresh data
         fileAttachmentHandler?.clearAttachedFiles?.();
         window.todo?.toggleWindow(false);
+
+        // Stop any ongoing recording
+        if (audioInputHandler && audioInputHandler.isRecording) {
+            audioInputHandler.stopRecording();
+        }
 
         resetUserInputState();
 
@@ -1164,5 +1189,6 @@ export const chatModule = {
             ...chatConfig,
             selectedAgentType,
         };
-    }
+    },
+    renderTurnFromEvents,
 };
