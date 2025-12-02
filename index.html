@@ -199,6 +199,7 @@
     import FileAttachmentHandler from './js/add-files.js';
     import { messageFormatter } from './js/message-formatter.js';
     import skeletonLoader from './js/skeleton-loader.js';
+    import AudioInputHandler from './js/audio-input.js';
 
     // ★★★ NEW: Context Viewer Class (Expanded Logic) ★★★
     class ContextViewer {
@@ -795,9 +796,17 @@
         }
       });
 
-      sendBtn?.addEventListener('click', () => {
-        window.chat.handleSendMessage();
+      // Initialize Audio Input Handler (Hold-to-Record)
+      const audioInputHandler = new AudioInputHandler({
+        inputElement: input,
+        sendButton: sendBtn,
+        onSend: () => {
+          window.chat.handleSendMessage();
+        }
       });
+
+      // Store reference globally for debugging
+      window.audioInputHandler = audioInputHandler;
 
       input?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
