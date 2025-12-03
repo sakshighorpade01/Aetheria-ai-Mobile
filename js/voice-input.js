@@ -56,16 +56,12 @@ class VoiceInputHandler {
     this.recognition.interimResults = true;
     this.recognition.lang = 'en-US';
     
-    // Track if we've received any results
-    this.hasReceivedResults = false;
-    
     this.recognition.onstart = () => {
-      console.log('[VoiceInput] Speech recognition started successfully');
-      this.hasReceivedResults = false;
+      console.log('[VoiceInput] Speech recognition started');
     };
     
     this.recognition.onresult = (event) => {
-      this.hasReceivedResults = true;
+      console.log('[VoiceInput] Speech recognition result received');
       let interimTranscript = '';
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -73,8 +69,10 @@ class VoiceInputHandler {
         
         if (event.results[i].isFinal) {
           this.finalTranscript += transcript + ' ';
+          console.log('[VoiceInput] Final transcript:', transcript);
         } else {
           interimTranscript += transcript;
+          console.log('[VoiceInput] Interim transcript:', transcript);
         }
       }
       
@@ -109,19 +107,19 @@ class VoiceInputHandler {
     };
     
     this.recognition.onerror = (event) => {
-      console.error('[VoiceInput] Speech recognition error:', event.error, event);
+      console.error('[VoiceInput] Speech recognition error:', event.error);
+      console.error('[VoiceInput] Error details:', event);
       
-      // Handle specific error types
+      // Handle specific errors
       if (event.error === 'not-allowed' || event.error === 'permission-denied') {
         this.showNotification('Microphone permission denied. Please allow microphone access in your browser settings.');
       } else if (event.error === 'no-speech') {
-        console.log('[VoiceInput] No speech detected, continuing to listen...');
-        // Don't stop on no-speech, just continue
-        return;
+        console.log('[VoiceInput] No speech detected');
+        // Don't show error for no-speech, just stop
       } else if (event.error === 'audio-capture') {
-        this.showNotification('Could not access microphone. Please check if another app is using it.');
+        this.showNotification('Could not capture audio. Please check your microphone.');
       } else if (event.error === 'network') {
-        this.showNotification('Network error. Speech recognition requires an internet connection.');
+        this.showNotification('Network error. Please check your internet connection.');
       } else if (event.error === 'aborted') {
         console.log('[VoiceInput] Speech recognition aborted');
       } else {
@@ -129,22 +127,6 @@ class VoiceInputHandler {
       }
       
       this.stopListening();
-    };
-    
-    this.recognition.onsoundstart = () => {
-      console.log('[VoiceInput] Sound detected');
-    };
-    
-    this.recognition.onspeechstart = () => {
-      console.log('[VoiceInput] Speech detected');
-    };
-    
-    this.recognition.onspeechend = () => {
-      console.log('[VoiceInput] Speech ended');
-    };
-    
-    this.recognition.onsoundend = () => {
-      console.log('[VoiceInput] Sound ended');
     };
   }
 
@@ -154,12 +136,40 @@ class VoiceInputHandler {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.error('[VoiceInput] getUserMedia is not supported in this browser/context');
         console.error('[VoiceInput] Make sure the site is served over HTTPS or localhost');
+        this.showNotification('Voice input requires HTTPS. Please use a secure connection.');
         return false;
       }
 
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('[VoiceInput] Requesting microphone access from user...');
       
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Request microphone access with explicit constraints
+      // This will trigger the permission prompt on mobile
+      this.mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      
+      console.log('[VoiceInput] Microphone access granted, setting up audio context...');
+      
+      // Check if we got a valid stream
+      if (!this.mediaStream || !this.mediaStream.active) {
+        console.error('[VoiceInput] Media stream is not active');
+        this.showNotification('Could not access microphone. Please try again.');
+        return false;
+      }
+
+      // Create audio context (with webkit prefix for older browsers)
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) {
+        console.error('[VoiceInput] AudioContext not supported');
+        this.showNotification('Audio processing not supported in this browser.');
+        return false;
+      }
+
+      this.audioContext = new AudioContextClass();
       this.analyser = this.audioContext.createAnalyser();
       this.microphone = this.audioContext.createMediaStreamSource(this.mediaStream);
       
@@ -171,23 +181,33 @@ class VoiceInputHandler {
       
       this.microphone.connect(this.analyser);
       
+      console.log('[VoiceInput] Audio analyser setup complete');
       return true;
+      
     } catch (error) {
       console.error('[VoiceInput] Audio setup failed:', error);
+      console.error('[VoiceInput] Error name:', error.name);
+      console.error('[VoiceInput] Error message:', error.message);
       
       // Provide more specific error messages
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
         console.error('[VoiceInput] Microphone permission denied by user');
-        this.showNotification('Microphone access denied. Please allow microphone permissions in your browser settings.');
+        this.showNotification('Microphone access denied. Please allow microphone permissions and try again.');
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         console.error('[VoiceInput] No microphone found on this device');
-        this.showNotification('No microphone found. Please connect a microphone and try again.');
+        this.showNotification('No microphone found. Please check your device settings.');
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
         console.error('[VoiceInput] Microphone is already in use by another application');
         this.showNotification('Microphone is already in use. Please close other apps using the microphone.');
+      } else if (error.name === 'SecurityError') {
+        console.error('[VoiceInput] Security error - likely HTTPS issue');
+        this.showNotification('Security error. Voice input requires HTTPS connection.');
+      } else if (error.name === 'TypeError') {
+        console.error('[VoiceInput] Type error - API might not be supported');
+        this.showNotification('Voice input is not supported in this browser.');
       } else {
-        console.error('[VoiceInput] Unknown error accessing microphone:', error.message);
-        this.showNotification('Could not access microphone. Please check your browser settings.');
+        console.error('[VoiceInput] Unknown error accessing microphone');
+        this.showNotification('Could not access microphone. Please check your browser settings and try again.');
       }
       
       return false;
@@ -195,13 +215,44 @@ class VoiceInputHandler {
   }
 
   bindEvents() {
-    this.micButton.addEventListener('click', () => {
+    this.micButton.addEventListener('click', async () => {
       if (this.isListening) {
         this.stopListening();
       } else {
+        // Check permission status before starting (if API is available)
+        await this.checkMicrophonePermission();
         this.startListening();
       }
     });
+  }
+
+  async checkMicrophonePermission() {
+    // Check if Permissions API is available
+    if (!navigator.permissions || !navigator.permissions.query) {
+      console.log('[VoiceInput] Permissions API not available, will request on getUserMedia');
+      return;
+    }
+
+    try {
+      const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+      console.log('[VoiceInput] Microphone permission status:', permissionStatus.state);
+      
+      if (permissionStatus.state === 'denied') {
+        console.warn('[VoiceInput] Microphone permission is denied');
+        this.showNotification('Microphone access is blocked. Please enable it in your browser settings.');
+        return false;
+      }
+      
+      if (permissionStatus.state === 'prompt') {
+        console.log('[VoiceInput] Will prompt user for microphone permission');
+      }
+      
+      return true;
+    } catch (error) {
+      // Permissions API might not support 'microphone' query on all browsers
+      console.log('[VoiceInput] Could not query microphone permission:', error.message);
+      return true; // Continue anyway, getUserMedia will handle it
+    }
   }
 
   async startListening() {
@@ -211,35 +262,47 @@ class VoiceInputHandler {
       // Reset transcript for new session
       this.finalTranscript = '';
       
-      // IMPORTANT: Start speech recognition FIRST before audio analyser
-      // This ensures we request microphone permission through speech recognition
-      // which is more reliable on mobile browsers
-      try {
-        this.recognition.start();
-        this.isListening = true;
-        this.updateButtonState();
-        console.log('[VoiceInput] Speech recognition started');
-      } catch (recError) {
-        console.error('[VoiceInput] Speech recognition failed to start:', recError);
-        this.showNotification('Voice input is not available. Please check your browser settings.');
-        this.isListening = false;
-        this.updateButtonState();
+      // First, request microphone permission explicitly
+      // This is crucial for mobile devices
+      console.log('[VoiceInput] Requesting microphone permission...');
+      
+      const audioSetup = await this.setupAudioAnalyser();
+      
+      if (!audioSetup) {
+        console.error('[VoiceInput] Could not access microphone - aborting');
+        // Don't proceed if we can't get microphone access
+        // Speech recognition needs microphone permission too
         return;
       }
       
-      // Now try to setup audio analyser for waveform (optional, won't block speech recognition)
-      const audioSetup = await this.setupAudioAnalyser();
-      if (audioSetup) {
-        // Start waveform animation only if audio setup succeeded
-        this.startWaveformAnimation();
-        console.log('[VoiceInput] Started listening with waveform');
-      } else {
-        console.log('[VoiceInput] Started listening without waveform (speech recognition only)');
-      }
+      console.log('[VoiceInput] Microphone access granted, starting speech recognition...');
+      
+      // Start speech recognition only after we have microphone access
+      this.recognition.start();
+      this.isListening = true;
+      
+      // Update UI to listening state
+      this.updateButtonState();
+      
+      // Start waveform animation
+      this.startWaveformAnimation();
+      
+      console.log('[VoiceInput] Started listening successfully');
       
     } catch (error) {
       console.error('[VoiceInput] Failed to start listening:', error);
-      this.stopListening();
+      
+      // Make sure to clean up and reset UI
+      this.isListening = false;
+      this.updateButtonState();
+      
+      // Stop any media streams that might have been created
+      if (this.mediaStream) {
+        this.mediaStream.getTracks().forEach(track => track.stop());
+        this.mediaStream = null;
+      }
+      
+      this.showNotification('Could not start voice input. Please check microphone permissions.');
     }
   }
 
@@ -280,31 +343,12 @@ class VoiceInputHandler {
   updateButtonState() {
     if (!this.micButton) return;
     
-    const waveformContainer = this.micButton.querySelector('.waveform-container');
-    const voiceIcon = this.micButton.querySelector('.voice-icon');
-    
     if (this.isListening) {
       this.micButton.classList.add('listening');
       this.micButton.classList.remove('idle');
-      
-      // Show waveform only if we have audio analyser
-      if (this.analyser && waveformContainer) {
-        this.micButton.classList.remove('no-waveform');
-        waveformContainer.classList.remove('hidden');
-        if (voiceIcon) voiceIcon.style.display = 'none';
-      } else {
-        // No waveform, keep icon visible with pulsing animation
-        this.micButton.classList.add('no-waveform');
-        if (waveformContainer) waveformContainer.classList.add('hidden');
-        if (voiceIcon) voiceIcon.style.display = 'block';
-      }
     } else {
       this.micButton.classList.add('idle');
-      this.micButton.classList.remove('listening', 'no-waveform');
-      
-      // Always show icon when idle
-      if (waveformContainer) waveformContainer.classList.add('hidden');
-      if (voiceIcon) voiceIcon.style.display = 'block';
+      this.micButton.classList.remove('listening');
     }
   }
 
