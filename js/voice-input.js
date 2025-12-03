@@ -14,6 +14,7 @@ class VoiceInputHandler {
     
     this.micButton = null;
     this.inputField = null;
+    this.isAndroid = /android/i.test(navigator.userAgent || '');
     
     this.initialize();
   }
@@ -52,7 +53,7 @@ class VoiceInputHandler {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     this.recognition = new SpeechRecognition();
     
-    this.recognition.continuous = true;
+    this.recognition.continuous = !this.isAndroid;
     this.recognition.interimResults = true;
     this.recognition.lang = 'en-US';
     
