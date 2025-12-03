@@ -28,6 +28,9 @@ class VoiceInputHandler {
       return;
     }
 
+    console.log('[VoiceInput] User agent:', navigator.userAgent);
+    console.log('[VoiceInput] Detected platform:', this.isAndroid ? 'Android' : 'Non-Android');
+
     // Check for speech recognition support
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       console.warn('[VoiceInput] Speech recognition not supported');
@@ -59,6 +62,11 @@ class VoiceInputHandler {
     
     this.recognition.onstart = () => {
       console.log('[VoiceInput] Speech recognition started');
+      console.log('[VoiceInput] Recognition settings:', {
+        continuous: this.recognition.continuous,
+        interimResults: this.recognition.interimResults,
+        lang: this.recognition.lang
+      });
     };
     
     this.recognition.onresult = (event) => {
@@ -103,6 +111,7 @@ class VoiceInputHandler {
         this.inputField.value = cleanValue;
         this.autoResizeInput();
         
+        console.log('[VoiceInput] onend triggered while still listening - invoking stopListening()');
         this.stopListening();
       }
     };
@@ -110,6 +119,11 @@ class VoiceInputHandler {
     this.recognition.onerror = (event) => {
       console.error('[VoiceInput] Speech recognition error:', event.error);
       console.error('[VoiceInput] Error details:', event);
+      console.error('[VoiceInput] Recognition state at error:', {
+        isListening: this.isListening,
+        hasStream: !!this.mediaStream,
+        hasAudioContext: !!this.audioContext
+      });
       
       // Handle specific errors
       if (event.error === 'not-allowed' || event.error === 'permission-denied') {
@@ -154,6 +168,16 @@ class VoiceInputHandler {
       });
       
       console.log('[VoiceInput] Microphone access granted, setting up audio context...');
+      if (this.mediaStream) {
+        const tracks = this.mediaStream.getAudioTracks() || [];
+        console.log('[VoiceInput] Active audio tracks:', tracks.map(track => ({
+          label: track.label,
+          enabled: track.enabled,
+          muted: track.muted,
+          readyState: track.readyState,
+          settings: track.getSettings ? track.getSettings() : {}
+        })));
+      }
       
       // Check if we got a valid stream
       if (!this.mediaStream || !this.mediaStream.active) {
@@ -174,6 +198,7 @@ class VoiceInputHandler {
       this.analyser = this.audioContext.createAnalyser();
       this.microphone = this.audioContext.createMediaStreamSource(this.mediaStream);
       
+      console.log('[VoiceInput] AudioContext state after init:', this.audioContext.state);
       this.analyser.fftSize = 256;
       this.analyser.smoothingTimeConstant = 0.8;
       
@@ -267,6 +292,11 @@ class VoiceInputHandler {
       // First, request microphone permission explicitly
       // This is crucial for mobile devices
       console.log('[VoiceInput] Requesting microphone permission...');
+      console.log('[VoiceInput] Current listening state before setup:', {
+        isListening: this.isListening,
+        hasStream: !!this.mediaStream,
+        hasAudioContext: !!this.audioContext
+      });
       
       const audioSetup = await this.setupAudioAnalyser();
       
@@ -282,6 +312,10 @@ class VoiceInputHandler {
       // Start speech recognition only after we have microphone access
       this.recognition.start();
       this.isListening = true;
+      console.log('[VoiceInput] Listening flag set true, stream/context ready?', {
+        hasStream: !!this.mediaStream,
+        audioContextState: this.audioContext?.state
+      });
       
       // Update UI to listening state
       this.updateButtonState();
@@ -315,17 +349,20 @@ class VoiceInputHandler {
     
     // Stop speech recognition
     if (this.recognition) {
+      console.log('[VoiceInput] Calling recognition.stop()');
       this.recognition.stop();
     }
     
     // Stop media stream tracks (releases microphone)
     if (this.mediaStream) {
+      console.log('[VoiceInput] Stopping media stream tracks');
       this.mediaStream.getTracks().forEach(track => track.stop());
       this.mediaStream = null;
     }
     
     // Stop audio analysis
     if (this.audioContext) {
+      console.log('[VoiceInput] Closing audio context');
       this.audioContext.close();
       this.audioContext = null;
     }
