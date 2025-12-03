@@ -11,7 +11,6 @@ import ContextHandler from './context-handler.js';
 import FileAttachmentHandler from './add-files.js';
 import { artifactHandler } from './artifact-handler.js';
 import messageActions from './message-actions.js';
-import AudioInputHandler from './audio-input.js';
 
 let sessionActive = false;
 let currentConversationId = null;
@@ -26,7 +25,6 @@ let welcomeDisplay = null;
 let notificationService = null;
 // ShuffleMenuController removed - not needed for PWA (Electron-only feature)
 let unifiedPreviewHandler = null;
-let audioInputHandler = null;
 
 const defaultToolsConfig = {
     internet_search: true,
@@ -859,23 +857,6 @@ export const chatModule = {
         unifiedPreviewHandler = new UnifiedPreviewHandler(contextHandler, fileAttachmentHandler);
         window.unifiedPreviewHandler = unifiedPreviewHandler;
 
-        // Initialize AudioInputHandler for slide-to-record functionality
-        const sendButton = document.getElementById('send-message');
-        const floatingInput = document.getElementById('floating-input');
-        
-        if (sendButton && floatingInput) {
-            audioInputHandler = new AudioInputHandler({
-                inputElement: floatingInput,
-                sendButton: sendButton,
-                onSend: () => this.handleSendMessage(),
-                notificationService: notificationService
-            });
-            window.audioInputHandler = audioInputHandler;
-            console.log('[Chat] AudioInputHandler initialized');
-        } else {
-            console.warn('[Chat] Could not initialize AudioInputHandler - elements not found');
-        }
-
         this.startNewConversation();
 
         // Preload sessions in background for instant context window display
@@ -902,11 +883,6 @@ export const chatModule = {
         contextHandler?.invalidateCache?.(); // Invalidate session cache for fresh data
         fileAttachmentHandler?.clearAttachedFiles?.();
         window.todo?.toggleWindow(false);
-
-        // Stop any ongoing recording
-        if (audioInputHandler && audioInputHandler.isRecording) {
-            audioInputHandler.stopRecording();
-        }
 
         resetUserInputState();
 

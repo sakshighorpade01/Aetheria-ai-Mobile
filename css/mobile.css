@@ -328,7 +328,7 @@ body:not(.dark-mode) .input-action-menu-item i {
         transition: background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         flex-shrink: 0;
         margin-bottom: 0;
-        position: relative;
+        overflow: hidden;
     }
 
     #attach-file-btn {
@@ -376,29 +376,6 @@ body:not(.dark-mode) .input-action-menu-item i {
     body:not(.dark-mode) #send-message:active {
         background: #3a3a3a;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Audio visualizer mobile optimizations */
-    .audio-visualizer {
-        height: 18px;
-        width: 28px;
-        gap: 2.5px;
-    }
-    
-    .visualizer-bar {
-        width: 2.5px;
-    }
-    
-    /* Ensure smooth sliding on mobile */
-    #send-message {
-        touch-action: none;
-        -webkit-user-select: none;
-        user-select: none;
-    }
-    
-    /* Recording state on mobile */
-    #send-message.is-recording {
-        transform: scale(1.05);
     }
 }
 
@@ -652,4 +629,71 @@ body:not(.dark-mode) .input-action-menu-item i {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Voice Input Button Mobile Styles --- */
+@media (max-width: 768px) {
+    .voice-input-btn {
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        -webkit-tap-highlight-color: transparent;
+        order: 2; /* Ensure proper order: plus(0), textarea(1), mic(2), send(3) */
+    }
+
+    .voice-input-btn:hover,
+    .voice-input-btn:active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Light mode voice button mobile */
+    body:not(.dark-mode) .voice-input-btn {
+        color: rgba(26, 26, 26, 0.6);
+    }
+
+    body:not(.dark-mode) .voice-input-btn:hover,
+    body:not(.dark-mode) .voice-input-btn:active {
+        background-color: rgba(26, 26, 26, 0.1);
+        color: rgba(26, 26, 26, 0.9);
+    }
+
+    /* Voice button listening state mobile */
+    .voice-input-btn.listening {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+    }
+
+    .voice-input-btn.listening:active {
+        background-color: var(--accent-hover);
+        transform: scale(0.95);
+    }
+
+    /* Waveform mobile optimization */
+    .voice-input-btn.listening .waveform-container {
+        height: 18px;
+        width: 18px;
+        gap: 1.5px;
+    }
+
+    .waveform-bar {
+        width: 2px;
+    }
+    
+    /* Ensure proper flex order for input field elements */
+    .input-field #attach-file-btn {
+        order: 0;
+    }
+    
+    .input-field .floating-input {
+        order: 1;
+    }
+    
+    .input-field #voice-input-btn {
+        order: 2;
+    }
+    
+    .input-field #send-message {
+        order: 3;
+    }
 }
