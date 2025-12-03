@@ -282,7 +282,7 @@ body:not(.dark-mode) .dropdown-item i {
     border-radius: 1.75rem;
     background-color: var(--elevated-bg);
     border: 1px solid var(--border-color);
-    padding: 0.75rem 55px;
+    padding: 0.75rem 100px 0.75rem 55px;
     font-size: 1rem;
     color: var(--text-color);
     resize: none;
@@ -309,6 +309,13 @@ body:not(.dark-mode) .dropdown-item i {
     left: 6px;
     background-color: transparent;
     border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+#voice-input-btn {
+    right: 52px;
+    background-color: transparent;
+    border: none;
     color: var(--text-secondary);
 }
 

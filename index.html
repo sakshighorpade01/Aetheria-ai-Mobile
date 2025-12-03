@@ -121,6 +121,16 @@
               </button>
             </div>
             <textarea id="floating-input" class="floating-input" placeholder="Ask anything..." rows="1"></textarea>
+            <button id="voice-input-btn" class="input-action-btn circular-btn voice-input-btn idle" title="Voice input">
+              <i class="fas fa-microphone voice-icon"></i>
+              <div class="waveform-container hidden">
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+              </div>
+            </button>
             <button id="send-message" class="input-action-btn circular-btn"><i class="fas fa-paper-plane"></i></button>
           </div>
         </div>
@@ -197,6 +207,7 @@
     import { ToDoList } from './js/to-do-list.js';
     import ContextHandler from './js/context-handler.js';
     import FileAttachmentHandler from './js/add-files.js';
+    import VoiceInputHandler from './js/voice-input.js';
     import { messageFormatter } from './js/message-formatter.js';
     import skeletonLoader from './js/skeleton-loader.js';
 
@@ -669,6 +680,7 @@
       console.log('[Init] ContextHandler setup complete');
 
       const fileAttachmentHandler = new FileAttachmentHandler();
+      const voiceInputHandler = new VoiceInputHandler();
 
       console.log('[Init] Creating ContextViewer...');
       window.contextViewer = new ContextViewer();
@@ -676,6 +688,7 @@
       window.chat = chatModule;
       window.contextHandler = contextHandler;
       window.fileAttachmentHandler = fileAttachmentHandler;
+      window.voiceInputHandler = voiceInputHandler;
       console.log('[Init] Initializing chat module...');
       window.chat.init(contextHandler, fileAttachmentHandler, window.contextViewer);
       console.log('[Init] Chat module initialized');
@@ -795,8 +808,9 @@
         }
       });
 
-      // Send button click handler removed - now handled by AudioInputHandler
-      // The AudioInputHandler manages both tap-to-send and slide-to-record
+      sendBtn?.addEventListener('click', () => {
+        window.chat.handleSendMessage();
+      });
 
       input?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
