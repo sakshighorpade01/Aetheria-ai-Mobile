@@ -215,14 +215,15 @@ class VoiceInputHandler {
   }
 
   bindEvents() {
-    this.micButton.addEventListener('click', async () => {
+    this.micButton.addEventListener('click', () => {
       if (this.isListening) {
         this.stopListening();
-      } else {
-        // Check permission status before starting (if API is available)
-        await this.checkMicrophonePermission();
-        this.startListening();
+        return;
       }
+
+      // Fire-and-forget permission query; awaiting here would drop the user gesture
+      this.checkMicrophonePermission();
+      this.startListening();
     });
   }
 
