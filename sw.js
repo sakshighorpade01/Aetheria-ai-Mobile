@@ -1,5 +1,5 @@
 // sw.js - Production Service Worker for Aetheria AI PWA
-const CACHE_VERSION = 'aetheria-v1.1.23';
+const CACHE_VERSION = 'aetheria-v1.1.24';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;

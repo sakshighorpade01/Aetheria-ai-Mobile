@@ -56,7 +56,16 @@ class VoiceInputHandler {
     this.recognition.interimResults = true;
     this.recognition.lang = 'en-US';
     
+    // Track if we've received any results
+    this.hasReceivedResults = false;
+    
+    this.recognition.onstart = () => {
+      console.log('[VoiceInput] Speech recognition started successfully');
+      this.hasReceivedResults = false;
+    };
+    
     this.recognition.onresult = (event) => {
+      this.hasReceivedResults = true;
       let interimTranscript = '';
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -87,6 +96,7 @@ class VoiceInputHandler {
     };
     
     this.recognition.onend = () => {
+      console.log('[VoiceInput] Speech recognition ended');
       if (this.isListening) {
         // Clean up interim results when stopping
         const currentValue = this.inputField.value;
@@ -99,8 +109,42 @@ class VoiceInputHandler {
     };
     
     this.recognition.onerror = (event) => {
-      console.error('[VoiceInput] Speech recognition error:', event.error);
+      console.error('[VoiceInput] Speech recognition error:', event.error, event);
+      
+      // Handle specific error types
+      if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        this.showNotification('Microphone permission denied. Please allow microphone access in your browser settings.');
+      } else if (event.error === 'no-speech') {
+        console.log('[VoiceInput] No speech detected, continuing to listen...');
+        // Don't stop on no-speech, just continue
+        return;
+      } else if (event.error === 'audio-capture') {
+        this.showNotification('Could not access microphone. Please check if another app is using it.');
+      } else if (event.error === 'network') {
+        this.showNotification('Network error. Speech recognition requires an internet connection.');
+      } else if (event.error === 'aborted') {
+        console.log('[VoiceInput] Speech recognition aborted');
+      } else {
+        this.showNotification(`Voice input error: ${event.error}`);
+      }
+      
       this.stopListening();
+    };
+    
+    this.recognition.onsoundstart = () => {
+      console.log('[VoiceInput] Sound detected');
+    };
+    
+    this.recognition.onspeechstart = () => {
+      console.log('[VoiceInput] Speech detected');
+    };
+    
+    this.recognition.onspeechend = () => {
+      console.log('[VoiceInput] Speech ended');
+    };
+    
+    this.recognition.onsoundend = () => {
+      console.log('[VoiceInput] Sound ended');
     };
   }
 
@@ -167,35 +211,31 @@ class VoiceInputHandler {
       // Reset transcript for new session
       this.finalTranscript = '';
       
-      // Setup audio analyser for waveform
-      const audioSetup = await this.setupAudioAnalyser();
-      if (!audioSetup) {
-        console.error('[VoiceInput] Could not access microphone');
-        // Still try to start speech recognition even if audio analyser fails
-        // The waveform just won't work, but speech recognition might still work
-        try {
-          this.recognition.start();
-          this.isListening = true;
-          this.updateButtonState();
-          console.log('[VoiceInput] Started listening (without waveform)');
-        } catch (recError) {
-          console.error('[VoiceInput] Speech recognition also failed:', recError);
-          this.showNotification('Voice input is not available. Please check your browser settings.');
-        }
+      // IMPORTANT: Start speech recognition FIRST before audio analyser
+      // This ensures we request microphone permission through speech recognition
+      // which is more reliable on mobile browsers
+      try {
+        this.recognition.start();
+        this.isListening = true;
+        this.updateButtonState();
+        console.log('[VoiceInput] Speech recognition started');
+      } catch (recError) {
+        console.error('[VoiceInput] Speech recognition failed to start:', recError);
+        this.showNotification('Voice input is not available. Please check your browser settings.');
+        this.isListening = false;
+        this.updateButtonState();
         return;
       }
       
-      // Start speech recognition
-      this.recognition.start();
-      this.isListening = true;
-      
-      // Update UI to listening state
-      this.updateButtonState();
-      
-      // Start waveform animation
-      this.startWaveformAnimation();
-      
-      console.log('[VoiceInput] Started listening');
+      // Now try to setup audio analyser for waveform (optional, won't block speech recognition)
+      const audioSetup = await this.setupAudioAnalyser();
+      if (audioSetup) {
+        // Start waveform animation only if audio setup succeeded
+        this.startWaveformAnimation();
+        console.log('[VoiceInput] Started listening with waveform');
+      } else {
+        console.log('[VoiceInput] Started listening without waveform (speech recognition only)');
+      }
       
     } catch (error) {
       console.error('[VoiceInput] Failed to start listening:', error);
@@ -240,12 +280,31 @@ class VoiceInputHandler {
   updateButtonState() {
     if (!this.micButton) return;
     
+    const waveformContainer = this.micButton.querySelector('.waveform-container');
+    const voiceIcon = this.micButton.querySelector('.voice-icon');
+    
     if (this.isListening) {
       this.micButton.classList.add('listening');
       this.micButton.classList.remove('idle');
+      
+      // Show waveform only if we have audio analyser
+      if (this.analyser && waveformContainer) {
+        this.micButton.classList.remove('no-waveform');
+        waveformContainer.classList.remove('hidden');
+        if (voiceIcon) voiceIcon.style.display = 'none';
+      } else {
+        // No waveform, keep icon visible with pulsing animation
+        this.micButton.classList.add('no-waveform');
+        if (waveformContainer) waveformContainer.classList.add('hidden');
+        if (voiceIcon) voiceIcon.style.display = 'block';
+      }
     } else {
       this.micButton.classList.add('idle');
-      this.micButton.classList.remove('listening');
+      this.micButton.classList.remove('listening', 'no-waveform');
+      
+      // Always show icon when idle
+      if (waveformContainer) waveformContainer.classList.add('hidden');
+      if (voiceIcon) voiceIcon.style.display = 'block';
     }
   }
 
@@ -301,6 +360,46 @@ class VoiceInputHandler {
   // Public method to check if voice input is supported
   isSupported() {
     return ('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window);
+  }
+
+  // Show user-friendly notification
+  showNotification(message) {
+    // Try to use the app's notification system if available
+    if (window.chat && typeof window.chat.showNotification === 'function') {
+      window.chat.showNotification(message, 'error');
+      return;
+    }
+
+    // Fallback to console and alert
+    console.warn('[VoiceInput]', message);
+    
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.className = 'voice-input-toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--error-bg, #ff4444);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 10000;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s ease-out';
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
   }
 }
 

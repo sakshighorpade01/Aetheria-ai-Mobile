@@ -720,6 +720,23 @@ body:not(.dark-mode) .voice-input-btn:hover {
     display: none;
 }
 
+/* Pulsing animation for voice icon when listening without waveform */
+.voice-input-btn.listening.no-waveform .voice-icon {
+    display: block;
+    animation: voice-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
 /* Waveform container - visible when listening */
 .voice-input-btn.idle .waveform-container {
     display: none !important;
