@@ -14,8 +14,10 @@ class VoiceInputHandler {
     
     this.micButton = null;
     this.inputField = null;
+    this.speechActive = false;
     // Robust Android detection
     this.isAndroid = /android/i.test(navigator.userAgent || '');
+    this.silenceThreshold = 12; // Avg frequency magnitude before we treat input as silent
     
     this.initialize();
   }
@@ -129,6 +131,30 @@ class VoiceInputHandler {
       
       this.stopListening();
     };
+
+    this.recognition.onaudiostart = () => {
+      this.speechActive = true;
+    };
+
+    this.recognition.onaudioend = () => {
+      this.speechActive = false;
+    };
+
+    this.recognition.onsoundstart = () => {
+      this.speechActive = true;
+    };
+
+    this.recognition.onsoundend = () => {
+      this.speechActive = false;
+    };
+
+    this.recognition.onspeechstart = () => {
+      this.speechActive = true;
+    };
+
+    this.recognition.onspeechend = () => {
+      this.speechActive = false;
+    };
   }
 
   async setupAudioAnalyser() {
@@ -189,6 +215,7 @@ class VoiceInputHandler {
     
     try {
       this.finalTranscript = '';
+      this.speechActive = false;
       
       // --- CRITICAL FIX FOR ANDROID ---
       // Android Chrome cannot handle getUserMedia (AudioContext) AND SpeechRecognition 
@@ -235,6 +262,7 @@ class VoiceInputHandler {
     if (!this.isListening) return;
     
     this.isListening = false;
+    this.speechActive = false;
     
     // Stop speech recognition
     if (this.recognition) {
@@ -281,13 +309,39 @@ class VoiceInputHandler {
     if (!waveformContainer) return;
     
     const bars = waveformContainer.querySelectorAll('.waveform-bar');
-    
+    const barConfigs = Array.from(bars, (_, index) => ({
+      baseHeight: 20 + Math.random() * 20,
+      amplitude: 35 + Math.random() * 35,
+      frequency: 0.6 + Math.random() * 1.2,
+      phase: Math.random() * Math.PI * 2,
+      drift: 0.002 + Math.random() * 0.004,
+      secondary: 0.4 + Math.random() * 0.6,
+      noise: 3 + Math.random() * 4,
+      idleHeight: 6 + Math.random() * 6,
+      index
+    }));
+
+    let silenceFrames = 0;
+
     const animate = () => {
       if (!this.isListening) return;
       
       if (this.analyser) {
+
         // --- DESKTOP: Real Audio Data ---
         this.analyser.getByteFrequencyData(this.dataArray);
+        let total = 0;
+        for (let i = 0; i < this.dataArray.length; i++) {
+          total += this.dataArray[i];
+        }
+        const averageLevel = total / this.dataArray.length;
+        if (averageLevel < this.silenceThreshold) {
+          silenceFrames = Math.min(silenceFrames + 1, 12);
+        } else {
+          silenceFrames = 0;
+          this.speechActive = true;
+        }
+        const holdSilence = silenceFrames > 4;
         
         bars.forEach((bar, index) => {
           const startIndex = Math.floor((index / bars.length) * this.dataArray.length);
@@ -300,20 +354,40 @@ class VoiceInputHandler {
           const barAverage = barSum / (endIndex - startIndex);
           
           // Convert to height percentage (20% to 100%)
-          const height = Math.max(20, (barAverage / 255) * 100);
+          const dynamicHeight = Math.max(12, (barAverage / 255) * 100);
+          const idleHeight = barConfigs[index].idleHeight;
+          const height = holdSilence ? idleHeight : dynamicHeight;
           bar.style.height = `${height}%`;
         });
       } else {
         // --- ANDROID: Simulated Animation ---
-        // Since we can't access the raw audio data without breaking SpeechRecognition,
-        // we create a pleasing random wave effect to indicate activity.
-        const time = Date.now() / 150; 
-        bars.forEach((bar, index) => {
-          // Create a sine wave pattern that moves over time
-          const height = 20 + Math.abs(Math.sin(time + index)) * 60;
-          bar.style.height = `${height}%`;
-        });
+        // Freeze bars when recognition thinks user is silent, animate when speech is detected.
+        if (!this.speechActive) {
+          bars.forEach((bar, index) => {
+            const idleHeight = barConfigs[index].idleHeight;
+            bar.style.height = `${idleHeight}%`;
+          });
+        } else {
+          const time = performance.now() / 1000;
+          bars.forEach((bar, index) => {
+            const config = barConfigs[index];
+            config.phase += config.drift; // slow phase drift keeps motion from repeating
+
+            const primary = Math.sin(time * config.frequency + config.phase);
+            const secondary = Math.sin((time * (config.frequency + config.secondary)) + index * 0.5);
+            const noise = (Math.random() - 0.5) * config.noise;
+
+            let height = config.baseHeight
+              + Math.abs(primary) * config.amplitude * 0.7
+              + Math.abs(secondary) * config.amplitude * 0.3
+              + noise;
+
+            height = Math.max(10, Math.min(95, height));
+            bar.style.height = `${height}%`;
+          });
+        }
       }
+
       
       this.animationId = requestAnimationFrame(animate);
     };
