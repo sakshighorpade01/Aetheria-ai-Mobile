@@ -14,10 +14,15 @@ class VoiceInputHandler {
     
     this.micButton = null;
     this.inputField = null;
-    this.speechActive = false;
+    this.waveformContainer = null;
+    this.waveformBaseHeights = [24, 44, 68, 50, 32];
+    this.waveformOffsets = [];
+    this.simulatedEnergyLevel = 0;
+    this.simulatedEnergyTarget = 0;
+    this.lastSoundDetectedAt = 0;
+    this.silenceThreshold = 0.04;
     // Robust Android detection
     this.isAndroid = /android/i.test(navigator.userAgent || '');
-    this.silenceThreshold = 12; // Avg frequency magnitude before we treat input as silent
     
     this.initialize();
   }
@@ -25,10 +30,17 @@ class VoiceInputHandler {
   initialize() {
     this.micButton = document.getElementById('voice-input-btn');
     this.inputField = document.getElementById('floating-input');
+    this.waveformContainer = this.micButton?.querySelector('.waveform-container') || null;
     
     if (!this.micButton || !this.inputField) {
       console.warn('[VoiceInput] Required elements not found');
       return;
+    }
+
+    if (this.waveformContainer) {
+      const barCount = this.waveformContainer.querySelectorAll('.waveform-bar').length || this.waveformBaseHeights.length;
+      this.waveformOffsets = Array.from({ length: barCount }, () => Math.random() * Math.PI * 2);
+      this.resetWaveform();
     }
 
     console.log('[VoiceInput] User agent:', navigator.userAgent);
@@ -66,6 +78,17 @@ class VoiceInputHandler {
     this.recognition.onstart = () => {
       console.log('[VoiceInput] Speech recognition started');
     };
+
+    const handleSoundActivity = (isActive) => {
+      if (!this.isAndroid) return;
+      this.updateSimulatedActivity(isActive);
+    };
+    this.recognition.onsoundstart = () => handleSoundActivity(true);
+    this.recognition.onaudiostart = () => handleSoundActivity(true);
+    this.recognition.onspeechstart = () => handleSoundActivity(true);
+    this.recognition.onspeechend = () => handleSoundActivity(false);
+    this.recognition.onsoundend = () => handleSoundActivity(false);
+    this.recognition.onaudioend = () => handleSoundActivity(false);
     
     this.recognition.onresult = (event) => {
       console.log('[VoiceInput] Speech recognition result received');
@@ -131,30 +154,6 @@ class VoiceInputHandler {
       
       this.stopListening();
     };
-
-    this.recognition.onaudiostart = () => {
-      this.speechActive = true;
-    };
-
-    this.recognition.onaudioend = () => {
-      this.speechActive = false;
-    };
-
-    this.recognition.onsoundstart = () => {
-      this.speechActive = true;
-    };
-
-    this.recognition.onsoundend = () => {
-      this.speechActive = false;
-    };
-
-    this.recognition.onspeechstart = () => {
-      this.speechActive = true;
-    };
-
-    this.recognition.onspeechend = () => {
-      this.speechActive = false;
-    };
   }
 
   async setupAudioAnalyser() {
@@ -180,11 +179,16 @@ class VoiceInputHandler {
       if (!AudioContextClass) return false;
 
       this.audioContext = new AudioContextClass();
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
       this.analyser = this.audioContext.createAnalyser();
       this.microphone = this.audioContext.createMediaStreamSource(this.mediaStream);
       
       this.analyser.fftSize = 256;
-      this.analyser.smoothingTimeConstant = 0.8;
+      this.analyser.minDecibels = -90;
+      this.analyser.maxDecibels = -10;
+      this.analyser.smoothingTimeConstant = 0.7;
       
       const bufferLength = this.analyser.frequencyBinCount;
       this.dataArray = new Uint8Array(bufferLength);
@@ -215,7 +219,6 @@ class VoiceInputHandler {
     
     try {
       this.finalTranscript = '';
-      this.speechActive = false;
       
       // --- CRITICAL FIX FOR ANDROID ---
       // Android Chrome cannot handle getUserMedia (AudioContext) AND SpeechRecognition 
@@ -262,7 +265,6 @@ class VoiceInputHandler {
     if (!this.isListening) return;
     
     this.isListening = false;
-    this.speechActive = false;
     
     // Stop speech recognition
     if (this.recognition) {
@@ -287,6 +289,9 @@ class VoiceInputHandler {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
+    this.resetWaveform();
+    this.simulatedEnergyLevel = 0;
+    this.simulatedEnergyTarget = 0;
     
     this.updateButtonState();
     console.log('[VoiceInput] Stopped listening');
@@ -305,94 +310,97 @@ class VoiceInputHandler {
   }
 
   startWaveformAnimation() {
-    const waveformContainer = this.micButton.querySelector('.waveform-container');
-    if (!waveformContainer) return;
-    
-    const bars = waveformContainer.querySelectorAll('.waveform-bar');
-    const barConfigs = Array.from(bars, (_, index) => ({
-      baseHeight: 20 + Math.random() * 20,
-      amplitude: 35 + Math.random() * 35,
-      frequency: 0.6 + Math.random() * 1.2,
-      phase: Math.random() * Math.PI * 2,
-      drift: 0.002 + Math.random() * 0.004,
-      secondary: 0.4 + Math.random() * 0.6,
-      noise: 3 + Math.random() * 4,
-      idleHeight: 6 + Math.random() * 6,
-      index
-    }));
+    if (!this.waveformContainer) return;
+    const bars = this.waveformContainer.querySelectorAll('.waveform-bar');
+    if (!bars.length) return;
 
-    let silenceFrames = 0;
+    const baseHeights = this.waveformBaseHeights;
+    const lastHeights = Array.from(bars).map((_, index) => baseHeights[index % baseHeights.length]);
 
     const animate = () => {
-      if (!this.isListening) return;
-      
-      if (this.analyser) {
-
-        // --- DESKTOP: Real Audio Data ---
-        this.analyser.getByteFrequencyData(this.dataArray);
-        let total = 0;
-        for (let i = 0; i < this.dataArray.length; i++) {
-          total += this.dataArray[i];
-        }
-        const averageLevel = total / this.dataArray.length;
-        if (averageLevel < this.silenceThreshold) {
-          silenceFrames = Math.min(silenceFrames + 1, 12);
-        } else {
-          silenceFrames = 0;
-          this.speechActive = true;
-        }
-        const holdSilence = silenceFrames > 4;
-        
-        bars.forEach((bar, index) => {
-          const startIndex = Math.floor((index / bars.length) * this.dataArray.length);
-          const endIndex = Math.floor(((index + 1) / bars.length) * this.dataArray.length);
-          
-          let barSum = 0;
-          for (let i = startIndex; i < endIndex; i++) {
-            barSum += this.dataArray[i];
-          }
-          const barAverage = barSum / (endIndex - startIndex);
-          
-          // Convert to height percentage (20% to 100%)
-          const dynamicHeight = Math.max(12, (barAverage / 255) * 100);
-          const idleHeight = barConfigs[index].idleHeight;
-          const height = holdSilence ? idleHeight : dynamicHeight;
-          bar.style.height = `${height}%`;
-        });
-      } else {
-        // --- ANDROID: Simulated Animation ---
-        // Freeze bars when recognition thinks user is silent, animate when speech is detected.
-        if (!this.speechActive) {
-          bars.forEach((bar, index) => {
-            const idleHeight = barConfigs[index].idleHeight;
-            bar.style.height = `${idleHeight}%`;
-          });
-        } else {
-          const time = performance.now() / 1000;
-          bars.forEach((bar, index) => {
-            const config = barConfigs[index];
-            config.phase += config.drift; // slow phase drift keeps motion from repeating
-
-            const primary = Math.sin(time * config.frequency + config.phase);
-            const secondary = Math.sin((time * (config.frequency + config.secondary)) + index * 0.5);
-            const noise = (Math.random() - 0.5) * config.noise;
-
-            let height = config.baseHeight
-              + Math.abs(primary) * config.amplitude * 0.7
-              + Math.abs(secondary) * config.amplitude * 0.3
-              + noise;
-
-            height = Math.max(10, Math.min(95, height));
-            bar.style.height = `${height}%`;
-          });
-        }
+      if (!this.isListening) {
+        this.waveformContainer.classList.add('is-silent');
+        return;
       }
 
-      
+      let isSilent = true;
+
+      if (this.analyser && this.dataArray) {
+        this.analyser.getByteFrequencyData(this.dataArray);
+        const binsPerBar = Math.max(1, Math.floor(this.dataArray.length / bars.length));
+        const targets = new Array(bars.length).fill(0);
+        let totalEnergy = 0;
+
+        bars.forEach((bar, index) => {
+          const start = index * binsPerBar;
+          const end = Math.min(this.dataArray.length, start + binsPerBar);
+          let sum = 0;
+          for (let i = start; i < end; i++) {
+            sum += this.dataArray[i];
+          }
+          const average = sum / Math.max(1, end - start);
+          const normalized = average / 255;
+          totalEnergy += normalized;
+
+          const emphasis = 0.85 + (index / bars.length) * 0.35;
+          const jitter = 0.9 + (Math.random() * 0.2);
+          const dynamicHeight = 18 + Math.min(1, normalized * emphasis) * 80 * jitter;
+          targets[index] = Math.max(baseHeights[index % baseHeights.length], Math.min(98, dynamicHeight));
+        });
+
+        const averageEnergy = totalEnergy / bars.length;
+        isSilent = averageEnergy < this.silenceThreshold;
+
+        bars.forEach((bar, index) => {
+          const target = isSilent ? baseHeights[index % baseHeights.length] : targets[index];
+          lastHeights[index] = this.easeHeight(lastHeights[index], target, isSilent ? 0.2 : 0.35);
+          bar.style.height = `${lastHeights[index]}%`;
+        });
+      } else {
+        const now = performance.now();
+        this.simulatedEnergyLevel += (this.simulatedEnergyTarget - this.simulatedEnergyLevel) * 0.08;
+        const holdActive = now - this.lastSoundDetectedAt < 250;
+        isSilent = !holdActive && this.simulatedEnergyLevel < 0.05;
+
+        bars.forEach((bar, index) => {
+          const base = baseHeights[index % baseHeights.length];
+          const offset = this.waveformOffsets[index] || 0;
+          const wobble = (Math.sin(now / (120 + index * 18) + offset) + 1) / 2;
+          const amplitude = isSilent ? 0 : (0.3 + wobble * 0.7) * this.simulatedEnergyLevel;
+          const target = base + amplitude * 60;
+          lastHeights[index] = this.easeHeight(lastHeights[index], target, isSilent ? 0.18 : 0.28);
+          bar.style.height = `${lastHeights[index]}%`;
+        });
+      }
+
+      this.waveformContainer.classList.toggle('is-silent', isSilent);
+
       this.animationId = requestAnimationFrame(animate);
     };
-    
+
     animate();
+  }
+
+  updateSimulatedActivity(isActive) {
+    this.simulatedEnergyTarget = isActive ? 1 : 0;
+    if (isActive) {
+      this.lastSoundDetectedAt = performance.now();
+    }
+  }
+
+  resetWaveform() {
+    if (!this.waveformContainer) return;
+    const bars = this.waveformContainer.querySelectorAll('.waveform-bar');
+    if (!bars.length) return;
+    bars.forEach((bar, index) => {
+      bar.style.height = `${this.waveformBaseHeights[index % this.waveformBaseHeights.length]}%`;
+    });
+    this.waveformContainer.classList.add('is-silent');
+  }
+
+  easeHeight(current, target, factor = 0.25) {
+    if (typeof current !== 'number') return target;
+    return current + (target - current) * factor;
   }
 
   autoResizeInput() {

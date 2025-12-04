@@ -739,25 +739,12 @@ body:not(.dark-mode) .voice-input-btn:hover {
     width: 2px;
     background-color: currentColor;
     border-radius: 1px;
-    height: 20%;
-    transition: height 0.1s ease;
+    height: 18%;
     min-height: 2px;
+    transition: height 0.12s ease, opacity 0.2s ease;
+    will-change: height, opacity;
 }
 
-.waveform-bar:nth-child(1) { animation-delay: 0ms; }
-.waveform-bar:nth-child(2) { animation-delay: 50ms; }
-.waveform-bar:nth-child(3) { animation-delay: 100ms; }
-.waveform-bar:nth-child(4) { animation-delay: 150ms; }
-.waveform-bar:nth-child(5) { animation-delay: 200ms; }
-
-/* Fallback animation when no audio data */
-.voice-input-btn.listening .waveform-bar {
-    animation: waveform-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes waveform-pulse {
-    0%, 100% { height: 20%; }
-    25% { height: 60%; }
-    50% { height: 100%; }
-    75% { height: 40%; }
+.voice-input-btn.listening .waveform-container.is-silent .waveform-bar {
+    opacity: 0.35;
 }
