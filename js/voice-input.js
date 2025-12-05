@@ -243,7 +243,20 @@ class VoiceInputHandler {
     
     try {
       this.finalTranscript = '';
+      this.simulatedEnergyLevel = 0;
+      this.simulatedEnergyTarget = 0;
+      this.usingSimulatedWaveform = true;
+
+      console.log('[VoiceInput] Starting speech recognition...');
+      this.recognition.start();
       
+      this.isListening = true;
+      this.updateButtonState();
+      
+      // Start waveform animation immediately (will switch to real data when ready)
+      this.startWaveformAnimation();
+
+      // Prepare analyser in the background (after recognition start to keep gesture)
       let audioSetup = false;
       try {
         audioSetup = await this.setupAudioAnalyser();
@@ -252,15 +265,6 @@ class VoiceInputHandler {
         audioSetup = false;
       }
       this.usingSimulatedWaveform = !audioSetup;
-
-      console.log('[VoiceInput] Starting speech recognition...');
-      this.recognition.start();
-      
-      this.isListening = true;
-      this.updateButtonState();
-      
-      // Start waveform animation (handles both real and simulated data)
-      this.startWaveformAnimation();
       
       console.log('[VoiceInput] Started listening successfully');
       
