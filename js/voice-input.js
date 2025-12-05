@@ -9,19 +9,26 @@ class VoiceInputHandler {
     this.microphone = null;
     this.mediaStream = null;
     this.dataArray = null;
+    this.timeDomainArray = null;
+    this.audioSetupInProgress = false;
+
     this.animationId = null;
     this.finalTranscript = '';
     
     this.micButton = null;
     this.inputField = null;
+
     this.waveformContainer = null;
     this.waveformBaseHeights = [24, 44, 68, 50, 32];
     this.waveformOffsets = [];
     this.simulatedEnergyLevel = 0;
     this.simulatedEnergyTarget = 0;
     this.lastSoundDetectedAt = 0;
-    this.silenceThreshold = 0.04;
+    this.silenceThreshold = 0.05;
+    this.usingSimulatedWaveform = true;
+    
     // Robust Android detection
+
     this.isAndroid = /android/i.test(navigator.userAgent || '');
     
     this.initialize();
@@ -84,11 +91,9 @@ class VoiceInputHandler {
       this.updateSimulatedActivity(isActive);
     };
     this.recognition.onsoundstart = () => handleSoundActivity(true);
-    this.recognition.onaudiostart = () => handleSoundActivity(true);
     this.recognition.onspeechstart = () => handleSoundActivity(true);
     this.recognition.onspeechend = () => handleSoundActivity(false);
     this.recognition.onsoundend = () => handleSoundActivity(false);
-    this.recognition.onaudioend = () => handleSoundActivity(false);
     
     this.recognition.onresult = (event) => {
       console.log('[VoiceInput] Speech recognition result received');
@@ -157,51 +162,70 @@ class VoiceInputHandler {
   }
 
   async setupAudioAnalyser() {
-    try {
-      // Check if mediaDevices API is available
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        this.showNotification('Voice input requires HTTPS.');
-        return false;
-      }
-
-      console.log('[VoiceInput] Requesting microphone access for visualizer...');
-      
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        } 
-      });
-      
-      // Create audio context
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return false;
-
-      this.audioContext = new AudioContextClass();
-      if (this.audioContext.state === 'suspended') {
-        await this.audioContext.resume();
-      }
-      this.analyser = this.audioContext.createAnalyser();
-      this.microphone = this.audioContext.createMediaStreamSource(this.mediaStream);
-      
-      this.analyser.fftSize = 256;
-      this.analyser.minDecibels = -90;
-      this.analyser.maxDecibels = -10;
-      this.analyser.smoothingTimeConstant = 0.7;
-      
-      const bufferLength = this.analyser.frequencyBinCount;
-      this.dataArray = new Uint8Array(bufferLength);
-      
-      this.microphone.connect(this.analyser);
-      
-      console.log('[VoiceInput] Audio analyser setup complete');
-      return true;
-      
-    } catch (error) {
-      console.error('[VoiceInput] Audio setup failed:', error);
-      return false;
+    if (this.audioSetupInProgress) {
+      await this.audioSetupInProgress;
+      return Boolean(this.analyser);
     }
+
+    this.audioSetupInProgress = (async () => {
+      try {
+        if (this.analyser && this.mediaStream) {
+          this.usingSimulatedWaveform = false;
+          return true;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          this.showNotification('Voice input requires HTTPS.');
+          this.usingSimulatedWaveform = true;
+          return false;
+        }
+
+        console.log('[VoiceInput] Requesting microphone access for visualizer...');
+
+        this.mediaStream = await navigator.mediaDevices.getUserMedia({ 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          } 
+        });
+
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          this.usingSimulatedWaveform = true;
+          return false;
+        }
+
+        this.audioContext = new AudioContextClass();
+        if (this.audioContext.state === 'suspended') {
+          await this.audioContext.resume();
+        }
+
+        this.analyser = this.audioContext.createAnalyser();
+        this.analyser.fftSize = 256;
+        this.analyser.minDecibels = -90;
+        this.analyser.maxDecibels = -10;
+        this.analyser.smoothingTimeConstant = 0.72;
+
+        this.microphone = this.audioContext.createMediaStreamSource(this.mediaStream);
+        this.microphone.connect(this.analyser);
+
+        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+        this.timeDomainArray = new Uint8Array(this.analyser.fftSize);
+
+        this.usingSimulatedWaveform = false;
+        console.log('[VoiceInput] Audio analyser setup complete');
+        return true;
+      } catch (error) {
+        console.error('[VoiceInput] Audio setup failed:', error);
+        this.usingSimulatedWaveform = true;
+        return false;
+      } finally {
+        this.audioSetupInProgress = null;
+      }
+    })();
+
+    return this.audioSetupInProgress;
   }
 
   bindEvents() {
@@ -220,22 +244,15 @@ class VoiceInputHandler {
     try {
       this.finalTranscript = '';
       
-      // --- CRITICAL FIX FOR ANDROID ---
-      // Android Chrome cannot handle getUserMedia (AudioContext) AND SpeechRecognition 
-      // simultaneously. It locks the mic resource.
-      // We skip the real audio analyser on Android and use a simulated animation instead.
-      if (this.isAndroid) {
-        console.log('[VoiceInput] Android detected: Skipping AudioContext setup to prevent mic conflict.');
-        // We rely on recognition.start() to trigger the permission prompt on Android.
-      } else {
-        // Desktop: Setup real audio analysis
-        const audioSetup = await this.setupAudioAnalyser();
-        if (!audioSetup) {
-          console.error('[VoiceInput] Could not access microphone for analyser - aborting');
-          return;
-        }
+      let audioSetup = false;
+      try {
+        audioSetup = await this.setupAudioAnalyser();
+      } catch (audioError) {
+        console.warn('[VoiceInput] Audio analyser unavailable, using simulated waveform.', audioError);
+        audioSetup = false;
       }
-      
+      this.usingSimulatedWaveform = !audioSetup;
+
       console.log('[VoiceInput] Starting speech recognition...');
       this.recognition.start();
       
@@ -282,6 +299,7 @@ class VoiceInputHandler {
       this.audioContext.close();
       this.audioContext = null;
       this.analyser = null;
+      this.timeDomainArray = null;
     }
     
     // Stop waveform animation
@@ -292,7 +310,8 @@ class VoiceInputHandler {
     this.resetWaveform();
     this.simulatedEnergyLevel = 0;
     this.simulatedEnergyTarget = 0;
-    
+    this.usingSimulatedWaveform = true;
+
     this.updateButtonState();
     console.log('[VoiceInput] Stopped listening');
   }
@@ -325,14 +344,19 @@ class VoiceInputHandler {
 
       let isSilent = true;
 
-      if (this.analyser && this.dataArray) {
+      if (!this.usingSimulatedWaveform && this.analyser && this.dataArray) {
         this.analyser.getByteFrequencyData(this.dataArray);
+        if (this.timeDomainArray) {
+          this.analyser.getByteTimeDomainData(this.timeDomainArray);
+        }
         const binsPerBar = Math.max(1, Math.floor(this.dataArray.length / bars.length));
         const targets = new Array(bars.length).fill(0);
         let totalEnergy = 0;
+        let amplitude = this.computeSignalEnergy(this.timeDomainArray);
 
         bars.forEach((bar, index) => {
           const start = index * binsPerBar;
+
           const end = Math.min(this.dataArray.length, start + binsPerBar);
           let sum = 0;
           for (let i = start; i < end; i++) {
@@ -344,15 +368,21 @@ class VoiceInputHandler {
 
           const emphasis = 0.85 + (index / bars.length) * 0.35;
           const jitter = 0.9 + (Math.random() * 0.2);
-          const dynamicHeight = 18 + Math.min(1, normalized * emphasis) * 80 * jitter;
+          const amplitudeBoost = Math.min(1, amplitude * 1.4);
+          const blended = Math.min(1, normalized * emphasis * 0.75 + amplitudeBoost * 0.65);
+          const dynamicHeight = 18 + blended * 82 * jitter;
           targets[index] = Math.max(baseHeights[index % baseHeights.length], Math.min(98, dynamicHeight));
         });
 
-        const averageEnergy = totalEnergy / bars.length;
+        const averageEnergy = Math.max(totalEnergy / bars.length, amplitude * 1.1);
         isSilent = averageEnergy < this.silenceThreshold;
+        if (!isSilent) {
+          this.lastSoundDetectedAt = performance.now();
+        }
 
         bars.forEach((bar, index) => {
           const target = isSilent ? baseHeights[index % baseHeights.length] : targets[index];
+
           lastHeights[index] = this.easeHeight(lastHeights[index], target, isSilent ? 0.2 : 0.35);
           bar.style.height = `${lastHeights[index]}%`;
         });
@@ -364,6 +394,7 @@ class VoiceInputHandler {
 
         bars.forEach((bar, index) => {
           const base = baseHeights[index % baseHeights.length];
+
           const offset = this.waveformOffsets[index] || 0;
           const wobble = (Math.sin(now / (120 + index * 18) + offset) + 1) / 2;
           const amplitude = isSilent ? 0 : (0.3 + wobble * 0.7) * this.simulatedEnergyLevel;
@@ -401,6 +432,16 @@ class VoiceInputHandler {
   easeHeight(current, target, factor = 0.25) {
     if (typeof current !== 'number') return target;
     return current + (target - current) * factor;
+  }
+
+  computeSignalEnergy(timeDomainArray) {
+    if (!timeDomainArray || !timeDomainArray.length) return 0;
+    let sumSquares = 0;
+    for (let i = 0; i < timeDomainArray.length; i += 1) {
+      const centered = (timeDomainArray[i] - 128) / 128;
+      sumSquares += centered * centered;
+    }
+    return Math.sqrt(sumSquares / timeDomainArray.length);
   }
 
   autoResizeInput() {
