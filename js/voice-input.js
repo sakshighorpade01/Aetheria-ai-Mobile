@@ -10,7 +10,6 @@ class VoiceInputHandler {
     this.mediaStream = null;
     this.dataArray = null;
     this.animationId = null;
-    this.finalTranscript = '';
     
     this.micButton = null;
     this.inputField = null;
@@ -21,16 +20,12 @@ class VoiceInputHandler {
     this.simulatedEnergyTarget = 0;
     this.lastSoundDetectedAt = 0;
     this.silenceThreshold = 0.04;
-    this.waveformMode = 'simulated';
-    this.forceSimulatedWaveform = false;
     
     // Robust Android detection
     this.isAndroid = /android/i.test(navigator.userAgent || '');
     
-    this.initialize();
-  }
-
-  initialize() {
+    this.waveformMode = 'simulated';
+    this.forceSimulatedWaveform = this.isAndroid; // default to simulated on Android to avoid mic conflicts
     this.micButton = document.getElementById('voice-input-btn');
     this.inputField = document.getElementById('floating-input');
     this.waveformContainer = this.micButton?.querySelector('.waveform-container') || null;
@@ -87,11 +82,9 @@ class VoiceInputHandler {
       this.updateSimulatedActivity(isActive);
     };
     this.recognition.onsoundstart = () => handleSoundActivity(true);
-    this.recognition.onaudiostart = () => handleSoundActivity(true);
     this.recognition.onspeechstart = () => handleSoundActivity(true);
     this.recognition.onspeechend = () => handleSoundActivity(false);
     this.recognition.onsoundend = () => handleSoundActivity(false);
-    this.recognition.onaudioend = () => handleSoundActivity(false);
     
     this.recognition.onresult = (event) => {
       console.log('[VoiceInput] Speech recognition result received');
@@ -228,12 +221,14 @@ class VoiceInputHandler {
       this.finalTranscript = '';
       
       let audioSetup = false;
-      if (!this.forceSimulatedWaveform) {
+      if (!this.forceSimulatedWaveform && !this.isAndroid) {
         audioSetup = await this.setupAudioAnalyser();
+      } else if (this.isAndroid) {
+        console.log('[VoiceInput] Android detected - keeping waveform in simulated mode to protect SpeechRecognition mic access.');
       }
       this.waveformMode = audioSetup ? 'live' : 'simulated';
       if (!audioSetup) {
-        console.warn('[VoiceInput] Waveform falling back to simulated mode');
+        console.warn('[VoiceInput] Waveform running in simulated mode');
       }
       
       console.log('[VoiceInput] Starting speech recognition...');
@@ -354,12 +349,13 @@ class VoiceInputHandler {
         bars.forEach((bar, index) => {
           const target = isSilent ? baseHeights[index % baseHeights.length] : targets[index];
           lastHeights[index] = this.easeHeight(lastHeights[index], target, isSilent ? 0.2 : 0.35);
-          bar.style.height = `${lastHeights[index]}%`;
+          this.updateBarScale(bar, lastHeights[index]);
         });
       } else {
         const now = performance.now();
         this.simulatedEnergyLevel += (this.simulatedEnergyTarget - this.simulatedEnergyLevel) * 0.08;
         const holdActive = now - this.lastSoundDetectedAt < 250;
+
         isSilent = !holdActive && this.simulatedEnergyLevel < 0.05;
 
         bars.forEach((bar, index) => {
@@ -369,7 +365,7 @@ class VoiceInputHandler {
           const amplitude = isSilent ? 0 : (0.3 + wobble * 0.7) * this.simulatedEnergyLevel;
           const target = base + amplitude * 60;
           lastHeights[index] = this.easeHeight(lastHeights[index], target, isSilent ? 0.18 : 0.28);
-          bar.style.height = `${lastHeights[index]}%`;
+          this.updateBarScale(bar, lastHeights[index]);
         });
       }
 
@@ -393,7 +389,7 @@ class VoiceInputHandler {
     const bars = this.waveformContainer.querySelectorAll('.waveform-bar');
     if (!bars.length) return;
     bars.forEach((bar, index) => {
-      bar.style.height = `${this.waveformBaseHeights[index % this.waveformBaseHeights.length]}%`;
+      this.updateBarScale(bar, this.waveformBaseHeights[index % this.waveformBaseHeights.length]);
     });
     this.waveformContainer.classList.add('is-silent');
   }
@@ -401,6 +397,12 @@ class VoiceInputHandler {
   easeHeight(current, target, factor = 0.25) {
     if (typeof current !== 'number') return target;
     return current + (target - current) * factor;
+  }
+
+  updateBarScale(bar, percent) {
+    if (!bar) return;
+    const clamped = Math.max(5, Math.min(110, percent));
+    bar.style.setProperty('--bar-scale', (clamped / 100).toFixed(3));
   }
 
   autoResizeInput() {

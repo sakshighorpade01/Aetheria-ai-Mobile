@@ -727,24 +727,36 @@ body:not(.dark-mode) .voice-input-btn:hover {
 
 .voice-input-btn.listening .waveform-container {
     display: flex !important;
-    align-items: end;
+    align-items: center;
     justify-content: center;
     gap: 2px;
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
 }
 
 /* Waveform bars */
 .waveform-bar {
     width: 2px;
-    background-color: currentColor;
-    border-radius: 1px;
-    height: 18%;
-    min-height: 2px;
-    transition: height 0.12s ease, opacity 0.2s ease;
-    will-change: height, opacity;
+    position: relative;
+    height: 100%;
+    --bar-scale: 0.35;
+    will-change: transform, opacity;
 }
 
-.voice-input-btn.listening .waveform-container.is-silent .waveform-bar {
+.waveform-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    border-radius: 999px;
+    transform-origin: center;
+    transform: translateY(-50%) scaleY(var(--bar-scale));
+    transition: transform 0.12s ease, opacity 0.2s ease;
+}
+
+.voice-input-btn.listening .waveform-container.is-silent .waveform-bar::after {
     opacity: 0.35;
 }
