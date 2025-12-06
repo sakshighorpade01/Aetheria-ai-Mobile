@@ -337,10 +337,128 @@ class ContextHandler {
             runs: []
         }));
 
+        await this.populateMissingTitles(userId, sessions);
+
         return {
             sessions,
             total: typeof count === 'number' ? count : (sessionRows?.length || 0)
         };
+    }
+
+    async populateMissingTitles(userId, sessions) {
+        if (!Array.isArray(sessions) || sessions.length === 0) {
+            return;
+        }
+
+        const sessionsNeedingTitles = sessions.filter(session => !session.title);
+        if (sessionsNeedingTitles.length === 0) {
+            return;
+        }
+
+        console.log('[ContextHandler] Deriving titles for sessions without titles:', sessionsNeedingTitles.length);
+
+        for (const session of sessionsNeedingTitles) {
+            try {
+                const derivedTitle = await this.deriveTitleFromSession(session.session_id);
+                if (!derivedTitle) {
+                    continue;
+                }
+
+                const createdAtSeconds = Number.isFinite(session.created_at)
+                    ? Math.floor(session.created_at)
+                    : Math.floor(Date.now() / 1000);
+
+                await this.saveSessionTitle(userId, session.session_id, derivedTitle, createdAtSeconds);
+                session.title = derivedTitle;
+            } catch (error) {
+                console.warn('[ContextHandler] Unable to derive/save session title:', session.session_id, error);
+            }
+        }
+    }
+
+    async deriveTitleFromSession(sessionId) {
+        try {
+            const { data, error } = await supabase
+                .from('agno_sessions')
+                .select('runs, session_data')
+                .eq('session_id', sessionId)
+                .single();
+
+            if (error) {
+                throw error;
+            }
+
+            const sessionData = data || {};
+            const turnContextMessage = sessionData?.session_data?.session_state?.turn_context?.user_message;
+            const titleFromContext = this.buildTitleFromMessage(turnContextMessage);
+            if (titleFromContext) {
+                return titleFromContext;
+            }
+
+            const runs = sessionData?.runs || [];
+            if (!Array.isArray(runs) || runs.length === 0) {
+                return null;
+            }
+
+            const topLevelRuns = runs.filter(run => !run.parent_run_id);
+            const firstRun = topLevelRuns[0];
+            if (!firstRun) {
+                return null;
+            }
+
+            const userInput = firstRun.input?.input_content || firstRun.content || '';
+            return this.buildTitleFromMessage(userInput);
+        } catch (err) {
+            console.warn('[ContextHandler] deriveTitleFromSession failed:', sessionId, err);
+            return null;
+        }
+    }
+
+    async saveSessionTitle(userId, sessionId, title, sessionCreatedAtSeconds) {
+        try {
+            await supabase
+                .from('session_titles')
+                .upsert({
+                    session_id: sessionId,
+                    user_id: userId,
+                    tittle: title,
+                    session_created_at: sessionCreatedAtSeconds
+                });
+        } catch (err) {
+            console.warn('[ContextHandler] saveSessionTitle failed:', sessionId, err);
+        }
+    }
+
+    buildTitleFromMessage(message) {
+        if (!message || typeof message !== 'string') {
+            return null;
+        }
+
+        const marker = 'Current message:';
+        const markerIndex = message.lastIndexOf(marker);
+        if (markerIndex !== -1) {
+            message = message.substring(markerIndex + marker.length).trim();
+        }
+
+        const cleaned = message.replace(/\s+/g, ' ').trim();
+        if (!cleaned) {
+            return null;
+        }
+
+        const words = cleaned.split(' ');
+        const maxWords = 4;
+        let title = words.slice(0, maxWords).join(' ');
+
+        if (words.length > maxWords) {
+            title += '...';
+        }
+
+        const maxLength = 60;
+        if (title.length > maxLength) {
+            title = `${title.substring(0, maxLength - 3).trim()}...`;
+        }
+
+        return title;
     }
 
     async forceRefreshSessions() {
