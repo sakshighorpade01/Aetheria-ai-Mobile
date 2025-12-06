@@ -21,6 +21,9 @@ class VoiceInputHandler {
     this.simulatedEnergyTarget = 0;
     this.lastSoundDetectedAt = 0;
     this.silenceThreshold = 0.04;
+    this.waveformMode = 'simulated';
+    this.forceSimulatedWaveform = false;
+    
     // Robust Android detection
     this.isAndroid = /android/i.test(navigator.userAgent || '');
     
@@ -146,6 +149,10 @@ class VoiceInputHandler {
         console.log('[VoiceInput] No speech detected');
       } else if (event.error === 'audio-capture') {
         this.showNotification('Could not capture audio. Please check your microphone.');
+        if (!this.forceSimulatedWaveform) {
+          this.forceSimulatedWaveform = true;
+          console.warn('[VoiceInput] Switching waveform to simulated mode after audio capture error');
+        }
       } else if (event.error === 'network') {
         this.showNotification('Network error. Please check your internet connection.');
       } else if (event.error !== 'aborted') {
@@ -220,20 +227,13 @@ class VoiceInputHandler {
     try {
       this.finalTranscript = '';
       
-      // --- CRITICAL FIX FOR ANDROID ---
-      // Android Chrome cannot handle getUserMedia (AudioContext) AND SpeechRecognition 
-      // simultaneously. It locks the mic resource.
-      // We skip the real audio analyser on Android and use a simulated animation instead.
-      if (this.isAndroid) {
-        console.log('[VoiceInput] Android detected: Skipping AudioContext setup to prevent mic conflict.');
-        // We rely on recognition.start() to trigger the permission prompt on Android.
-      } else {
-        // Desktop: Setup real audio analysis
-        const audioSetup = await this.setupAudioAnalyser();
-        if (!audioSetup) {
-          console.error('[VoiceInput] Could not access microphone for analyser - aborting');
-          return;
-        }
+      let audioSetup = false;
+      if (!this.forceSimulatedWaveform) {
+        audioSetup = await this.setupAudioAnalyser();
+      }
+      this.waveformMode = audioSetup ? 'live' : 'simulated';
+      if (!audioSetup) {
+        console.warn('[VoiceInput] Waveform falling back to simulated mode');
       }
       
       console.log('[VoiceInput] Starting speech recognition...');
