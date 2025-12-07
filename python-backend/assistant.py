@@ -22,7 +22,7 @@ from agno.models.groq import Groq
 
 # Tool Imports
 from agno.tools import Toolkit
-from agno.tools.googlesearch import GoogleSearchTools
+from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.website import WebsiteTools
 from agno.tools.hackernews import HackerNewsTools
 from agno.tools.wikipedia import WikipediaTools
@@ -31,6 +31,7 @@ from sandbox_tools import SandboxTools
 from github_tools import GitHubTools
 from google_email_tools import GoogleEmailTools
 from google_drive_tools import GoogleDriveTools
+from browser_tools import BrowserTools
 from vercel_tools import VercelTools
 from supabase_tools import SupabaseTools
 from agno.tools.api import CustomApiTools
@@ -59,6 +60,8 @@ def get_llm_os(
     enable_vercel: bool = False,
     enable_google_email: bool = False,
     enable_google_drive: bool = False,
+    enable_browser: bool = False,
+    browser_tools_config: Optional[Dict[str, Any]] = None,
     custom_tool_config: Optional[Dict[str, Any]] = None,
 ) -> Team:
     """
@@ -87,7 +90,9 @@ def get_llm_os(
         if enable_google_drive:
             direct_tools.append(GoogleDriveTools(user_id=user_id))
     if internet_search:
-        direct_tools.append(GoogleSearchTools(fixed_max_results=15))
+        direct_tools.append(DuckDuckGoTools())
+    if enable_browser and browser_tools_config:
+        direct_tools.append(BrowserTools(**browser_tools_config))
     if enable_vercel and user_id:
         direct_tools.append(VercelTools(user_id=user_id))
     if enable_supabase and user_id:
@@ -509,7 +514,7 @@ def get_llm_os(
         "",
         "DIRECT TOOLS(Tools only you can use):",
         "• NEVER delegate tasks requiring these tools to other agents - you must execute them directly."
-        "• Handle all (Github, Vercel, Supabase, Mails, Drive, image)"
+        "• Handle all (Github, Vercel, Supabase, Browser Automation, Mails , Drive, image)"
         "Coding assistant has Sandbox",
         "", "RESPONSE STYLE:",
         "• Deliver results as if you personally completed the task",

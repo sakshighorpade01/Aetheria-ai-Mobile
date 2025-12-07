@@ -60,6 +60,7 @@ def run_agent_and_stream(
     conversation_id: str,
     message_id: str,
     turn_data: dict,
+    browser_tools_config: dict, # This is now only used to extract socketio and redis_client
     context_session_ids: List[str],
     connection_manager: ConnectionManager,
     redis_client: Redis
@@ -87,6 +88,7 @@ def run_agent_and_stream(
         agent = get_llm_os(
             user_id=user_id,
             session_info=session_data,
+            browser_tools_config=realtime_tool_config,
             custom_tool_config=realtime_tool_config,
             **session_data['config']
         )
