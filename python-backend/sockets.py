@@ -107,15 +107,12 @@ def on_send_message(data: str):
         msg_preview = data.get("message", "")[:50]
         logger.info(f"{sid[:8]} | Message received: {msg_preview}{'...' if len(data.get('message', '')) > 50 else ''}")
         
-        browser_tools_config = {'sid': sid, 'socketio': socketio, 'redis_client': redis_client_instance}
-        
         eventlet.spawn(
             run_agent_and_stream,
             sid,
             conversation_id,
             message_id,
             turn_data,
-            browser_tools_config,
             context_session_ids,
             connection_manager_service,
             redis_client_instance
