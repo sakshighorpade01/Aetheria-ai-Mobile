@@ -31,7 +31,6 @@ from sandbox_tools import SandboxTools
 from github_tools import GitHubTools
 from google_email_tools import GoogleEmailTools
 from google_drive_tools import GoogleDriveTools
-from browser_tools import BrowserTools
 from vercel_tools import VercelTools
 from supabase_tools import SupabaseTools
 from agno.tools.api import CustomApiTools
@@ -60,8 +59,6 @@ def get_llm_os(
     enable_vercel: bool = False,
     enable_google_email: bool = False,
     enable_google_drive: bool = False,
-    enable_browser: bool = False,
-    browser_tools_config: Optional[Dict[str, Any]] = None,
     custom_tool_config: Optional[Dict[str, Any]] = None,
 ) -> Team:
     """
@@ -91,8 +88,6 @@ def get_llm_os(
             direct_tools.append(GoogleDriveTools(user_id=user_id))
     if internet_search:
         direct_tools.append(GoogleSearchTools(fixed_max_results=15))
-    if enable_browser and browser_tools_config:
-        direct_tools.append(BrowserTools(**browser_tools_config))
     if enable_vercel and user_id:
         direct_tools.append(VercelTools(user_id=user_id))
     if enable_supabase and user_id:
@@ -106,14 +101,14 @@ def get_llm_os(
         planner = Agent(
             name="planner",
             role="Omniscient planner who sees all dependencies before execution",
-            model=Groq(id="openai/gpt-oss-120b"),
+            model=Groq(id="groq/compound"),
             instructions=[
                 "<role>",
-                "You are the Planner Agent in the Aetheria AI system. Your role is to analyze user requests and create execution plans using available tools. You DO NOT execute tasks - you only design the plan that Aetheria AI will execute.",
+                "You are the Omniscient Planner Agent in the Aetheria AI system. Your role is to analyze user requests and create execution plans using available tools. You DO NOT execute tasks - you only design the plan that Aetheria AI will execute.",
                 "</role>",
                 "",
                 "<output_format>",
-                "Provide plans in this EXACT XML structure:",
+                "Provide plans in markdown structure:",
                 "",
                 "<plan>",
                 "  <task>[One-line task summary]</task>",
@@ -130,8 +125,6 @@ def get_llm_os(
                 "      <reason>[Brief justification]</reason>",
                 "    </step>",
                 "  </steps>",
-                "  ",
-                "  <expected_outcome>[What Aetheria AI will deliver]</expected_outcome>",
                 "  ",
                 "  <prerequisites>[Any user actions needed before execution, or NONE]</prerequisites>",
                 "</plan>",
@@ -438,11 +431,12 @@ def get_llm_os(
                 "CRITICAL REMINDERS:",
                 "- You are a PLANNER ONLY - never answer user queries directly",
                 "- For simple queries: respond with 'This query is simple and does not require a multi-step plan.'",
-                "- For complex queries: create detailed XML-formatted execution plans",
+                "- For complex queries: create detailed markdown formatted execution plans",
                 "- Check prerequisites (connection status, IDs, tokens) before planning state changes",
                 "- Respect tool ordering: GitHub metadata → Vercel, Browser status → Browser actions",
                 "- Never skip prerequisite gathering steps",
                 "- Use Mermaid for technical diagrams, ImageTools for creative visuals",
+                "-Tell Aetheria ai what tools to use and whether to delegate any tasks to other agents",
             ],
             markdown=True,
             debug_mode=debug_mode,
@@ -452,9 +446,9 @@ def get_llm_os(
     if coding_assistant:
         dev_team = Agent(
             name="dev_team",
-            model=OpenRouter(id="qwen/qwen3-coder:free"),
-            role="does Any coding related task",
-            tools=[SandboxTools(session_info=session_info), SupabaseTools(user_id=user_id), VercelTools(user_id=user_id)] if session_info else [],
+            model=OpenRouter(id="amazon/nova-2-lite-v1:free"),
+            role="It can do Any code related task",
+            tools=[SandboxTools(session_info=session_info)],
             instructions=[
                 "Development team: Plan and execute code solutions using sandbox tools.",
                 "Access files from session_state['turn_context']['files'].",
@@ -471,7 +465,7 @@ def get_llm_os(
         world_ai = Agent(
             name="World_Agent",
             role="Universal knowledge and research agent with access to world information.",
-            model=OpenRouter(id="x-ai/grok-4.1-fast:free"),
+            model=Gemini(id="gemini-2.5-flash-lite"),
             tools=[WikipediaTools(),HackerNewsTools(),ArxivTools(),CustomApiTools(),YouTubeTools()],
             instructions=[
                 "You are the World Agent with comprehensive access to global information sources.",
@@ -513,6 +507,9 @@ def get_llm_os(
         "• Maintain context between steps",
         "• Never skip prerequisite checks specified in plan",
         "",
+        "DIRECT TOOLS(Tools only you can use):",
+        "• NEVER delegate tasks requiring these tools to other agents - you must execute them directly."
+        "• Handle all (Github, Vercel, Supabase, Mails, Drive, image)"
         "Coding assistant has Sandbox",
         "", "RESPONSE STYLE:",
         "• Deliver results as if you personally completed the task",
