@@ -1,0 +1,16 @@
+COPY python-backend/ .
+201ms
+
+auth
+sharing credentials for production-asia-southeast1-eqsg3a.railway-registry.com
+0ms
+
+importing to docker
+16s
+Build time: 136.11 seconds
+ 
+=========================
+Container failed to start
+=========================
+ 
+/orchestrator.RouterLegacyService/CreateDeployment UNKNOWN: failed to parse start command `/bin/sh -c "exec celery -A celery_app:celery_app --broker=$REDIS_URL flower`

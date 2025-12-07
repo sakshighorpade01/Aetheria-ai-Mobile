@@ -1,0 +1,274 @@
+<!-- aios.html (Complete, Updated Version) -->
+<div id="floating-window" class="floating-window hidden">
+    <div class="window-header">
+        <div class="window-title">Account Settings</div>
+        <button class="close-btn" id="close-aios" aria-label="Close Settings">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="window-content">
+        <div class="split-layout">
+            <div class="tabs-sidebar">
+                <button class="tab-btn active" data-tab="account">
+                    <i class="fas fa-user"></i>
+                    <span>Account</span>
+                </button>
+                <button class="tab-btn" data-tab="integration">
+                    <i class="fas fa-plug"></i>
+                    <span>Integration</span>
+                </button>
+                <button class="tab-btn" data-tab="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </button>
+                <button class="tab-btn" data-tab="support">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Support</span>
+                </button>
+                <button class="tab-btn" data-tab="updates">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Updates</span>
+                </button>
+            </div>
+
+            <div class="tab-content-area">
+                <div class="tab-content active" id="account-tab">
+                    <h3 class="tab-heading">Account Settings</h3>
+                    
+                    <!-- Logged Out State -->
+                    <div id="account-logged-out" class="auth-state">
+                        <div class="auth-tabs">
+                            <button class="auth-tab-btn active" data-auth-tab="login">Login</button>
+                            <button class="auth-tab-btn" data-auth-tab="signup">Sign Up</button>
+                        </div>
+                        
+                        <!-- Login Form -->
+                        <form id="login-form" class="auth-form active">
+                            <div class="form-group">
+                                <label for="loginEmail">Email</label>
+                                <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password</label>
+                                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                            </div>
+                            <div id="login-error" class="auth-error"></div>
+                            <div class="form-actions">
+                                <button type="submit" class="auth-btn primary">Login</button>
+                            </div>
+                            
+                            <div class="social-auth-divider">OR</div>
+                            <div class="social-auth-actions">
+                                <button type="button" id="google-signin-btn" class="auth-btn social">
+                                    <i class="fab fa-google"></i>
+                                    <span>Sign in with Google</span>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Sign Up Form -->
+                        <form id="signup-form" class="auth-form">
+                            <div class="form-group">
+                                <label for="signupName">Name</label>
+                                <input type="text" id="signupName" placeholder="Enter your name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signupEmail">Email</label>
+                                <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signupPassword">Password</label>
+                                <input type="password" id="signupPassword" placeholder="Create a password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                            </div>
+                            <div id="signup-error" class="auth-error"></div>
+                            <div class="form-actions">
+                                <button type="submit" class="auth-btn primary">Sign Up</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Logged In State -->
+                    <div id="account-logged-in" class="auth-state hidden">
+                        
+                        <!-- NEW: User Identity Card -->
+                        <div class="user-identity-card">
+                            <div class="user-avatar-container" id="account-avatar">
+                                <!-- Avatar img or initials div will be dynamically inserted here -->
+                            </div>
+                            <div class="user-info">
+                                <span class="user-name-display" id="account-userName"></span>
+                                <span class="user-email-display" id="account-userEmail"></span>
+                            </div>
+                            <button class="logout-button" id="logout-btn" title="Log out">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </button>
+                        </div>
+                        <!-- END: User Identity Card -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="integration-tab">
+                    <h3 class="tab-heading">Integrations</h3>
+                    <div class="integration-content">
+                        <p class="integration-description">
+                            Connect your third-party services to enhance your AI-OS experience. 
+                            Manage all your integrations and their permissions from this central location.
+                        </p>
+                        
+                        <!-- Integrations Section -->
+                        <div class="integrations-section">
+                            <!-- GitHub Integration Item -->
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <i class="fab fa-github"></i>
+                                    <span>GitHub</span>
+                                </div>
+                                <button class="connect-btn" id="connect-github-btn" data-provider="github" data-action="connect">
+                                    <i class="fas fa-link icon-connect"></i>
+                                    <i class="fas fa-check icon-connected"></i>
+                                    <span class="btn-text">Connect</span>
+                                </button>
+                            </div>
+                            <!-- Google Integration Item -->
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <i class="fab fa-google"></i>
+                                    <span>Google</span>
+                                </div>
+                                <button class="connect-btn" id="connect-google-btn" data-provider="google" data-action="connect">
+                                    <i class="fas fa-link icon-connect"></i>
+                                    <i class="fas fa-check icon-connected"></i>
+                                    <span class="btn-text">Connect</span>
+                                </button>
+                            </div>
+                            <!-- Vercel Integration Item -->
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <svg class="provider-icon vercel-icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M24 22.525H0l12-21.05 12 21.05z"/>
+                                    </svg>
+                                    <span>Vercel</span>
+                                </div>
+                                <button class="connect-btn" id="connect-vercel-btn" data-provider="vercel" data-action="connect">
+                                    <i class="fas fa-link icon-connect"></i>
+                                    <i class="fas fa-check icon-connected"></i>
+                                    <span class="btn-text">Connect</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Supabase Integration Item -->
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <svg class="provider-icon" role="img" viewBox="0 0 109 113" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px;">
+                                        <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint0_linear)"/>
+                                        <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint1_linear)" fill-opacity="0.2"/>
+                                        <path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/>
+                                        <defs>
+                                            <linearGradient id="paint0_linear" x1="53.9738" y1="54.974" x2="94.1635" y2="71.8295" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#249361"/>
+                                                <stop offset="1" stop-color="#3ECF8E"/>
+                                            </linearGradient>
+                                            <linearGradient id="paint1_linear" x1="36.1558" y1="30.578" x2="54.4844" y2="65.0806" gradientUnits="userSpaceOnUse">
+                                                <stop/>
+                                                <stop offset="1" stop-opacity="0"/>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <span>Supabase</span>
+                                </div>
+                                <button class="connect-btn" id="connect-supabase-btn" data-provider="supabase" data-action="connect">
+                                    <i class="fas fa-link icon-connect"></i>
+                                    <i class="fas fa-check icon-connected"></i>
+                                    <span class="btn-text">Connect</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="about-tab">
+                    <h3 class="tab-heading">About AIOS Desktop</h3>
+                    <div class="about-content">
+                        <p class="version">Version 1.1.4</p>
+                        <p class="description">
+                            Aetheria AI-OS is a sophisticated personal AI Operating System that intelligently orchestrates specialized AI agents and integrations to handle complex, multi-step tasks through natural conversation.
+                        </p>
+                        <div class="about-links">
+                            <a href="https://ai-os-website.vercel.app/privacy" class="link external-link" aria-label="Privacy Policy" data-external="true">Privacy Policy</a>
+                            <a href="https://ai-os-website.vercel.app/terms" class="link external-link" aria-label="Terms of Service" data-external="true">Terms of Service</a>
+                            <a href="https://github.com/GodBoii/AI-OS" class="link external-link" aria-label="Documentation" data-external="true">Documentation</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="support-tab">
+                    <h3 class="tab-heading">Support & Feedback</h3>
+                    <form id="support-form">
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" placeholder="Enter subject" aria-label="Subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" placeholder="Describe your issue or feedback" aria-label="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="screenshot">Upload Screenshot</label>
+                            <div class="upload-container">
+                                <input type="file" id="screenshot" accept=".jpg,.png,.gif,.txt" aria-label="Upload Screenshot">
+                                <p class="file-hint">Supported formats: .jpg, .png, .gif, .txt</p>
+                            </div>
+                            <div class="screenshot-preview"></div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn primary">Submit Feedback</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-content" id="updates-tab">
+                    <h3 class="tab-heading">Software Updates</h3>
+                    <div class="updates-content">
+                        <div class="update-status-card">
+                            <div class="update-icon" id="update-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="update-info">
+                                <h4 id="update-status-title">Checking for updates...</h4>
+                                <p id="update-status-message">Please wait while we check for the latest version.</p>
+                                <p class="current-version">Current Version: <span id="current-version-display">1.1.4</span></p>
+                                <p class="last-check">Last checked: <span id="last-check-time">Never</span></p>
+                            </div>
+                        </div>
+
+                        <div id="update-details" class="update-details hidden">
+                            <h4>What's New in v<span id="new-version-number"></span></h4>
+                            <div id="release-notes-content" class="release-notes"></div>
+                            
+                            <div class="download-options">
+                                <h5>Download Options:</h5>
+                                <div id="download-links" class="download-links-grid"></div>
+                            </div>
+                        </div>
+
+                        <div class="update-actions">
+                            <button class="btn-secondary" id="check-updates-btn">
+                                <i class="fas fa-sync-alt"></i>
+                                Check for Updates
+                            </button>
+                            <button class="btn-primary hidden" id="download-update-btn">
+                                <i class="fas fa-download"></i>
+                                Download Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

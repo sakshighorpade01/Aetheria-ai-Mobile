@@ -1,0 +1,584 @@
+2025-11-07T21:51:44.000000000Z [inf]  Starting Container
+2025-11-07T21:51:46.107397717Z [err]  [2025-11-07 21:51:45 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:46.107402221Z [err]  [2025-11-07 21:51:45 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:46.107406264Z [err]  [2025-11-07 21:51:45 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:46.107411064Z [err]  [2025-11-07 21:51:45 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:46.149117849Z [err]  [2025-11-07 21:51:46 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:46.149122819Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:46.149128218Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:46.149132784Z [err]      worker.init_process()
+2025-11-07T21:51:46.149138644Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:46.149142163Z [err]      super().init_process()
+2025-11-07T21:51:46.149145911Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:46.149150876Z [err]      self.load_wsgi()
+2025-11-07T21:51:46.149156694Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:46.149160755Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:46.149164436Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:46.149168435Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:46.149173518Z [err]      self.callable = self.load()
+2025-11-07T21:51:46.149179947Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:46.149184822Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:46.149188286Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:46.149193609Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:46.149199809Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:46.149204349Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:46.149208138Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:46.149212049Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:46.150822111Z [err]      from auth import auth_bp
+2025-11-07T21:51:46.150822717Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:46.150828594Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:46.150833350Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:46.150835015Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:46.150841624Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:46.150842540Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:46.150848626Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:46.150849638Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:46.150856175Z [err]      import supabase
+2025-11-07T21:51:46.150858742Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:46.150863828Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:46.150864506Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:46.150870955Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:46.150872686Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:46.150878279Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:46.150882802Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:46.150887639Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:46.150892062Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:46.150897249Z [err]      from factory import create_app
+2025-11-07T21:51:46.150901441Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:46.151758157Z [err]  [2025-11-07 21:51:46 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:46.151808268Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:46.151813677Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:46.151819343Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:46.481681346Z [err]  [2025-11-07 21:51:46 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:46.481695616Z [err]  [2025-11-07 21:51:46 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:46.481704965Z [err]  [2025-11-07 21:51:46 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:51:48.159579673Z [err]  [2025-11-07 21:51:47 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:48.159590220Z [err]  [2025-11-07 21:51:47 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:48.159597189Z [err]  [2025-11-07 21:51:47 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:48.159624483Z [err]  [2025-11-07 21:51:47 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:48.633496837Z [err]  [2025-11-07 21:51:48 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:48.633508449Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:48.633514523Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:48.633518810Z [err]      worker.init_process()
+2025-11-07T21:51:48.633530200Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:48.633536601Z [err]      super().init_process()
+2025-11-07T21:51:48.633542084Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:48.633546089Z [err]      self.load_wsgi()
+2025-11-07T21:51:48.633552444Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:48.633557399Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:48.633562090Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:48.633567324Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:48.633572052Z [err]      self.callable = self.load()
+2025-11-07T21:51:48.633576255Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:48.633581912Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:48.633587338Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:48.633594184Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:48.633600424Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:48.633605881Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:48.633610152Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:48.633614270Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:48.635253466Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:48.635260393Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:48.635265865Z [err]      import supabase
+2025-11-07T21:51:48.635268646Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:48.635271333Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:48.635276164Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:48.635280068Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:48.635287720Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:48.635290350Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:48.635295253Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:48.635302606Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:48.635303850Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:48.635310821Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:48.635312784Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:48.635318587Z [err]      from factory import create_app
+2025-11-07T21:51:48.635322741Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:48.635330235Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:48.635332161Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:48.635336937Z [err]      from auth import auth_bp
+2025-11-07T21:51:48.635340592Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:48.635345202Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:48.637286890Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:48.637296126Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:48.637302368Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:48.637309151Z [err]  [2025-11-07 21:51:48 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:49.181652688Z [err]  [2025-11-07 21:51:48 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:49.181658208Z [err]  [2025-11-07 21:51:48 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:49.181682875Z [err]  [2025-11-07 21:51:48 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:51:50.267325364Z [err]  [2025-11-07 21:51:50 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:50.269047008Z [err]  [2025-11-07 21:51:50 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:50.269053348Z [err]  [2025-11-07 21:51:50 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:50.275116525Z [err]  [2025-11-07 21:51:50 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:51.176507992Z [err]  [2025-11-07 21:51:51 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:51.176512980Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:51.176518337Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:51.176525730Z [err]      worker.init_process()
+2025-11-07T21:51:51.176530814Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:51.176535262Z [err]      super().init_process()
+2025-11-07T21:51:51.176542356Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:51.176547783Z [err]      self.load_wsgi()
+2025-11-07T21:51:51.176554316Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:51.176559313Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:51.176564175Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:51.176569137Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:51.176581820Z [err]      self.callable = self.load()
+2025-11-07T21:51:51.176587070Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:51.176591923Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:51.176597281Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:51.176602388Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:51.176607406Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:51.176611923Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:51.176616243Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:51.176620777Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:51.176625534Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:51.176630755Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:51.176635402Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:51.176640440Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:51.176644898Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:51.176651247Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:51.176655786Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:51.176660651Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:51.176665551Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:51.176670249Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:51.176674448Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:51.176679387Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:51.176683362Z [err]      from factory import create_app
+2025-11-07T21:51:51.176688010Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:51.176694349Z [err]      from auth import auth_bp
+2025-11-07T21:51:51.176698682Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:51.176703400Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:51.176708717Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:51.176713296Z [err]      import supabase
+2025-11-07T21:51:51.176718945Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:51.176723255Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:51.176728208Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:51.176733371Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:51.176738803Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:51.176743789Z [err]  [2025-11-07 21:51:51 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:51.310448878Z [err]  [2025-11-07 21:51:51 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:51.312005027Z [err]  [2025-11-07 21:51:51 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:51.312016655Z [err]  [2025-11-07 21:51:51 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:51:53.172952780Z [err]  [2025-11-07 21:51:52 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:53.173027111Z [err]  [2025-11-07 21:51:52 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:53.173035282Z [err]  [2025-11-07 21:51:52 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:53.173043778Z [err]  [2025-11-07 21:51:52 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:53.533538761Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:53.533544972Z [err]  [2025-11-07 21:51:53 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:53.533548565Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:53.533554668Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:53.533555156Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:53.533562713Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:53.533563372Z [err]      self.callable = self.load()
+2025-11-07T21:51:53.533571031Z [err]      worker.init_process()
+2025-11-07T21:51:53.533573096Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:53.533575985Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:53.533579775Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:53.533586241Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:53.533586747Z [err]      super().init_process()
+2025-11-07T21:51:53.533592861Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:53.533594719Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:53.533599152Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:53.533604366Z [err]      self.load_wsgi()
+2025-11-07T21:51:53.533605490Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:53.533612344Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:53.533615158Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:53.533618917Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:53.534570321Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:53.534576387Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:53.534581933Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:53.534582631Z [err]      from factory import create_app
+2025-11-07T21:51:53.534586552Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:53.534593922Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:53.534594100Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:53.534601397Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:53.534606478Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:53.534607656Z [err]      from auth import auth_bp
+2025-11-07T21:51:53.534613284Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:53.534617058Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:53.534623213Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:53.534624886Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:53.534631183Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:53.534635462Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:53.534639107Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:53.534644085Z [err]      import supabase
+2025-11-07T21:51:53.534647221Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:53.534651923Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:53.534656076Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:53.535452079Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:53.535456553Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:53.535460452Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:53.535464225Z [err]  [2025-11-07 21:51:53 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:53.754989542Z [err]  [2025-11-07 21:51:53 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:53.754997268Z [err]  [2025-11-07 21:51:53 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:53.755002875Z [err]  [2025-11-07 21:51:53 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:51:55.282009044Z [err]  [2025-11-07 21:51:55 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:55.282013954Z [err]  [2025-11-07 21:51:55 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:55.282020662Z [err]  [2025-11-07 21:51:55 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:55.282041486Z [err]  [2025-11-07 21:51:55 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:56.237135670Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:56.237145359Z [err]      self.load_wsgi()
+2025-11-07T21:51:56.237159707Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:56.237165182Z [err]      worker.init_process()
+2025-11-07T21:51:56.237170359Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:56.237175681Z [err]      super().init_process()
+2025-11-07T21:51:56.237185256Z [err]  [2025-11-07 21:51:56 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:56.237194930Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:56.237251942Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:56.237265281Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:56.237272093Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:56.237279681Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:56.237286976Z [err]      self.callable = self.load()
+2025-11-07T21:51:56.237296124Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:56.237301373Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:56.237306463Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:56.237312037Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:56.237321185Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:56.237327793Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:56.237333711Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:56.237339316Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:56.238523202Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:56.238530628Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:56.238537651Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:56.238544266Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:56.238551681Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:56.238557784Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:56.238564452Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:56.238570962Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:56.238576781Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:56.238582672Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:56.238589159Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:56.238594540Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:56.238599227Z [err]      from factory import create_app
+2025-11-07T21:51:56.238605602Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:56.238611889Z [err]      from auth import auth_bp
+2025-11-07T21:51:56.238618532Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:56.238630651Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:56.238639126Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:56.238645881Z [err]      import supabase
+2025-11-07T21:51:56.238652941Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:56.238664446Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:56.238685860Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:56.238691322Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:56.238696613Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:56.238701185Z [err]  [2025-11-07 21:51:56 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:56.265212630Z [err]  [2025-11-07 21:51:56 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:56.265232025Z [err]  [2025-11-07 21:51:56 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:56.265242220Z [err]  [2025-11-07 21:51:56 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:51:57.830449208Z [err]  [2025-11-07 21:51:57 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:51:57.830453057Z [err]  [2025-11-07 21:51:57 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:51:57.830457793Z [err]  [2025-11-07 21:51:57 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:51:57.830461953Z [err]  [2025-11-07 21:51:57 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:51:58.616045398Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:51:58.616061445Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:51:58.616070061Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:58.616077186Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:51:58.616088749Z [err]  [2025-11-07 21:51:58 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:51:58.616096078Z [err]  Traceback (most recent call last):
+2025-11-07T21:51:58.616103069Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:51:58.616113096Z [err]      worker.init_process()
+2025-11-07T21:51:58.616119653Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:51:58.616125618Z [err]      super().init_process()
+2025-11-07T21:51:58.616131249Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:51:58.616137537Z [err]      self.load_wsgi()
+2025-11-07T21:51:58.616143852Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:51:58.616150996Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:51:58.616157260Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:51:58.616164004Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:51:58.616170899Z [err]      self.callable = self.load()
+2025-11-07T21:51:58.616177607Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:51:58.616185063Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:51:58.616192853Z [err]      return self.load_wsgiapp()
+2025-11-07T21:51:58.616199514Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:58.616834873Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:51:58.616840914Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:58.616847041Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:51:58.616851910Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:51:58.616857281Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:51:58.616862055Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:51:58.616866675Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:51:58.616871114Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:51:58.616874884Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:51:58.616879976Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:51:58.616884769Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:51:58.616889357Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:51:58.616893642Z [err]      from factory import create_app
+2025-11-07T21:51:58.616898438Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:51:58.616903924Z [err]      from auth import auth_bp
+2025-11-07T21:51:58.616907980Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:51:58.616911649Z [err]      from supabase_client import supabase_client
+2025-11-07T21:51:58.616915385Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:51:58.616919576Z [err]      import supabase
+2025-11-07T21:51:58.616924345Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:51:58.616932066Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:51:58.617631861Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:51:58.617639113Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:51:58.617646747Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:51:58.617651074Z [err]  [2025-11-07 21:51:58 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:51:58.819312428Z [err]  [2025-11-07 21:51:58 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:51:58.819320892Z [err]  [2025-11-07 21:51:58 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:51:58.819325418Z [err]  [2025-11-07 21:51:58 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:52:00.305971184Z [err]  [2025-11-07 21:52:00 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:52:00.305975801Z [err]  [2025-11-07 21:52:00 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:52:00.305980753Z [err]  [2025-11-07 21:52:00 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:52:00.305985686Z [err]  [2025-11-07 21:52:00 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:52:01.277347816Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:01.277361081Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:52:01.277364467Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:52:01.277456697Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:52:01.277458596Z [err]  [2025-11-07 21:52:01 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:52:01.277458611Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:52:01.277475647Z [err]      from factory import create_app
+2025-11-07T21:52:01.277478244Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:01.277488850Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:52:01.277492760Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:52:01.277494951Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:52:01.277500724Z [err]      from auth import auth_bp
+2025-11-07T21:52:01.277508242Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:52:01.277509631Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:52:01.277512919Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:52:01.277519357Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:52:01.277523254Z [err]      from supabase_client import supabase_client
+2025-11-07T21:52:01.277533689Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:52:01.277534130Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:52:01.277544001Z [err]      import supabase
+2025-11-07T21:52:01.277550228Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:52:01.277555109Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:52:01.277564502Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:52:01.277569309Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:52:01.277598002Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:52:01.277769297Z [err]  [2025-11-07 21:52:01 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:52:01.277775435Z [err]  Traceback (most recent call last):
+2025-11-07T21:52:01.277785808Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:52:01.277790213Z [err]      worker.init_process()
+2025-11-07T21:52:01.277794464Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:52:01.277799797Z [err]      super().init_process()
+2025-11-07T21:52:01.277805051Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:52:01.277811088Z [err]      self.load_wsgi()
+2025-11-07T21:52:01.277820727Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:52:01.277826278Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:52:01.277833749Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:52:01.277839395Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:52:01.277843777Z [err]      self.callable = self.load()
+2025-11-07T21:52:01.277849376Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:52:01.277853118Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:52:01.277858088Z [err]      return self.load_wsgiapp()
+2025-11-07T21:52:01.277862467Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:01.277867069Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:52:01.277872362Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:52:01.277877662Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:01.277883521Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:52:01.360656963Z [err]  [2025-11-07 21:52:01 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:52:01.360666234Z [err]  [2025-11-07 21:52:01 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:52:01.360675111Z [err]  [2025-11-07 21:52:01 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:52:03.225147150Z [err]  [2025-11-07 21:52:03 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:52:03.225151494Z [err]  [2025-11-07 21:52:03 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:52:03.225156878Z [err]  [2025-11-07 21:52:03 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:52:03.225161254Z [err]  [2025-11-07 21:52:03 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:52:04.227022776Z [err]      return self.load_wsgiapp()
+2025-11-07T21:52:04.227035841Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:04.227044513Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:52:04.227051240Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:52:04.227058435Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:04.227066976Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:52:04.227093117Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:52:04.227104273Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:52:04.227111478Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:52:04.227118095Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:52:04.227125383Z [err]      self.callable = self.load()
+2025-11-07T21:52:04.227131899Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:52:04.227139149Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:52:04.227143303Z [err]  [2025-11-07 21:52:03 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:52:04.227149401Z [err]  Traceback (most recent call last):
+2025-11-07T21:52:04.227156665Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:52:04.227163791Z [err]      worker.init_process()
+2025-11-07T21:52:04.227170696Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:52:04.227177833Z [err]      super().init_process()
+2025-11-07T21:52:04.227184102Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:52:04.227190287Z [err]      self.load_wsgi()
+2025-11-07T21:52:04.230177698Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:52:04.230183856Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:04.230189917Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:52:04.230195500Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:52:04.230200602Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:04.230206341Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:52:04.230212005Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:52:04.230218167Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:52:04.230224058Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:52:04.230230497Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:52:04.230236169Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:52:04.230241597Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:52:04.230247294Z [err]      from factory import create_app
+2025-11-07T21:52:04.230252460Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:52:04.230257637Z [err]      from auth import auth_bp
+2025-11-07T21:52:04.230261383Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:52:04.230265404Z [err]      from supabase_client import supabase_client
+2025-11-07T21:52:04.230269473Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:52:04.230277667Z [err]      import supabase
+2025-11-07T21:52:04.230281999Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:52:04.230286988Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:52:04.230320498Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:52:04.230325307Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:52:04.230330509Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:52:04.230335337Z [err]  [2025-11-07 21:52:03 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:52:04.230340626Z [err]  [2025-11-07 21:52:04 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:52:04.230345828Z [err]  [2025-11-07 21:52:04 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:52:04.230351864Z [err]  [2025-11-07 21:52:04 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:52:05.819163937Z [err]  [2025-11-07 21:52:05 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:52:05.819178693Z [err]  [2025-11-07 21:52:05 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:52:05.819187250Z [err]  [2025-11-07 21:52:05 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:52:05.819194890Z [err]  [2025-11-07 21:52:05 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:52:06.567837468Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:52:06.567849686Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:52:06.567862038Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:52:06.567877393Z [err]      self.callable = self.load()
+2025-11-07T21:52:06.567884465Z [err]  [2025-11-07 21:52:06 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:52:06.567886795Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:52:06.567889853Z [err]  Traceback (most recent call last):
+2025-11-07T21:52:06.567895223Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:52:06.567898087Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:52:06.567903156Z [err]      return self.load_wsgiapp()
+2025-11-07T21:52:06.567903388Z [err]      worker.init_process()
+2025-11-07T21:52:06.567910718Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:52:06.567914070Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:06.567917492Z [err]      super().init_process()
+2025-11-07T21:52:06.567924791Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:52:06.567925178Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:52:06.567931402Z [err]      self.load_wsgi()
+2025-11-07T21:52:06.567934541Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:52:06.567937152Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:52:06.567944127Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:06.567949310Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:52:06.569958871Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:52:06.569965701Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:52:06.569970426Z [err]      from auth import auth_bp
+2025-11-07T21:52:06.569980346Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:52:06.569982042Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:06.569990283Z [err]      from supabase_client import supabase_client
+2025-11-07T21:52:06.569994456Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:52:06.570001273Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:52:06.570006915Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:52:06.570015193Z [err]      import supabase
+2025-11-07T21:52:06.570045926Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:52:06.570052906Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:06.570054340Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:52:06.570063442Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:52:06.570069995Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:52:06.570078352Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:52:06.570086042Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:52:06.570091913Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:52:06.570097869Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:52:06.570104232Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:52:06.570110827Z [err]      from factory import create_app
+2025-11-07T21:52:06.571203494Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:52:06.571211356Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:52:06.571216735Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:52:06.571222233Z [err]  [2025-11-07 21:52:06 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:52:06.818926186Z [err]  [2025-11-07 21:52:06 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:52:06.818935816Z [err]  [2025-11-07 21:52:06 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:52:06.818942747Z [err]  [2025-11-07 21:52:06 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:52:08.348170570Z [err]  [2025-11-07 21:52:08 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:52:08.348178703Z [err]  [2025-11-07 21:52:08 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:52:08.348185213Z [err]  [2025-11-07 21:52:08 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:52:08.356841117Z [err]  [2025-11-07 21:52:08 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:52:09.288956034Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:52:09.288976844Z [err]  [2025-11-07 21:52:09 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:52:09.288985373Z [err]  Traceback (most recent call last):
+2025-11-07T21:52:09.288986491Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:52:09.288993912Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:52:09.288997262Z [err]      self.callable = self.load()
+2025-11-07T21:52:09.289002908Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:52:09.289007984Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:52:09.289010705Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:52:09.289013275Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:52:09.289018699Z [err]      worker.init_process()
+2025-11-07T21:52:09.289021776Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:09.289023450Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:52:09.289027196Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:52:09.289032654Z [err]      return self.load_wsgiapp()
+2025-11-07T21:52:09.289033779Z [err]      self.load_wsgi()
+2025-11-07T21:52:09.289033805Z [err]      super().init_process()
+2025-11-07T21:52:09.289042047Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:52:09.289042781Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:09.289043057Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:52:09.289049493Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:52:09.292611155Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:52:09.292616571Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:09.292621994Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:52:09.292627104Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:52:09.292631810Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:09.292637108Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:52:09.292645138Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:52:09.292650697Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:52:09.292656977Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:52:09.292662766Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:52:09.292669206Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:52:09.292674945Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:52:09.292680256Z [err]      from factory import create_app
+2025-11-07T21:52:09.292686362Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:52:09.292692944Z [err]      from auth import auth_bp
+2025-11-07T21:52:09.292704303Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:52:09.292708704Z [err]      from supabase_client import supabase_client
+2025-11-07T21:52:09.292721786Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:52:09.292726360Z [err]      import supabase
+2025-11-07T21:52:09.292731526Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:52:09.292741773Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:52:09.292746970Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:52:09.292751829Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:52:09.292757343Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:52:09.292770379Z [err]  [2025-11-07 21:52:09 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:52:09.374660465Z [err]  [2025-11-07 21:52:09 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:52:09.374667471Z [err]  [2025-11-07 21:52:09 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:52:09.374674787Z [err]  [2025-11-07 21:52:09 +0000] [1] [ERROR] Reason: Worker failed to boot.
+2025-11-07T21:52:11.318157321Z [err]  [2025-11-07 21:52:11 +0000] [2] [INFO] Booting worker with pid: 2
+2025-11-07T21:52:11.318222934Z [err]  [2025-11-07 21:52:11 +0000] [1] [INFO] Starting gunicorn 23.0.0
+2025-11-07T21:52:11.318224115Z [err]  [2025-11-07 21:52:11 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-11-07T21:52:11.318234053Z [err]  [2025-11-07 21:52:11 +0000] [1] [INFO] Using worker: eventlet
+2025-11-07T21:52:11.894644254Z [err]      self.callable = self.load()
+2025-11-07T21:52:11.894654315Z [err]                      ^^^^^^^^^^^
+2025-11-07T21:52:11.894656176Z [err]  [2025-11-07 21:52:11 +0000] [2] [ERROR] Exception in worker process
+2025-11-07T21:52:11.894662014Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+2025-11-07T21:52:11.894666871Z [err]  Traceback (most recent call last):
+2025-11-07T21:52:11.894668873Z [err]      return self.load_wsgiapp()
+2025-11-07T21:52:11.894676676Z [err]             ^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:11.894676950Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+2025-11-07T21:52:11.894684673Z [err]      worker.init_process()
+2025-11-07T21:52:11.894685954Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+2025-11-07T21:52:11.894693139Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/geventlet.py", line 142, in init_process
+2025-11-07T21:52:11.894696430Z [err]      return util.import_app(self.app_uri)
+2025-11-07T21:52:11.894699883Z [err]      super().init_process()
+2025-11-07T21:52:11.894706954Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 135, in init_process
+2025-11-07T21:52:11.894707287Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:11.894715578Z [err]      self.load_wsgi()
+2025-11-07T21:52:11.894717637Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/util.py", line 370, in import_app
+2025-11-07T21:52:11.894722450Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+2025-11-07T21:52:11.894727745Z [err]      self.wsgi = self.app.wsgi()
+2025-11-07T21:52:11.894733170Z [err]                  ^^^^^^^^^^^^^^^
+2025-11-07T21:52:11.894738728Z [err]    File "/usr/local/lib/python3.11/site-packages/gunicorn/app/base.py", line 66, in wsgi
+2025-11-07T21:52:11.895945838Z [err]      mod = importlib.import_module(module)
+2025-11-07T21:52:11.895945932Z [err]      from supabase_client import supabase_client
+2025-11-07T21:52:11.895953995Z [err]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:11.895956467Z [err]    File "/app/supabase_client.py", line 4, in <module>
+2025-11-07T21:52:11.895960627Z [err]    File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+2025-11-07T21:52:11.895964381Z [err]      import supabase
+2025-11-07T21:52:11.895972784Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/__init__.py", line 22, in <module>
+2025-11-07T21:52:11.895973682Z [err]      return _bootstrap._gcd_import(name[level:], package, level)
+2025-11-07T21:52:11.895981409Z [err]      from ._async.auth_client import AsyncSupabaseAuthClient as ASupabaseAuthClient
+2025-11-07T21:52:11.895981983Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-07T21:52:11.895987745Z [err]    File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+2025-11-07T21:52:11.895992688Z [err]    File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+2025-11-07T21:52:11.895997588Z [err]    File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+2025-11-07T21:52:11.896003369Z [err]    File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+2025-11-07T21:52:11.896009491Z [err]    File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+2025-11-07T21:52:11.896015257Z [err]    File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+2025-11-07T21:52:11.896021597Z [err]    File "/app/app.py", line 3, in <module>
+2025-11-07T21:52:11.896025875Z [err]      from factory import create_app
+2025-11-07T21:52:11.896030048Z [err]    File "/app/factory.py", line 15, in <module>
+2025-11-07T21:52:11.896033951Z [err]      from auth import auth_bp
+2025-11-07T21:52:11.896038103Z [err]    File "/app/auth.py", line 11, in <module>
+2025-11-07T21:52:11.897206475Z [err]    File "/usr/local/lib/python3.11/site-packages/supabase/_async/auth_client.py", line 9, in <module>
+2025-11-07T21:52:11.897211235Z [err]      from supabase_auth.http_clients import AsyncClient
+2025-11-07T21:52:11.897216331Z [err]  ModuleNotFoundError: No module named 'supabase_auth.http_clients'
+2025-11-07T21:52:11.897220159Z [err]  [2025-11-07 21:52:11 +0000] [2] [INFO] Worker exiting (pid: 2)
+2025-11-07T21:52:12.300552656Z [err]  [2025-11-07 21:52:12 +0000] [1] [ERROR] Worker (pid:2) exited with code 3
+2025-11-07T21:52:12.300556726Z [err]  [2025-11-07 21:52:12 +0000] [1] [ERROR] Shutting down: Master
+2025-11-07T21:52:12.300561120Z [err]  [2025-11-07 21:52:12 +0000] [1] [ERROR] Reason: Worker failed to boot.

@@ -1,0 +1,683 @@
+/* =================================================================
+ * CONTEXT & SESSION HISTORY WINDOWS
+ * ================================================================= */
+
+/* --- Modal Overlay (Background) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+/* --- Context Window Panel (The actual window) --- */
+.context-window-panel {
+    position: relative;
+    width: 98%;
+    max-width: 1100px;
+    height: 85vh;
+    max-height: 700px;
+    background: var(--window-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- Main Context Window (Legacy - keeping for compatibility) --- */
+.context-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 98%;
+    max-width: 1100px;
+    height: 90vh;
+    background: var(--window-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px var(--shadow-color);
+    z-index: var(--z-context-window);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.context-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--elevated-bg);
+    transition: all 0.3s ease;
+}
+
+.context-header.hidden-for-detail {
+    display: none;
+}
+
+.context-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.context-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.context-header h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.sync-context-btn {
+    display: none !important;
+}
+
+.close-context-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+}
+
+.close-context-btn:hover {
+    background: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+.context-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    position: relative;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
+}
+
+.context-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* --- List and Detail Views --- */
+#context-list-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+}
+
+#context-list-view.hidden {
+    display: none;
+}
+
+#context-detail-view {
+    display: block;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+#context-detail-view::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+#context-detail-view.hidden {
+    display: none;
+}
+
+/* --- Session List View --- */
+.session-item {
+    background: var(--elevated-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    padding: 10px 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    min-height: 44px;
+}
+
+.session-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+.dark-mode .session-item:hover {
+    border-color: var(--neutral-700);
+    background: var(--neutral-800);
+}
+.session-content {
+    flex-grow: 1;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.session-content h3 {
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin: 0;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.session-meta {
+    display: none;
+}
+
+/* --- Session Selection Controls --- */
+.selection-controls {
+    grid-column: 1 / -1;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 8px;
+}
+
+.selection-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selection-actions.hidden {
+    display: none;
+}
+
+.selected-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.use-selected-btn,
+.clear-selection-btn {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.use-selected-btn {
+    background: var(--accent-color);
+    color: white;
+}
+
+.clear-selection-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.use-selected-btn:hover {
+    background: var(--accent-hover);
+}
+
+.clear-selection-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.session-select {
+    padding-top: 1px;
+}
+
+.session-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: var(--window-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.custom-checkbox::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.session-item:hover .custom-checkbox {
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .custom-checkbox {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .custom-checkbox::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Legacy support for old checkbox-label class */
+.checkbox-label {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: var(--window-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label i.fa-check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 12px;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.session-item:hover .checkbox-label {
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .checkbox-label {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.session-checkbox:checked + .checkbox-label i.fa-check {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.session-item.selected {
+    border-color: var(--accent-color);
+    background-color: var(--accent-muted);
+}
+
+.dark-mode .session-item.selected {
+    background-color: rgba(60, 80, 220, 0.15);
+    border-color: var(--primary-700);
+}
+
+/* --- Session Detail View (Unified History) --- */
+.session-details-view .conversation-messages {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 16px 24px;
+    box-shadow: none;
+}
+
+/* =================================================================
+ * UNIFIED CONTEXT/FILE VIEWER (POPUP)
+ * ================================================================= */
+
+.selected-context-viewer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 98%;
+    max-width: 700px;
+    height: 85vh;
+    background: var(--window-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xl);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    z-index: var(--z-selected-context-viewer);
+}
+
+.selected-context-viewer.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.context-viewer-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.context-viewer-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-color);
+    margin: 0;
+}
+
+.context-viewer-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--elevated-bg);
+}
+
+.viewer-tab {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.viewer-tab:hover {
+    color: var(--text-color);
+    background: var(--hover-bg);
+}
+
+.viewer-tab.active {
+    color: var(--accent-color);
+    background: var(--accent-muted);
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.viewer-tab i {
+    font-size: 0.9rem;
+}
+
+.context-viewer-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
+}
+
+.tab-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.context-preview-content,
+.files-preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.close-viewer-btn {
+    background: none;
+    border: none;
+    color: var(--icon-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.close-viewer-btn:hover {
+    color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+/* Session Header for Detail View - Hidden, replaced by inline back button */
+.session-header {
+    display: none;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--icon-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+}
+
+.back-button:hover {
+    color: var(--accent-color);
+    background: var(--hover-bg);
+}
+
+.back-button i {
+    font-size: 1rem;
+}
+
+.back-button span {
+    display: none;
+}
+
+.session-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* --- Empty States and Loading --- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.empty-state.error-state {
+    color: var(--error-500);
+}
+
+.empty-state.error-state i {
+    color: var(--error-500);
+}
+
+.retry-load-btn {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.retry-load-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.error-hint {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.session-item-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 16px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    grid-column: 1 / -1;
+}
+
+.loading-more-indicator {
+    grid-column: 1 / -1;
+    padding: 16px;
+    text-align: center;
+}
+
+.loading-more-indicator .session-item-loading {
+    padding: 16px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* --- Conversation History in Detail View --- */
+.conversation-history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
+}
+
+.conversation-history::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.conversation-messages {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Inline header with back button and title */
+.conversation-inline-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+    background: transparent;
+}
+
+.conversation-inline-header .back-button {
+    flex-shrink: 0;
+}
+
+.conversation-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conversation-messages .message {
+    padding: 0;
+    border-radius: 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    background: transparent !important;
+    border: none !important;
+    max-width: 100%;
+    margin: 0;
+}
+
+.conversation-messages .user-message {
+    color: var(--text-color);
+    text-align: left;
+}
+
+.conversation-messages .bot-message {
+    color: var(--text-secondary);
+    text-align: left;
+}

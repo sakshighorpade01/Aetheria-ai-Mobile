@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-OS Desktop</title>
+    <link rel="stylesheet" href="css/design-system.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/chat.css" />
+    <link rel="stylesheet" href="css/to-do-list.css" />
+    <link rel="stylesheet" href="css/artifact-ui.css" />
+    <link rel="stylesheet" href="css/aios.css" />
+    <link rel="stylesheet" href="css/notifications.css" />
+    <link rel="stylesheet" href="css/update-modal.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- App Components -->
+        <div id="aios-container"></div>
+        <div id="chat-root"></div>
+        <div id="to-do-list-root"></div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-icons">
+                <button id="app-icon" class="sidebar-icon" aria-label="Profile" title="Profile">
+                    <div id="aios-settings-avatar-container">
+                        <i class="fas fa-user-cog"></i> <!-- Default icon -->
+                    </div>
+                </button>
+                <button id="to-do-list-icon" class="sidebar-icon" aria-label="Tasks" title="Tasks">
+                    <i class="fa-solid fa-tasks"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MODIFICATION START: Hover-to-expand control bar -->
+        <div class="window-controls-area" title="Window Controls">
+            <button id="theme-toggle" class="theme-toggle window-control-btn" aria-label="Toggle Theme" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="minimize-window" class="window-control-btn" aria-label="Minimize Window" title="Minimize">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="resize-window" class="window-control-btn" aria-label="Resize Window" title="Maximize">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button id="close-window" class="window-control-btn" aria-label="Close Window" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="window-controls-chevron">
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+        <!-- MODIFICATION END -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/notification-service.js"></script>
+    <script src="js/update-checker.js"></script>
+    <script src="js/renderer.js"></script>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.4/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/message-formatter.js"></script>
+    <script type="module" src="js/conversation-state-manager.js"></script>
+    <script type="module" src="js/chat.js"></script>
+    <script src="js/aios.js"></script>
+    <script src="js/to-do-list.js"></script>
+
+    <script>
+        // Initialize highlight.js
+        hljs.configure({
+            cssSelector: 'pre code',
+            ignoreUnescapedHTML: true,
+            languages: ['javascript', 'python', 'bash', 'json', 'html', 'css']
+        });
+
+        // Initialize mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default'
+        });
+    </script>
+</body>
+
+</html>

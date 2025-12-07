@@ -1,36 +1,742 @@
-web             | 2025-11-01 02:48:42.159 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:48:42.159 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:48:42.809 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:48:42.809 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:48:43.093 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:48:43.093 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:49:32.452 | INFO:sockets:Client disconnected: atrSGkKGpDPxvDK2AAAF
-web             | 2025-11-01 02:49:32.452 | INFO:sockets:Client disconnected: atrSGkKGpDPxvDK2AAAF
-web             | 2025-11-01 02:49:58.034 | INFO:sockets:Client connected: cwAFzF6Cnv4_vWxsAAAH
-web             | 2025-11-01 02:49:58.034 | INFO:sockets:Client connected: cwAFzF6Cnv4_vWxsAAAH
-web             | 2025-11-01 02:50:12.101 | INFO:sockets:Client disconnected: cwAFzF6Cnv4_vWxsAAAH
-web             | 2025-11-01 02:50:12.101 | INFO:sockets:Client disconnected: cwAFzF6Cnv4_vWxsAAAH
-web             | 2025-11-01 02:51:35.259 | INFO:sockets:Client connected: DIl4aJwdq7fqW78EAAAJ
-web             | 2025-11-01 02:51:35.259 | INFO:sockets:Client connected: DIl4aJwdq7fqW78EAAAJ
-web             | 2025-11-01 02:51:38.182 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:38.182 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:38.649 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:38.649 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:38.828 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:51:38.828 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:51:51.332 | server=192.168.1.5:8765//socket.io/ client=172.18.0.1:55426 socket shutdown error: [Errno 9] Bad file descriptorINFO:sockets:Client disconnected: AVFpliKlxvzFbY0mAAAC
-web             | 2025-11-01 02:51:51.332 | server=192.168.1.5:8765//socket.io/ client=172.18.0.1:55426 socket shutdown error: [Errno 9] Bad file descriptorINFO:sockets:Client disconnected: AVFpliKlxvzFbY0mAAAC
-web             | 2025-11-01 02:51:53.334 | INFO:sockets:Client connected: A_0Xvv-r9xwRvKhaAAAL
-web             | 2025-11-01 02:51:53.334 | INFO:sockets:Client connected: A_0Xvv-r9xwRvKhaAAAL
-web             | 2025-11-01 02:51:54.043 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:54.043 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:54.275 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/user_integrations?select=service&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:54.275 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/user_integrations?select=service&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:56.157 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:56.157 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/auth/v1/user "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:56.274 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:56.274 | INFO:httpx:HTTP Request: GET https://vpluyoknbywuhahcnlfx.supabase.co/rest/v1/agno_sessions?select=%2A&user_id=eq.8f76ae61-7718-4a67-a0ef-1c86160d78f1&order=created_at.desc&limit=15 "HTTP/2 200 OK"
-web             | 2025-11-01 02:51:56.467 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:51:56.467 | INFO:api:Sessions query for user 8f76ae61-7718-4a67-a0ef-1c86160d78f1: requested 15, returned 15
-web             | 2025-11-01 02:52:37.952 | INFO:sockets:Client disconnected: DIl4aJwdq7fqW78EAAAJ
-web             | 2025-11-01 02:52:37.952 | INFO:sockets:Client disconnected: DIl4aJwdq7fqW78EAAAJ
+web    | 2025-11-09 07:18:30.336 | 172.19.0.1 - - [09/Nov/2025:01:48:30 +0000] "OPTIONS /api/sessions HTTP/1.1" 200 0 "http://192.168.1.34:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+web    | 2025-11-09 07:18:30.336 | 172.19.0.1 - - [09/Nov/2025:01:48:30 +0000] "OPTIONS /api/sessions HTTP/1.1" 200 0 "http://192.168.1.34:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+web    | 2025-11-09 07:18:40.540 | 172.19.0.1 - - [09/Nov/2025:01:48:40 +0000] "GET /api/sessions HTTP/1.1" 200 2962 "http://192.168.1.34:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+web    | 2025-11-09 07:18:40.540 | 172.19.0.1 - - [09/Nov/2025:01:48:40 +0000] "GET /api/sessions HTTP/1.1" 200 2962 "http://192.168.1.34:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+web    | 2025-11-09 07:21:48.991 | DEBUG ******************* Team ID: aetheria-ai *******************              
+web    | 2025-11-09 07:21:48.991 | DEBUG ******************* Team ID: aetheria-ai *******************              
+web    | 2025-11-09 07:21:50.863 | DEBUG Creating new TeamSession: conv_1762652905706                              
+web    | 2025-11-09 07:21:50.863 | DEBUG Creating new TeamSession: conv_1762652905706                              
+web    | 2025-11-09 07:21:50.887 | DEBUG Processing tools for model                                                
+web    | 2025-11-09 07:21:50.887 | DEBUG Processing tools for model                                                
+web    | 2025-11-09 07:21:50.891 | DEBUG Added tool list_repositories from github_tools                            
+web    | 2025-11-09 07:21:50.891 | DEBUG Added tool list_repositories from github_tools                            
+web    | 2025-11-09 07:21:50.895 | DEBUG Added tool create_issue from github_tools                                 
+web    | 2025-11-09 07:21:50.895 | DEBUG Added tool create_issue from github_tools                                 
+web    | 2025-11-09 07:21:50.899 | DEBUG Added tool get_file_content from github_tools                             
+web    | 2025-11-09 07:21:50.899 | DEBUG Added tool get_file_content from github_tools                             
+web    | 2025-11-09 07:21:50.903 | DEBUG Added tool list_pull_requests from github_tools                           
+web    | 2025-11-09 07:21:50.903 | DEBUG Added tool list_pull_requests from github_tools                           
+web    | 2025-11-09 07:21:50.907 | DEBUG Added tool get_pull_request_details from github_tools                     
+web    | 2025-11-09 07:21:50.907 | DEBUG Added tool get_pull_request_details from github_tools                     
+web    | 2025-11-09 07:21:50.911 | DEBUG Added tool add_comment from github_tools                                  
+web    | 2025-11-09 07:21:50.911 | DEBUG Added tool add_comment from github_tools                                  
+web    | 2025-11-09 07:21:50.915 | DEBUG Added tool get_repository_details from github_tools                       
+web    | 2025-11-09 07:21:50.915 | DEBUG Added tool get_repository_details from github_tools                       
+web    | 2025-11-09 07:21:50.920 | DEBUG Added tool list_branches from github_tools                                
+web    | 2025-11-09 07:21:50.920 | DEBUG Added tool list_branches from github_tools                                
+web    | 2025-11-09 07:21:50.925 | DEBUG Added tool create_branch from github_tools                                
+web    | 2025-11-09 07:21:50.925 | DEBUG Added tool create_branch from github_tools                                
+web    | 2025-11-09 07:21:50.929 | DEBUG Added tool create_or_update_file from github_tools                        
+web    | 2025-11-09 07:21:50.929 | DEBUG Added tool create_or_update_file from github_tools                        
+web    | 2025-11-09 07:21:50.933 | DEBUG Added tool commit_files from github_tools                                 
+web    | 2025-11-09 07:21:50.933 | DEBUG Added tool commit_files from github_tools                                 
+web    | 2025-11-09 07:21:50.937 | DEBUG Added tool read_latest_emails from google_email_tools                     
+web    | 2025-11-09 07:21:50.937 | DEBUG Added tool read_latest_emails from google_email_tools                     
+web    | 2025-11-09 07:21:50.940 | DEBUG Added tool send_email from google_email_tools                             
+web    | 2025-11-09 07:21:50.940 | DEBUG Added tool send_email from google_email_tools                             
+web    | 2025-11-09 07:21:50.945 | DEBUG Added tool search_emails from google_email_tools                          
+web    | 2025-11-09 07:21:50.945 | DEBUG Added tool search_emails from google_email_tools                          
+web    | 2025-11-09 07:21:50.950 | DEBUG Added tool reply_to_email from google_email_tools                         
+web    | 2025-11-09 07:21:50.950 | DEBUG Added tool reply_to_email from google_email_tools                         
+web    | 2025-11-09 07:21:50.955 | DEBUG Added tool modify_email from google_email_tools                           
+web    | 2025-11-09 07:21:50.955 | DEBUG Added tool modify_email from google_email_tools                           
+web    | 2025-11-09 07:21:50.958 | DEBUG Added tool search_files from google_drive_tools                           
+web    | 2025-11-09 07:21:50.958 | DEBUG Added tool search_files from google_drive_tools                           
+web    | 2025-11-09 07:21:50.961 | DEBUG Added tool read_file_content from google_drive_tools                      
+web    | 2025-11-09 07:21:50.961 | DEBUG Added tool read_file_content from google_drive_tools                      
+web    | 2025-11-09 07:21:50.966 | DEBUG Added tool create_file from google_drive_tools                            
+web    | 2025-11-09 07:21:50.966 | DEBUG Added tool create_file from google_drive_tools                            
+web    | 2025-11-09 07:21:50.971 | DEBUG Added tool manage_file from google_drive_tools                            
+web    | 2025-11-09 07:21:50.971 | DEBUG Added tool manage_file from google_drive_tools                            
+web    | 2025-11-09 07:21:50.975 | DEBUG Added tool share_file from google_drive_tools                             
+web    | 2025-11-09 07:21:50.975 | DEBUG Added tool share_file from google_drive_tools                             
+web    | 2025-11-09 07:21:50.980 | DEBUG Added tool google_search from google_search_tools                         
+web    | 2025-11-09 07:21:50.980 | DEBUG Added tool google_search from google_search_tools                         
+web    | 2025-11-09 07:21:50.984 | DEBUG Added tool get_status from browser_tools                                  
+web    | 2025-11-09 07:21:50.984 | DEBUG Added tool get_status from browser_tools                                  
+web    | 2025-11-09 07:21:50.988 | DEBUG Added tool navigate from browser_tools                                    
+web    | 2025-11-09 07:21:50.988 | DEBUG Added tool navigate from browser_tools                                    
+web    | 2025-11-09 07:21:50.992 | DEBUG Added tool get_current_view from browser_tools                            
+web    | 2025-11-09 07:21:50.992 | DEBUG Added tool get_current_view from browser_tools                            
+web    | 2025-11-09 07:21:50.995 | DEBUG Added tool click from browser_tools                                       
+web    | 2025-11-09 07:21:50.995 | DEBUG Added tool click from browser_tools                                       
+web    | 2025-11-09 07:21:50.999 | DEBUG Added tool type_text from browser_tools                                   
+web    | 2025-11-09 07:21:50.999 | DEBUG Added tool type_text from browser_tools                                   
+web    | 2025-11-09 07:21:51.003 | DEBUG Added tool scroll from browser_tools                                      
+web    | 2025-11-09 07:21:51.003 | DEBUG Added tool scroll from browser_tools                                      
+web    | 2025-11-09 07:21:51.006 | DEBUG Added tool go_back from browser_tools                                     
+web    | 2025-11-09 07:21:51.006 | DEBUG Added tool go_back from browser_tools                                     
+web    | 2025-11-09 07:21:51.009 | DEBUG Added tool go_forward from browser_tools                                  
+web    | 2025-11-09 07:21:51.009 | DEBUG Added tool go_forward from browser_tools                                  
+web    | 2025-11-09 07:21:51.013 | DEBUG Added tool list_tabs from browser_tools                                   
+web    | 2025-11-09 07:21:51.013 | DEBUG Added tool list_tabs from browser_tools                                   
+web    | 2025-11-09 07:21:51.017 | DEBUG Added tool open_new_tab from browser_tools                                
+web    | 2025-11-09 07:21:51.017 | DEBUG Added tool open_new_tab from browser_tools                                
+web    | 2025-11-09 07:21:51.020 | DEBUG Added tool switch_to_tab from browser_tools                               
+web    | 2025-11-09 07:21:51.020 | DEBUG Added tool switch_to_tab from browser_tools                               
+web    | 2025-11-09 07:21:51.024 | DEBUG Added tool close_tab from browser_tools                                   
+web    | 2025-11-09 07:21:51.024 | DEBUG Added tool close_tab from browser_tools                                   
+web    | 2025-11-09 07:21:51.028 | DEBUG Added tool hover_over_element from browser_tools                          
+web    | 2025-11-09 07:21:51.028 | DEBUG Added tool hover_over_element from browser_tools                          
+web    | 2025-11-09 07:21:51.032 | DEBUG Added tool select_dropdown_option from browser_tools                      
+web    | 2025-11-09 07:21:51.032 | DEBUG Added tool select_dropdown_option from browser_tools                      
+web    | 2025-11-09 07:21:51.036 | DEBUG Added tool handle_alert from browser_tools                                
+web    | 2025-11-09 07:21:51.036 | DEBUG Added tool handle_alert from browser_tools                                
+web    | 2025-11-09 07:21:51.039 | DEBUG Added tool press_key from browser_tools                                   
+web    | 2025-11-09 07:21:51.039 | DEBUG Added tool press_key from browser_tools                                   
+web    | 2025-11-09 07:21:51.043 | DEBUG Added tool extract_text_from_element from browser_tools                   
+web    | 2025-11-09 07:21:51.043 | DEBUG Added tool extract_text_from_element from browser_tools                   
+web    | 2025-11-09 07:21:51.046 | DEBUG Added tool get_element_attributes from browser_tools                      
+web    | 2025-11-09 07:21:51.046 | DEBUG Added tool get_element_attributes from browser_tools                      
+web    | 2025-11-09 07:21:51.050 | DEBUG Added tool extract_table_data from browser_tools                          
+web    | 2025-11-09 07:21:51.050 | DEBUG Added tool extract_table_data from browser_tools                          
+web    | 2025-11-09 07:21:51.052 | DEBUG Added tool refresh_page from browser_tools                                
+web    | 2025-11-09 07:21:51.052 | DEBUG Added tool refresh_page from browser_tools                                
+web    | 2025-11-09 07:21:51.057 | DEBUG Added tool wait_for_element from browser_tools                            
+web    | 2025-11-09 07:21:51.057 | DEBUG Added tool wait_for_element from browser_tools                            
+web    | 2025-11-09 07:21:51.066 | DEBUG Added tool manage_cookies from browser_tools                              
+web    | 2025-11-09 07:21:51.066 | DEBUG Added tool manage_cookies from browser_tools                              
+web    | 2025-11-09 07:21:51.071 | DEBUG Added tool list_projects from vercel_tools                                
+web    | 2025-11-09 07:21:51.071 | DEBUG Added tool list_projects from vercel_tools                                
+web    | 2025-11-09 07:21:51.075 | DEBUG Added tool list_deployments from vercel_tools                             
+web    | 2025-11-09 07:21:51.075 | DEBUG Added tool list_deployments from vercel_tools                             
+web    | 2025-11-09 07:21:51.078 | DEBUG Added tool get_project_details from vercel_tools                          
+web    | 2025-11-09 07:21:51.078 | DEBUG Added tool get_project_details from vercel_tools                          
+web    | 2025-11-09 07:21:51.084 | DEBUG Added tool create_project from vercel_tools                               
+web    | 2025-11-09 07:21:51.084 | DEBUG Added tool create_project from vercel_tools                               
+web    | 2025-11-09 07:21:51.088 | DEBUG Added tool delete_project from vercel_tools                               
+web    | 2025-11-09 07:21:51.088 | DEBUG Added tool delete_project from vercel_tools                               
+web    | 2025-11-09 07:21:51.092 | DEBUG Added tool list_environment_variables from vercel_tools                   
+web    | 2025-11-09 07:21:51.092 | DEBUG Added tool list_environment_variables from vercel_tools                   
+web    | 2025-11-09 07:21:51.096 | DEBUG Added tool add_environment_variable from vercel_tools                     
+web    | 2025-11-09 07:21:51.096 | DEBUG Added tool add_environment_variable from vercel_tools                     
+web    | 2025-11-09 07:21:51.100 | DEBUG Added tool remove_environment_variable from vercel_tools                  
+web    | 2025-11-09 07:21:51.100 | DEBUG Added tool remove_environment_variable from vercel_tools                  
+web    | 2025-11-09 07:21:51.104 | DEBUG Added tool trigger_redeployment from vercel_tools                         
+web    | 2025-11-09 07:21:51.104 | DEBUG Added tool trigger_redeployment from vercel_tools                         
+web    | 2025-11-09 07:21:51.110 | DEBUG Added tool create_deployment from vercel_tools                            
+web    | 2025-11-09 07:21:51.110 | DEBUG Added tool create_deployment from vercel_tools                            
+web    | 2025-11-09 07:21:51.114 | DEBUG Added tool cancel_deployment from vercel_tools                            
+web    | 2025-11-09 07:21:51.114 | DEBUG Added tool cancel_deployment from vercel_tools                            
+web    | 2025-11-09 07:21:51.118 | DEBUG Added tool get_deployment_status from vercel_tools                        
+web    | 2025-11-09 07:21:51.118 | DEBUG Added tool get_deployment_status from vercel_tools                        
+web    | 2025-11-09 07:21:51.122 | DEBUG Added tool get_deployment_events from vercel_tools                        
+web    | 2025-11-09 07:21:51.122 | DEBUG Added tool get_deployment_events from vercel_tools                        
+web    | 2025-11-09 07:21:51.126 | DEBUG Added tool list_deployment_checks from vercel_tools                       
+web    | 2025-11-09 07:21:51.126 | DEBUG Added tool list_deployment_checks from vercel_tools                       
+web    | 2025-11-09 07:21:51.130 | DEBUG Added tool create_deployment_check from vercel_tools                      
+web    | 2025-11-09 07:21:51.130 | DEBUG Added tool create_deployment_check from vercel_tools                      
+web    | 2025-11-09 07:21:51.135 | DEBUG Added tool update_deployment_check from vercel_tools                      
+web    | 2025-11-09 07:21:51.135 | DEBUG Added tool update_deployment_check from vercel_tools                      
+web    | 2025-11-09 07:21:51.139 | DEBUG Added tool update_project_settings from vercel_tools                      
+web    | 2025-11-09 07:21:51.139 | DEBUG Added tool update_project_settings from vercel_tools                      
+web    | 2025-11-09 07:21:51.143 | DEBUG Added tool list_project_domains from vercel_tools                         
+web    | 2025-11-09 07:21:51.143 | DEBUG Added tool list_project_domains from vercel_tools                         
+web    | 2025-11-09 07:21:51.147 | DEBUG Added tool add_project_domain from vercel_tools                           
+web    | 2025-11-09 07:21:51.147 | DEBUG Added tool add_project_domain from vercel_tools                           
+web    | 2025-11-09 07:21:51.151 | DEBUG Added tool remove_project_domain from vercel_tools                        
+web    | 2025-11-09 07:21:51.151 | DEBUG Added tool remove_project_domain from vercel_tools                        
+web    | 2025-11-09 07:21:51.155 | DEBUG Added tool verify_project_domain from vercel_tools                        
+web    | 2025-11-09 07:21:51.155 | DEBUG Added tool verify_project_domain from vercel_tools                        
+web    | 2025-11-09 07:21:51.159 | DEBUG Added tool list_global_environment_variables from vercel_tools            
+web    | 2025-11-09 07:21:51.159 | DEBUG Added tool list_global_environment_variables from vercel_tools            
+web    | 2025-11-09 07:21:51.163 | DEBUG Added tool add_global_environment_variable from vercel_tools              
+web    | 2025-11-09 07:21:51.163 | DEBUG Added tool add_global_environment_variable from vercel_tools              
+web    | 2025-11-09 07:21:51.167 | DEBUG Added tool remove_global_environment_variable from vercel_tools           
+web    | 2025-11-09 07:21:51.167 | DEBUG Added tool remove_global_environment_variable from vercel_tools           
+web    | 2025-11-09 07:21:51.170 | DEBUG Added tool get_integration_configuration from vercel_tools                
+web    | 2025-11-09 07:21:51.170 | DEBUG Added tool get_integration_configuration from vercel_tools                
+web    | 2025-11-09 07:21:51.173 | DEBUG Added tool list_teams from vercel_tools                                   
+web    | 2025-11-09 07:21:51.173 | DEBUG Added tool list_teams from vercel_tools                                   
+web    | 2025-11-09 07:21:51.177 | DEBUG Added tool get_current_user from vercel_tools                             
+web    | 2025-11-09 07:21:51.177 | DEBUG Added tool get_current_user from vercel_tools                             
+web    | 2025-11-09 07:21:51.180 | DEBUG Added tool list_organizations from supabase_tools                         
+web    | 2025-11-09 07:21:51.180 | DEBUG Added tool list_organizations from supabase_tools                         
+web    | 2025-11-09 07:21:51.184 | DEBUG Added tool pause_project from supabase_tools                              
+web    | 2025-11-09 07:21:51.184 | DEBUG Added tool pause_project from supabase_tools                              
+web    | 2025-11-09 07:21:51.187 | DEBUG Added tool restore_project from supabase_tools                            
+web    | 2025-11-09 07:21:51.187 | DEBUG Added tool restore_project from supabase_tools                            
+web    | 2025-11-09 07:21:51.191 | DEBUG Added tool list_edge_functions from supabase_tools                        
+web    | 2025-11-09 07:21:51.191 | DEBUG Added tool list_edge_functions from supabase_tools                        
+web    | 2025-11-09 07:21:51.195 | DEBUG Added tool list_secrets from supabase_tools                               
+web    | 2025-11-09 07:21:51.195 | DEBUG Added tool list_secrets from supabase_tools                               
+web    | 2025-11-09 07:21:51.198 | DEBUG Added tool list_storage_buckets from supabase_tools                       
+web    | 2025-11-09 07:21:51.198 | DEBUG Added tool list_storage_buckets from supabase_tools                       
+web    | 2025-11-09 07:21:51.202 | DEBUG Added tool create_storage_bucket from supabase_tools                      
+web    | 2025-11-09 07:21:51.202 | DEBUG Added tool create_storage_bucket from supabase_tools                      
+web    | 2025-11-09 07:21:51.206 | DEBUG Added tool delete_storage_bucket from supabase_tools                      
+web    | 2025-11-09 07:21:51.206 | DEBUG Added tool delete_storage_bucket from supabase_tools                      
+web    | 2025-11-09 07:21:51.210 | DEBUG Added tool generate_image from image_tools                                
+web    | 2025-11-09 07:21:51.210 | DEBUG Added tool generate_image from image_tools                                
+web    | 2025-11-09 07:21:51.214 | DEBUG Added tool get_team_history                                               
+web    | 2025-11-09 07:21:51.214 | DEBUG Added tool get_team_history                                               
+web    | 2025-11-09 07:21:51.217 | DEBUG Added tool update_user_memory                                             
+web    | 2025-11-09 07:21:51.217 | DEBUG Added tool update_user_memory                                             
+web    | 2025-11-09 07:21:51.221 | DEBUG Added tool delegate_task_to_member                                        
+web    | 2025-11-09 07:21:51.221 | DEBUG Added tool delegate_task_to_member                                        
+web    | 2025-11-09 07:21:52.319 | DEBUG *** Team Run Start: 2195045d-a01f-49fd-a347-9035f2188bff ***              
+web    | 2025-11-09 07:21:52.319 | DEBUG *** Team Run Start: 2195045d-a01f-49fd-a347-9035f2188bff ***              
+web    | 2025-11-09 07:21:52.320 | DEBUG --------------- Google Response Stream Start ---------------              
+web    | 2025-11-09 07:21:52.320 | DEBUG --------------- Google Response Stream Start ---------------              
+web    | 2025-11-09 07:21:52.321 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:52.321 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:52.322 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:52.322 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:52.337 | DEBUG You are the leader of a team and sub-teams of AI Agents.                  
+web    | 2025-11-09 07:21:52.337 |       Your task is to coordinate the team to complete the user's request.       
+web    | 2025-11-09 07:21:52.337 |                                                                                 
+web    | 2025-11-09 07:21:52.337 |       Here are the members in your team:                                        
+web    | 2025-11-09 07:21:52.337 |       <team_members>                                                            
+web    | 2025-11-09 07:21:52.337 |        - Agent 1:                                                               
+web    | 2025-11-09 07:21:52.337 |          - ID: planner                                                          
+web    | 2025-11-09 07:21:52.337 |          - Name: planner                                                        
+web    | 2025-11-09 07:21:52.337 |          - Role: Omniscient planner who sees all dependencies before execution  
+web    | 2025-11-09 07:21:52.337 |        - Team: dev_team                                                         
+web    | 2025-11-09 07:21:52.337 |        - ID: dev-team                                                           
+web    | 2025-11-09 07:21:52.337 |       </team_members>                                                           
+web    | 2025-11-09 07:21:52.337 |                                                                                 
+web    | 2025-11-09 07:21:52.337 |       <how_to_respond>                                                          
+web    | 2025-11-09 07:21:52.337 |       - Your role is to delegate tasks to members in your team with the highest 
+web    | 2025-11-09 07:21:52.337 |       likelihood of completing the user's request.                              
+web    | 2025-11-09 07:21:52.337 |       - Carefully analyze the tools available to the members and their roles    
+web    | 2025-11-09 07:21:52.337 |       before delegating tasks.                                                  
+web    | 2025-11-09 07:21:52.337 |       - You cannot use a member tool directly. You can only delegate tasks to   
+web    | 2025-11-09 07:21:52.337 | DEBUG You are the leader of a team and sub-teams of AI Agents.                  
+web    | 2025-11-09 07:21:52.337 |       Your task is to coordinate the team to complete the user's request.       
+web    | 2025-11-09 07:21:52.337 |                                                                                 
+web    | 2025-11-09 07:21:52.337 |       Here are the members in your team:                                        
+web    | 2025-11-09 07:21:52.337 |       <team_members>                                                            
+web    | 2025-11-09 07:21:52.337 |        - Agent 1:                                                               
+web    | 2025-11-09 07:21:52.337 |          - ID: planner                                                          
+web    | 2025-11-09 07:21:52.337 |          - Name: planner                                                        
+web    | 2025-11-09 07:21:52.337 |          - Role: Omniscient planner who sees all dependencies before execution  
+web    | 2025-11-09 07:21:52.337 |        - Team: dev_team                                                         
+web    | 2025-11-09 07:21:52.337 |        - ID: dev-team                                                           
+web    | 2025-11-09 07:21:52.337 |       </team_members>                                                           
+web    | 2025-11-09 07:21:52.337 |                                                                                 
+web    | 2025-11-09 07:21:52.337 |       <how_to_respond>                                                          
+web    | 2025-11-09 07:21:52.337 |       - Your role is to delegate tasks to members in your team with the highest 
+web    | 2025-11-09 07:21:52.337 |       likelihood of completing the user's request.                              
+web    | 2025-11-09 07:21:52.337 |       - Carefully analyze the tools available to the members and their roles    
+web    | 2025-11-09 07:21:52.337 |       before delegating tasks.                                                  
+web    | 2025-11-09 07:21:52.337 |       - You cannot use a member tool directly. You can only delegate tasks to   
+web    | 2025-11-09 07:21:52.337 |       members.                                                                  
+web    | 2025-11-09 07:21:52.337 |       - When you delegate a task to another member, make sure to include:       
+web    | 2025-11-09 07:21:52.337 |         - member_id (str): The ID of the member to delegate the task to. Use    
+web    | 2025-11-09 07:21:52.337 |       only the ID of the member, not the ID of the team followed by the ID of   
+web    | 2025-11-09 07:21:52.337 |       the member.                                                               
+web    | 2025-11-09 07:21:52.337 |         - task_description (str): A clear description of the task.              
+web    | 2025-11-09 07:21:52.337 |         - expected_output (str): The expected output.                           
+web    | 2025-11-09 07:21:52.337 |       - You can delegate tasks to multiple members at once.                     
+web    | 2025-11-09 07:21:52.337 |       - You must always analyze the responses from members before responding to 
+web    | 2025-11-09 07:21:52.337 |       the user.                                                                 
+web    | 2025-11-09 07:21:52.337 |       - After analyzing the responses from the members, if you feel the task has
+web    | 2025-11-09 07:21:52.337 |       been completed, you can stop and respond to the user.                     
+web    | 2025-11-09 07:21:52.337 |       - If you are not satisfied with the responses from the members, you should
+web    | 2025-11-09 07:21:52.337 |       re-assign the task.                                                       
+web    | 2025-11-09 07:21:52.337 |       - For simple greetings, thanks, or questions about the team itself, you   
+web    | 2025-11-09 07:21:52.338 |       should respond directly.                                                  
+web    | 2025-11-09 07:21:52.338 |       - For all work requests, tasks, or questions requiring expertise, route to
+web    | 2025-11-09 07:21:52.338 |       appropriate team members.                                                 
+web    | 2025-11-09 07:21:52.338 |       </how_to_respond>                                                         
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       You have access to memories from previous interactions with the user that 
+web    | 2025-11-09 07:21:52.338 |       you can use:                                                              
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       <memories_from_previous_interactions>                                     
+web    | 2025-11-09 07:21:52.338 |       - User's name is Prajwal Suhas Ghadge, is 20 years old, has a diploma in  
+web    | 2025-11-09 07:21:52.338 |       AI and ML engineering, is currently pursuing a degree in Electronics      
+web    | 2025-11-09 07:21:52.338 |       Engineering (VLSI), lives in Vashi, Navi Mumbai, India, is an all-rounder,
+web    | 2025-11-09 07:21:52.338 |       and is working on an AI-related startup.                                  
+web    | 2025-11-09 07:21:52.338 |       </memories_from_previous_interactions>                                    
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       Note: this information is from previous interactions and may be updated in
+web    | 2025-11-09 07:21:52.339 |       this conversation. You should always prefer information from this         
+web    | 2025-11-09 07:21:52.339 |       conversation over the past memories.                                      
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <updating_user_memories>                                                  
+web    | 2025-11-09 07:21:52.339 |       - You have access to the `update_user_memory` tool that you can use to add
+web    | 2025-11-09 07:21:52.339 |       new memories, update existing memories, delete memories, or clear all     
+web    | 2025-11-09 07:21:52.339 |       memories.                                                                 
+web    | 2025-11-09 07:21:52.339 |       - If the user's message includes information that should be captured as a 
+web    | 2025-11-09 07:21:52.339 |       memory, use the `update_user_memory` tool to update your memory database. 
+web    | 2025-11-09 07:21:52.339 |       - Memories should include details that could personalize ongoing          
+web    | 2025-11-09 07:21:52.339 |       interactions with the user.                                               
+web    | 2025-11-09 07:21:52.339 |       - Use this tool to add new memories or update existing memories that you  
+web    | 2025-11-09 07:21:52.339 |       identify in the conversation.                                             
+web    | 2025-11-09 07:21:52.339 |       - Use this tool if the user asks to update their memory, delete a memory, 
+web    | 2025-11-09 07:21:52.339 |       or clear all memories.                                                    
+web    | 2025-11-09 07:21:52.339 |       - If you use the `update_user_memory` tool, remember to pass on the       
+web    | 2025-11-09 07:21:52.339 |       response to the user.                                                     
+web    | 2025-11-09 07:21:52.339 |       </updating_user_memories>                                                 
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <instructions>                                                            
+web    | 2025-11-09 07:21:52.339 |       - Aetheria AI: Most Advanced AI system in the world providing             
+web    | 2025-11-09 07:21:52.339 |       personalized, direct responses. Access context via                        
+web    | 2025-11-09 07:21:52.339 |       session_state['turn_context'].                                            
+web    | 2025-11-09 07:21:52.339 |       - WORKFLOW:                                                               
+web    | 2025-11-09 07:21:52.339 |       - 1. ALWAYS consult 'planner' agent first for every user query            
+web    | 2025-11-09 07:21:52.339 |       - 2. Receive plan classification and execution steps                      
+web    | 2025-11-09 07:21:52.339 |       - 3. Execute plan precisely using specified tools/agents                  
+web    | 2025-11-09 07:21:52.339 |       - 4. Synthesize results into natural, user-friendly response              
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - EXECUTION RULES:                                                        
+web    | 2025-11-09 07:21:52.339 |       - • Follow planner's tool/agent specifications precisely                  
+web    | 2025-11-09 07:21:52.339 |       - • If a step fails, report to planner for recovery plan                  
+web    | 2025-11-09 07:21:52.339 |       - • Maintain context between steps                                        
+web    | 2025-11-09 07:21:52.339 |       - • Never skip prerequisite checks specified in plan                      
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - Coding assistant has Sandbox                                            
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - RESPONSE STYLE:                                                         
+web    | 2025-11-09 07:21:52.339 |       - • Deliver results as if you personally completed the task               
+web    | 2025-11-09 07:21:52.339 |       - • Use personalized responses when user data is available                
+web    | 2025-11-09 07:21:52.339 |       - • Provide direct, clear answers without explaining internal processes   
+web    | 2025-11-09 07:21:52.339 |       - • Don't use phrases like 'based on my knowledge', 'depending on         
+web    | 2025-11-09 07:21:52.339 |       information', 'I will now', etc.                                          
+web    | 2025-11-09 07:21:52.339 |       - • Focus on user value, not system operations                            
+web    | 2025-11-09 07:21:52.339 |       - • Keep responses natural and conversational                             
+web    | 2025-11-09 07:21:52.339 |       - • If any tool is failing try to use different tool or method and dont   
+web    | 2025-11-09 07:21:52.339 |       tell your whats happening till he explicitly asks for.                    
+web    | 2025-11-09 07:21:52.339 |       </instructions>                                                           
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <additional_information>                                                  
+web    | 2025-11-09 07:21:52.339 |       - Use markdown to format your answers.                                    
+web    | 2025-11-09 07:21:52.339 |       - The current time is 2025-11-09 01:51:51.222718.                         
+web    | 2025-11-09 07:21:52.339 |       </additional_information>                                                 
+web    | 2025-11-09 07:21:52.339 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:52.339 | DEBUG what do you know about me /                                               
+web    | 2025-11-09 07:21:52.337 |       members.                                                                  
+web    | 2025-11-09 07:21:52.337 |       - When you delegate a task to another member, make sure to include:       
+web    | 2025-11-09 07:21:52.337 |         - member_id (str): The ID of the member to delegate the task to. Use    
+web    | 2025-11-09 07:21:52.337 |       only the ID of the member, not the ID of the team followed by the ID of   
+web    | 2025-11-09 07:21:52.337 |       the member.                                                               
+web    | 2025-11-09 07:21:52.337 |         - task_description (str): A clear description of the task.              
+web    | 2025-11-09 07:21:52.337 |         - expected_output (str): The expected output.                           
+web    | 2025-11-09 07:21:52.337 |       - You can delegate tasks to multiple members at once.                     
+web    | 2025-11-09 07:21:52.337 |       - You must always analyze the responses from members before responding to 
+web    | 2025-11-09 07:21:52.337 |       the user.                                                                 
+web    | 2025-11-09 07:21:52.337 |       - After analyzing the responses from the members, if you feel the task has
+web    | 2025-11-09 07:21:52.337 |       been completed, you can stop and respond to the user.                     
+web    | 2025-11-09 07:21:52.337 |       - If you are not satisfied with the responses from the members, you should
+web    | 2025-11-09 07:21:52.337 |       re-assign the task.                                                       
+web    | 2025-11-09 07:21:52.337 |       - For simple greetings, thanks, or questions about the team itself, you   
+web    | 2025-11-09 07:21:52.338 |       should respond directly.                                                  
+web    | 2025-11-09 07:21:52.338 |       - For all work requests, tasks, or questions requiring expertise, route to
+web    | 2025-11-09 07:21:52.338 |       appropriate team members.                                                 
+web    | 2025-11-09 07:21:52.338 |       </how_to_respond>                                                         
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       You have access to memories from previous interactions with the user that 
+web    | 2025-11-09 07:21:52.338 |       you can use:                                                              
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       <memories_from_previous_interactions>                                     
+web    | 2025-11-09 07:21:52.338 |       - User's name is Prajwal Suhas Ghadge, is 20 years old, has a diploma in  
+web    | 2025-11-09 07:21:52.338 |       AI and ML engineering, is currently pursuing a degree in Electronics      
+web    | 2025-11-09 07:21:52.338 |       Engineering (VLSI), lives in Vashi, Navi Mumbai, India, is an all-rounder,
+web    | 2025-11-09 07:21:52.338 |       and is working on an AI-related startup.                                  
+web    | 2025-11-09 07:21:52.338 |       </memories_from_previous_interactions>                                    
+web    | 2025-11-09 07:21:52.338 |                                                                                 
+web    | 2025-11-09 07:21:52.338 |       Note: this information is from previous interactions and may be updated in
+web    | 2025-11-09 07:21:52.339 |       this conversation. You should always prefer information from this         
+web    | 2025-11-09 07:21:52.339 |       conversation over the past memories.                                      
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <updating_user_memories>                                                  
+web    | 2025-11-09 07:21:52.339 |       - You have access to the `update_user_memory` tool that you can use to add
+web    | 2025-11-09 07:21:52.339 |       new memories, update existing memories, delete memories, or clear all     
+web    | 2025-11-09 07:21:52.339 |       memories.                                                                 
+web    | 2025-11-09 07:21:52.339 |       - If the user's message includes information that should be captured as a 
+web    | 2025-11-09 07:21:52.339 |       memory, use the `update_user_memory` tool to update your memory database. 
+web    | 2025-11-09 07:21:52.339 |       - Memories should include details that could personalize ongoing          
+web    | 2025-11-09 07:21:52.339 |       interactions with the user.                                               
+web    | 2025-11-09 07:21:52.339 |       - Use this tool to add new memories or update existing memories that you  
+web    | 2025-11-09 07:21:52.339 |       identify in the conversation.                                             
+web    | 2025-11-09 07:21:52.339 |       - Use this tool if the user asks to update their memory, delete a memory, 
+web    | 2025-11-09 07:21:52.339 |       or clear all memories.                                                    
+web    | 2025-11-09 07:21:52.339 |       - If you use the `update_user_memory` tool, remember to pass on the       
+web    | 2025-11-09 07:21:52.339 |       response to the user.                                                     
+web    | 2025-11-09 07:21:52.339 |       </updating_user_memories>                                                 
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <instructions>                                                            
+web    | 2025-11-09 07:21:52.339 |       - Aetheria AI: Most Advanced AI system in the world providing             
+web    | 2025-11-09 07:21:52.339 |       personalized, direct responses. Access context via                        
+web    | 2025-11-09 07:21:52.339 |       session_state['turn_context'].                                            
+web    | 2025-11-09 07:21:52.339 |       - WORKFLOW:                                                               
+web    | 2025-11-09 07:21:52.339 |       - 1. ALWAYS consult 'planner' agent first for every user query            
+web    | 2025-11-09 07:21:52.339 |       - 2. Receive plan classification and execution steps                      
+web    | 2025-11-09 07:21:52.339 |       - 3. Execute plan precisely using specified tools/agents                  
+web    | 2025-11-09 07:21:52.339 |       - 4. Synthesize results into natural, user-friendly response              
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - EXECUTION RULES:                                                        
+web    | 2025-11-09 07:21:52.339 |       - • Follow planner's tool/agent specifications precisely                  
+web    | 2025-11-09 07:21:52.339 |       - • If a step fails, report to planner for recovery plan                  
+web    | 2025-11-09 07:21:52.339 |       - • Maintain context between steps                                        
+web    | 2025-11-09 07:21:52.339 |       - • Never skip prerequisite checks specified in plan                      
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - Coding assistant has Sandbox                                            
+web    | 2025-11-09 07:21:52.339 |       -                                                                         
+web    | 2025-11-09 07:21:52.339 |       - RESPONSE STYLE:                                                         
+web    | 2025-11-09 07:21:52.339 |       - • Deliver results as if you personally completed the task               
+web    | 2025-11-09 07:21:52.339 |       - • Use personalized responses when user data is available                
+web    | 2025-11-09 07:21:52.339 |       - • Provide direct, clear answers without explaining internal processes   
+web    | 2025-11-09 07:21:52.339 |       - • Don't use phrases like 'based on my knowledge', 'depending on         
+web    | 2025-11-09 07:21:52.339 |       information', 'I will now', etc.                                          
+web    | 2025-11-09 07:21:52.339 |       - • Focus on user value, not system operations                            
+web    | 2025-11-09 07:21:52.339 |       - • Keep responses natural and conversational                             
+web    | 2025-11-09 07:21:52.339 |       - • If any tool is failing try to use different tool or method and dont   
+web    | 2025-11-09 07:21:52.339 |       tell your whats happening till he explicitly asks for.                    
+web    | 2025-11-09 07:21:52.339 |       </instructions>                                                           
+web    | 2025-11-09 07:21:52.339 |                                                                                 
+web    | 2025-11-09 07:21:52.339 |       <additional_information>                                                  
+web    | 2025-11-09 07:21:52.339 |       - Use markdown to format your answers.                                    
+web    | 2025-11-09 07:21:52.339 |       - The current time is 2025-11-09 01:51:51.222718.                         
+web    | 2025-11-09 07:21:52.339 |       </additional_information>                                                 
+web    | 2025-11-09 07:21:52.339 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:52.339 | DEBUG what do you know about me /                                               
+web    | 2025-11-09 07:21:54.153 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:54.153 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:54.154 | DEBUG Tool Calls:                                                               
+web    | 2025-11-09 07:21:54.154 |         - ID: 'f1422a53-5d2c-48bd-ab5a-715fc9246022'                            
+web    | 2025-11-09 07:21:54.154 |           Name: 'update_user_memory'                                            
+web    | 2025-11-09 07:21:54.154 |           Arguments: 'task: get all memories'                                   
+web    | 2025-11-09 07:21:54.154 | DEBUG Tool Calls:                                                               
+web    | 2025-11-09 07:21:54.154 |         - ID: 'f1422a53-5d2c-48bd-ab5a-715fc9246022'                            
+web    | 2025-11-09 07:21:54.154 |           Name: 'update_user_memory'                                            
+web    | 2025-11-09 07:21:54.154 |           Arguments: 'task: get all memories'                                   
+web    | 2025-11-09 07:21:54.155 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:54.155 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:54.156 | DEBUG * Tokens:                      input=7170, output=75, total=7189          
+web    | 2025-11-09 07:21:54.156 | DEBUG * Tokens:                      input=7170, output=75, total=7189          
+web    | 2025-11-09 07:21:54.157 | DEBUG * Duration:                    1.8073s                                    
+web    | 2025-11-09 07:21:54.157 | DEBUG * Duration:                    1.8073s                                    
+web    | 2025-11-09 07:21:54.157 | DEBUG * Tokens per second:           41.4989 tokens/s                           
+web    | 2025-11-09 07:21:54.157 | DEBUG * Tokens per second:           41.4989 tokens/s                           
+web    | 2025-11-09 07:21:54.158 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:54.158 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:54.160 | DEBUG Running: update_user_memory(task=get all memories)                        
+web    | 2025-11-09 07:21:54.160 | DEBUG Running: update_user_memory(task=get all memories)                        
+web    | 2025-11-09 07:21:54.627 | DEBUG ******************* MemoryManager Start ********************              
+web    | 2025-11-09 07:21:54.627 | DEBUG ******************* MemoryManager Start ********************              
+web    | 2025-11-09 07:21:54.632 | DEBUG Added function add_memory                                                 
+web    | 2025-11-09 07:21:54.632 | DEBUG Added function add_memory                                                 
+web    | 2025-11-09 07:21:54.637 | DEBUG Added function update_memory                                              
+web    | 2025-11-09 07:21:54.637 | DEBUG Added function update_memory                                              
+web    | 2025-11-09 07:21:54.641 | DEBUG Added function delete_memory                                              
+web    | 2025-11-09 07:21:54.641 | DEBUG Added function delete_memory                                              
+web    | 2025-11-09 07:21:54.644 | DEBUG Added function clear_memory                                               
+web    | 2025-11-09 07:21:54.644 | DEBUG Added function clear_memory                                               
+web    | 2025-11-09 07:21:54.645 | DEBUG ------------------ Google Response Start -------------------              
+web    | 2025-11-09 07:21:54.645 | DEBUG ------------------ Google Response Start -------------------              
+web    | 2025-11-09 07:21:54.647 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:54.647 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:54.648 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:54.648 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:54.659 | DEBUG You are a MemoryConnector that is responsible for manging key information 
+web    | 2025-11-09 07:21:54.659 |       about the user. You will be provided with a criteria for memories to      
+web    | 2025-11-09 07:21:54.659 |       capture in the <memories_to_capture> section and a list of existing       
+web    | 2025-11-09 07:21:54.659 |       memories in the <existing_memories> section.                              
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## When to add or update memories                                         
+web    | 2025-11-09 07:21:54.659 |       - Your first task is to decide if a memory needs to be added, updated, or 
+web    | 2025-11-09 07:21:54.659 |       deleted based on the user's message OR if no changes are needed.          
+web    | 2025-11-09 07:21:54.659 |       - If the user's message meets the criteria in the <memories_to_capture>   
+web    | 2025-11-09 07:21:54.659 |       section and that information is not already captured in the               
+web    | 2025-11-09 07:21:54.659 |       <existing_memories> section, you should capture it as a memory.           
+web    | 2025-11-09 07:21:54.659 |       - If the users messages does not meet the criteria in the                 
+web    | 2025-11-09 07:21:54.659 |       <memories_to_capture> section, no memory updates are needed.              
+web    | 2025-11-09 07:21:54.659 |       - If the existing memories in the <existing_memories> section capture all 
+web    | 2025-11-09 07:21:54.659 |       relevant information, no memory updates are needed.                       
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## How to add or update memories                                          
+web    | 2025-11-09 07:21:54.659 |       - If you decide to add a new memory, create memories that captures key    
+web    | 2025-11-09 07:21:54.659 |       information, as if you were storing it for future reference.              
+web    | 2025-11-09 07:21:54.659 |       - Memories should be a brief, third-person statements that encapsulate the
+web    | 2025-11-09 07:21:54.659 |       most important aspect of the user's input, without adding any extraneous  
+web    | 2025-11-09 07:21:54.659 |       information.                                                              
+web    | 2025-11-09 07:21:54.659 |         - Example: If the user's message is 'I'm going to the gym', a memory    
+web    | 2025-11-09 07:21:54.659 |       could be `John Doe goes to the gym regularly`.                            
+web    | 2025-11-09 07:21:54.659 |         - Example: If the user's message is 'My name is John Doe', a memory     
+web    | 2025-11-09 07:21:54.659 |       could be `User's name is John Doe`.                                       
+web    | 2025-11-09 07:21:54.659 |       - Don't make a single memory too long or complex, create multiple memories
+web    | 2025-11-09 07:21:54.659 |       if needed to capture all the information.                                 
+web    | 2025-11-09 07:21:54.659 |       - Don't repeat the same information in multiple memories. Rather update   
+web    | 2025-11-09 07:21:54.659 |       existing memories if needed.                                              
+web    | 2025-11-09 07:21:54.659 |       - If a user asks for a memory to be updated or forgotten, remove all      
+web    | 2025-11-09 07:21:54.659 |       reference to the information that should be forgotten. Don't say 'The user
+web    | 2025-11-09 07:21:54.659 |       used to like ...`                                                         
+web    | 2025-11-09 07:21:54.659 |       - When updating a memory, append the existing memory with new information 
+web    | 2025-11-09 07:21:54.659 |       rather than completely overwriting it.                                    
+web    | 2025-11-09 07:21:54.659 |       - When a user's preferences change, update the relevant memories to       
+web    | 2025-11-09 07:21:54.659 |       reflect the new preferences but also capture what the user's preferences  
+web    | 2025-11-09 07:21:54.659 |       used to be and what has changed.                                          
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## Criteria for creating memories                                         
+web    | 2025-11-09 07:21:54.659 |       Use the following criteria to determine if a user's message should be     
+web    | 2025-11-09 07:21:54.659 |       captured as a memory.                                                     
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       <memories_to_capture>                                                     
+web    | 2025-11-09 07:21:54.659 |       Memories should include details that could personalize ongoing            
+web    | 2025-11-09 07:21:54.659 |       interactions with the user, such as:                                      
+web    | 2025-11-09 07:21:54.659 |         - Personal facts: name, age, occupation, location, interests,           
+web    | 2025-11-09 07:21:54.659 |       preferences, etc.                                                         
+web    | 2025-11-09 07:21:54.659 |         - Significant life events or experiences shared by the user             
+web    | 2025-11-09 07:21:54.659 |         - Important context about the user's current situation, challenges or   
+web    | 2025-11-09 07:21:54.659 |       goals                                                                     
+web    | 2025-11-09 07:21:54.659 |         - What the user likes or dislikes, their opinions, beliefs, values, etc.
+web    | 2025-11-09 07:21:54.659 |         - Any other details that provide valuable insights into the user's      
+web    | 2025-11-09 07:21:54.659 |       personality, perspective or needs                                         
+web    | 2025-11-09 07:21:54.659 |       </memories_to_capture>                                                    
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## Updating memories                                                      
+web    | 2025-11-09 07:21:54.659 |       You will also be provided with a list of existing memories in the         
+web    | 2025-11-09 07:21:54.659 |       <existing_memories> section. You can:                                     
+web    | 2025-11-09 07:21:54.659 |         1. Decide to make no changes.                                           
+web    | 2025-11-09 07:21:54.659 |         2. Decide to add a new memory, using the `add_memory` tool.             
+web    | 2025-11-09 07:21:54.659 |         3. Decide to update an existing memory, using the `update_memory` tool. 
+web    | 2025-11-09 07:21:54.660 |         4. Decide to delete an existing memory, using the `delete_memory` tool. 
+web    | 2025-11-09 07:21:54.660 |         5. Decide to clear all memories, using the `clear_memory` tool.         
+web    | 2025-11-09 07:21:54.660 |       You can call multiple tools in a single response if needed.               
+web    | 2025-11-09 07:21:54.660 |       Only add or update memories if it is necessary to capture key information 
+web    | 2025-11-09 07:21:54.660 |       provided by the user.                                                     
+web    | 2025-11-09 07:21:54.660 |                                                                                 
+web    | 2025-11-09 07:21:54.660 |       <existing_memories>                                                       
+web    | 2025-11-09 07:21:54.660 |       ID: 6b33b4ee-10ea-48f8-8102-3779c3aa4f25                                  
+web    | 2025-11-09 07:21:54.660 |       Memory: User's name is Prajwal Suhas Ghadge, is 20 years old, has a       
+web    | 2025-11-09 07:21:54.660 |       diploma in AI and ML engineering, is currently pursuing a degree in       
+web    | 2025-11-09 07:21:54.660 |       Electronics Engineering (VLSI), lives in Vashi, Navi Mumbai, India, is an 
+web    | 2025-11-09 07:21:54.660 |       all-rounder, and is working on an AI-related startup.                     
+web    | 2025-11-09 07:21:54.660 |                                                                                 
+web    | 2025-11-09 07:21:54.660 |       </existing_memories>                                                      
+web    | 2025-11-09 07:21:54.662 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:54.659 | DEBUG You are a MemoryConnector that is responsible for manging key information 
+web    | 2025-11-09 07:21:54.659 |       about the user. You will be provided with a criteria for memories to      
+web    | 2025-11-09 07:21:54.659 |       capture in the <memories_to_capture> section and a list of existing       
+web    | 2025-11-09 07:21:54.659 |       memories in the <existing_memories> section.                              
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## When to add or update memories                                         
+web    | 2025-11-09 07:21:54.659 |       - Your first task is to decide if a memory needs to be added, updated, or 
+web    | 2025-11-09 07:21:54.659 |       deleted based on the user's message OR if no changes are needed.          
+web    | 2025-11-09 07:21:54.659 |       - If the user's message meets the criteria in the <memories_to_capture>   
+web    | 2025-11-09 07:21:54.659 |       section and that information is not already captured in the               
+web    | 2025-11-09 07:21:54.659 |       <existing_memories> section, you should capture it as a memory.           
+web    | 2025-11-09 07:21:54.659 |       - If the users messages does not meet the criteria in the                 
+web    | 2025-11-09 07:21:54.659 |       <memories_to_capture> section, no memory updates are needed.              
+web    | 2025-11-09 07:21:54.659 |       - If the existing memories in the <existing_memories> section capture all 
+web    | 2025-11-09 07:21:54.659 |       relevant information, no memory updates are needed.                       
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## How to add or update memories                                          
+web    | 2025-11-09 07:21:54.659 |       - If you decide to add a new memory, create memories that captures key    
+web    | 2025-11-09 07:21:54.659 |       information, as if you were storing it for future reference.              
+web    | 2025-11-09 07:21:54.659 |       - Memories should be a brief, third-person statements that encapsulate the
+web    | 2025-11-09 07:21:54.659 |       most important aspect of the user's input, without adding any extraneous  
+web    | 2025-11-09 07:21:54.659 |       information.                                                              
+web    | 2025-11-09 07:21:54.659 |         - Example: If the user's message is 'I'm going to the gym', a memory    
+web    | 2025-11-09 07:21:54.659 |       could be `John Doe goes to the gym regularly`.                            
+web    | 2025-11-09 07:21:54.659 |         - Example: If the user's message is 'My name is John Doe', a memory     
+web    | 2025-11-09 07:21:54.659 |       could be `User's name is John Doe`.                                       
+web    | 2025-11-09 07:21:54.659 |       - Don't make a single memory too long or complex, create multiple memories
+web    | 2025-11-09 07:21:54.659 |       if needed to capture all the information.                                 
+web    | 2025-11-09 07:21:54.659 |       - Don't repeat the same information in multiple memories. Rather update   
+web    | 2025-11-09 07:21:54.659 |       existing memories if needed.                                              
+web    | 2025-11-09 07:21:54.659 |       - If a user asks for a memory to be updated or forgotten, remove all      
+web    | 2025-11-09 07:21:54.659 |       reference to the information that should be forgotten. Don't say 'The user
+web    | 2025-11-09 07:21:54.659 |       used to like ...`                                                         
+web    | 2025-11-09 07:21:54.659 |       - When updating a memory, append the existing memory with new information 
+web    | 2025-11-09 07:21:54.659 |       rather than completely overwriting it.                                    
+web    | 2025-11-09 07:21:54.659 |       - When a user's preferences change, update the relevant memories to       
+web    | 2025-11-09 07:21:54.659 |       reflect the new preferences but also capture what the user's preferences  
+web    | 2025-11-09 07:21:54.659 |       used to be and what has changed.                                          
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## Criteria for creating memories                                         
+web    | 2025-11-09 07:21:54.659 |       Use the following criteria to determine if a user's message should be     
+web    | 2025-11-09 07:21:54.659 |       captured as a memory.                                                     
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       <memories_to_capture>                                                     
+web    | 2025-11-09 07:21:54.659 |       Memories should include details that could personalize ongoing            
+web    | 2025-11-09 07:21:54.659 |       interactions with the user, such as:                                      
+web    | 2025-11-09 07:21:54.659 |         - Personal facts: name, age, occupation, location, interests,           
+web    | 2025-11-09 07:21:54.659 |       preferences, etc.                                                         
+web    | 2025-11-09 07:21:54.659 |         - Significant life events or experiences shared by the user             
+web    | 2025-11-09 07:21:54.659 |         - Important context about the user's current situation, challenges or   
+web    | 2025-11-09 07:21:54.659 |       goals                                                                     
+web    | 2025-11-09 07:21:54.659 |         - What the user likes or dislikes, their opinions, beliefs, values, etc.
+web    | 2025-11-09 07:21:54.659 |         - Any other details that provide valuable insights into the user's      
+web    | 2025-11-09 07:21:54.659 |       personality, perspective or needs                                         
+web    | 2025-11-09 07:21:54.659 |       </memories_to_capture>                                                    
+web    | 2025-11-09 07:21:54.659 |                                                                                 
+web    | 2025-11-09 07:21:54.659 |       ## Updating memories                                                      
+web    | 2025-11-09 07:21:54.659 |       You will also be provided with a list of existing memories in the         
+web    | 2025-11-09 07:21:54.659 |       <existing_memories> section. You can:                                     
+web    | 2025-11-09 07:21:54.659 |         1. Decide to make no changes.                                           
+web    | 2025-11-09 07:21:54.659 |         2. Decide to add a new memory, using the `add_memory` tool.             
+web    | 2025-11-09 07:21:54.659 |         3. Decide to update an existing memory, using the `update_memory` tool. 
+web    | 2025-11-09 07:21:54.660 |         4. Decide to delete an existing memory, using the `delete_memory` tool. 
+web    | 2025-11-09 07:21:54.660 |         5. Decide to clear all memories, using the `clear_memory` tool.         
+web    | 2025-11-09 07:21:54.660 |       You can call multiple tools in a single response if needed.               
+web    | 2025-11-09 07:21:54.660 |       Only add or update memories if it is necessary to capture key information 
+web    | 2025-11-09 07:21:54.660 |       provided by the user.                                                     
+web    | 2025-11-09 07:21:54.660 |                                                                                 
+web    | 2025-11-09 07:21:54.660 |       <existing_memories>                                                       
+web    | 2025-11-09 07:21:54.660 |       ID: 6b33b4ee-10ea-48f8-8102-3779c3aa4f25                                  
+web    | 2025-11-09 07:21:54.660 |       Memory: User's name is Prajwal Suhas Ghadge, is 20 years old, has a       
+web    | 2025-11-09 07:21:54.660 |       diploma in AI and ML engineering, is currently pursuing a degree in       
+web    | 2025-11-09 07:21:54.660 |       Electronics Engineering (VLSI), lives in Vashi, Navi Mumbai, India, is an 
+web    | 2025-11-09 07:21:54.660 |       all-rounder, and is working on an AI-related startup.                     
+web    | 2025-11-09 07:21:54.660 |                                                                                 
+web    | 2025-11-09 07:21:54.660 |       </existing_memories>                                                      
+web    | 2025-11-09 07:21:54.662 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:54.663 | DEBUG get all memories                                                          
+web    | 2025-11-09 07:21:54.663 | DEBUG get all memories                                                          
+web    | 2025-11-09 07:21:56.625 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:56.625 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:56.626 | DEBUG I'm sorry, I cannot fulfill this request. The available tools do not have 
+web    | 2025-11-09 07:21:56.626 |       a function to retrieve all memories.                                      
+web    | 2025-11-09 07:21:56.626 | DEBUG I'm sorry, I cannot fulfill this request. The available tools do not have 
+web    | 2025-11-09 07:21:56.626 |       a function to retrieve all memories.                                      
+web    | 2025-11-09 07:21:56.627 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:56.627 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:56.628 | DEBUG * Tokens:                      input=1201, output=121, total=1225         
+web    | 2025-11-09 07:21:56.628 | DEBUG * Tokens:                      input=1201, output=121, total=1225         
+web    | 2025-11-09 07:21:56.629 | DEBUG * Duration:                    1.9590s                                    
+web    | 2025-11-09 07:21:56.629 | DEBUG * Duration:                    1.9590s                                    
+web    | 2025-11-09 07:21:56.630 | DEBUG * Tokens per second:           61.7673 tokens/s                           
+web    | 2025-11-09 07:21:56.630 | DEBUG * Tokens per second:           61.7673 tokens/s                           
+web    | 2025-11-09 07:21:56.631 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:56.631 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:56.632 | DEBUG ------------------- Google Response End --------------------              
+web    | 2025-11-09 07:21:56.632 | DEBUG ------------------- Google Response End --------------------              
+web    | 2025-11-09 07:21:56.633 | DEBUG ******************** MemoryManager End *********************              
+web    | 2025-11-09 07:21:56.633 | DEBUG ******************** MemoryManager End *********************              
+web    | 2025-11-09 07:21:57.125 | DEBUG =========================== tool ===========================              
+web    | 2025-11-09 07:21:57.125 | DEBUG =========================== tool ===========================              
+web    | 2025-11-09 07:21:57.126 | DEBUG Tool call Id: f1422a53-5d2c-48bd-ab5a-715fc9246022                        
+web    | 2025-11-09 07:21:57.126 | DEBUG Tool call Id: f1422a53-5d2c-48bd-ab5a-715fc9246022                        
+web    | 2025-11-09 07:21:57.127 | DEBUG I'm sorry, I cannot fulfill this request. The available tools do not have 
+web    | 2025-11-09 07:21:57.127 |       a function to retrieve all memories.                                      
+web    | 2025-11-09 07:21:57.127 | DEBUG I'm sorry, I cannot fulfill this request. The available tools do not have 
+web    | 2025-11-09 07:21:57.127 |       a function to retrieve all memories.                                      
+web    | 2025-11-09 07:21:57.128 | DEBUG **********************  TOOL METRICS  **********************              
+web    | 2025-11-09 07:21:57.128 | DEBUG **********************  TOOL METRICS  **********************              
+web    | 2025-11-09 07:21:57.129 | DEBUG * Duration:                    2.9641s                                    
+web    | 2025-11-09 07:21:57.129 | DEBUG * Duration:                    2.9641s                                    
+web    | 2025-11-09 07:21:57.130 | DEBUG **********************  TOOL METRICS  **********************              
+web    | 2025-11-09 07:21:57.130 | DEBUG **********************  TOOL METRICS  **********************              
+web    | 2025-11-09 07:21:58.606 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:58.606 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:21:58.608 | DEBUG I remember that your name is Prajwal Suhas Ghadge, you are 20 years old,  
+web    | 2025-11-09 07:21:58.608 |       and you have a diploma in AI and ML engineering. You are currently        
+web    | 2025-11-09 07:21:58.608 | DEBUG I remember that your name is Prajwal Suhas Ghadge, you are 20 years old,  
+web    | 2025-11-09 07:21:58.608 |       and you have a diploma in AI and ML engineering. You are currently        
+web    | 2025-11-09 07:21:58.608 |       pursuing a degree in Electronics Engineering (VLSI) and live in Vashi,    
+web    | 2025-11-09 07:21:58.608 |       Navi Mumbai, India. You are also an all-rounder and are working on an     
+web    | 2025-11-09 07:21:58.608 |       AI-related startup.                                                       
+web    | 2025-11-09 07:21:58.609 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:58.610 | DEBUG * Tokens:                      input=7229, output=75, total=7304,         
+web    | 2025-11-09 07:21:58.610 |       cached=6764                                                               
+web    | 2025-11-09 07:21:58.611 | DEBUG * Duration:                    1.4690s                                    
+web    | 2025-11-09 07:21:58.612 | DEBUG * Tokens per second:           51.0555 tokens/s                           
+web    | 2025-11-09 07:21:58.613 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:58.608 |       pursuing a degree in Electronics Engineering (VLSI) and live in Vashi,    
+web    | 2025-11-09 07:21:58.608 |       Navi Mumbai, India. You are also an all-rounder and are working on an     
+web    | 2025-11-09 07:21:58.608 |       AI-related startup.                                                       
+web    | 2025-11-09 07:21:58.609 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:58.610 | DEBUG * Tokens:                      input=7229, output=75, total=7304,         
+web    | 2025-11-09 07:21:58.610 |       cached=6764                                                               
+web    | 2025-11-09 07:21:58.611 | DEBUG * Duration:                    1.4690s                                    
+web    | 2025-11-09 07:21:58.612 | DEBUG * Tokens per second:           51.0555 tokens/s                           
+web    | 2025-11-09 07:21:58.613 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:21:58.614 | DEBUG ---------------- Google Response Stream End ----------------              
+web    | 2025-11-09 07:21:58.614 | DEBUG ---------------- Google Response Stream End ----------------              
+web    | 2025-11-09 07:21:58.616 | DEBUG Added RunOutput to Team Session                                           
+web    | 2025-11-09 07:21:58.616 | DEBUG Added RunOutput to Team Session                                           
+web    | 2025-11-09 07:21:58.617 | DEBUG Creating session summary.                                                 
+web    | 2025-11-09 07:21:58.617 | DEBUG Creating session summary.                                                 
+web    | 2025-11-09 07:21:58.619 | DEBUG ***************** Creating session summary *****************              
+web    | 2025-11-09 07:21:58.619 | DEBUG ***************** Creating session summary *****************              
+web    | 2025-11-09 07:21:58.620 | DEBUG ------------------ Google Response Start -------------------              
+web    | 2025-11-09 07:21:58.620 | DEBUG ------------------ Google Response Start -------------------              
+web    | 2025-11-09 07:21:58.621 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:58.621 | DEBUG ----------------- Model: gemini-2.5-flash ------------------              
+web    | 2025-11-09 07:21:58.622 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:58.622 | DEBUG ========================== system ==========================              
+web    | 2025-11-09 07:21:58.626 | DEBUG Analyze the following conversation between a user and an assistant, and   
+web    | 2025-11-09 07:21:58.626 |       extract the following details:                                            
+web    | 2025-11-09 07:21:58.626 |         - Summary (str): Provide a concise summary of the session, focusing on  
+web    | 2025-11-09 07:21:58.626 |       important information that would be helpful for future interactions.      
+web    | 2025-11-09 07:21:58.626 |         - Topics (Optional[List[str]]): List the topics discussed in the        
+web    | 2025-11-09 07:21:58.626 |       session.                                                                  
+web    | 2025-11-09 07:21:58.626 |       Keep the summary concise and to the point. Only include relevant          
+web    | 2025-11-09 07:21:58.626 |       information.                                                              
+web    | 2025-11-09 07:21:58.626 |                                                                                 
+web    | 2025-11-09 07:21:58.626 |       <conversation>                                                            
+web    | 2025-11-09 07:21:58.626 |       User: what do you know about me /                                         
+web    | 2025-11-09 07:21:58.626 |       Assistant: I remember that your name is Prajwal Suhas Ghadge, you are 20  
+web    | 2025-11-09 07:21:58.626 |       years old, and you have a diploma in AI and ML engineering. You are       
+web    | 2025-11-09 07:21:58.626 |       currently pursuing a degree in Electronics Engineering (VLSI) and live in 
+web    | 2025-11-09 07:21:58.626 |       Vashi, Navi Mumbai, India. You are also an all-rounder and are working on 
+web    | 2025-11-09 07:21:58.626 |       an AI-related startup.                                                    
+web    | 2025-11-09 07:21:58.626 |       </conversation>                                                           
+web    | 2025-11-09 07:21:58.626 | DEBUG Analyze the following conversation between a user and an assistant, and   
+web    | 2025-11-09 07:21:58.626 |       extract the following details:                                            
+web    | 2025-11-09 07:21:58.626 |         - Summary (str): Provide a concise summary of the session, focusing on  
+web    | 2025-11-09 07:21:58.626 |       important information that would be helpful for future interactions.      
+web    | 2025-11-09 07:21:58.626 |         - Topics (Optional[List[str]]): List the topics discussed in the        
+web    | 2025-11-09 07:21:58.626 |       session.                                                                  
+web    | 2025-11-09 07:21:58.626 |       Keep the summary concise and to the point. Only include relevant          
+web    | 2025-11-09 07:21:58.626 |       information.                                                              
+web    | 2025-11-09 07:21:58.626 |                                                                                 
+web    | 2025-11-09 07:21:58.626 |       <conversation>                                                            
+web    | 2025-11-09 07:21:58.626 |       User: what do you know about me /                                         
+web    | 2025-11-09 07:21:58.626 |       Assistant: I remember that your name is Prajwal Suhas Ghadge, you are 20  
+web    | 2025-11-09 07:21:58.626 |       years old, and you have a diploma in AI and ML engineering. You are       
+web    | 2025-11-09 07:21:58.626 |       currently pursuing a degree in Electronics Engineering (VLSI) and live in 
+web    | 2025-11-09 07:21:58.626 |       Vashi, Navi Mumbai, India. You are also an all-rounder and are working on 
+web    | 2025-11-09 07:21:58.626 |       an AI-related startup.                                                    
+web    | 2025-11-09 07:21:58.626 |       </conversation>                                                           
+web    | 2025-11-09 07:21:58.627 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:58.627 | DEBUG =========================== user ===========================              
+web    | 2025-11-09 07:21:58.628 | DEBUG Provide the summary of the conversation.                                  
+web    | 2025-11-09 07:21:58.628 | DEBUG Provide the summary of the conversation.                                  
+web    | 2025-11-09 07:22:00.680 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:22:00.680 | DEBUG ======================== assistant =========================              
+web    | 2025-11-09 07:22:00.682 | DEBUG {                                                                         
+web    | 2025-11-09 07:22:00.682 |         "summary": "Prajwal Suhas Ghadge is 20 years old, has a diploma in AI   
+web    | 2025-11-09 07:22:00.682 |       and ML engineering, and is pursuing Electronics Engineering (VLSI). He    
+web    | 2025-11-09 07:22:00.682 |       lives in Vashi, Navi Mumbai, India, is an all-rounder, and is working on  
+web    | 2025-11-09 07:22:00.682 |       an AI-related startup.",                                                  
+web    | 2025-11-09 07:22:00.682 |         "topics": [                                                             
+web    | 2025-11-09 07:22:00.682 |           "User profile",                                                       
+web    | 2025-11-09 07:22:00.682 |           "Education",                                                          
+web    | 2025-11-09 07:22:00.682 |           "Location",                                                           
+web    | 2025-11-09 07:22:00.682 |           "Career interests"                                                    
+web    | 2025-11-09 07:22:00.682 |         ]                                                                       
+web    | 2025-11-09 07:22:00.682 |       }                                                                         
+web    | 2025-11-09 07:22:00.682 | DEBUG {                                                                         
+web    | 2025-11-09 07:22:00.682 |         "summary": "Prajwal Suhas Ghadge is 20 years old, has a diploma in AI   
+web    | 2025-11-09 07:22:00.682 |       and ML engineering, and is pursuing Electronics Engineering (VLSI). He    
+web    | 2025-11-09 07:22:00.682 |       lives in Vashi, Navi Mumbai, India, is an all-rounder, and is working on  
+web    | 2025-11-09 07:22:00.682 |       an AI-related startup.",                                                  
+web    | 2025-11-09 07:22:00.682 |         "topics": [                                                             
+web    | 2025-11-09 07:22:00.682 |           "User profile",                                                       
+web    | 2025-11-09 07:22:00.682 |           "Education",                                                          
+web    | 2025-11-09 07:22:00.682 |           "Location",                                                           
+web    | 2025-11-09 07:22:00.682 |           "Career interests"                                                    
+web    | 2025-11-09 07:22:00.682 |         ]                                                                       
+web    | 2025-11-09 07:22:00.682 |       }                                                                         
+web    | 2025-11-09 07:22:00.683 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:22:00.683 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:22:00.684 | DEBUG * Tokens:                      input=184, output=229, total=284           
+web    | 2025-11-09 07:22:00.684 | DEBUG * Tokens:                      input=184, output=229, total=284           
+web    | 2025-11-09 07:22:00.685 | DEBUG * Duration:                    2.0439s                                    
+web    | 2025-11-09 07:22:00.685 | DEBUG * Duration:                    2.0439s                                    
+web    | 2025-11-09 07:22:00.685 | DEBUG * Tokens per second:           112.0432 tokens/s                          
+web    | 2025-11-09 07:22:00.685 | DEBUG * Tokens per second:           112.0432 tokens/s                          
+web    | 2025-11-09 07:22:00.686 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:22:00.686 | DEBUG ************************  METRICS  *************************              
+web    | 2025-11-09 07:22:00.687 | DEBUG ------------------- Google Response End --------------------              
+web    | 2025-11-09 07:22:00.687 | DEBUG ------------------- Google Response End --------------------              
+web    | 2025-11-09 07:22:00.689 | DEBUG ***************** Session summary created ******************              
+web    | 2025-11-09 07:22:00.689 | DEBUG ***************** Session summary created ******************              
+web    | 2025-11-09 07:22:01.246 | DEBUG Created or updated TeamSession record: conv_1762652905706                 
+web    | 2025-11-09 07:22:01.246 | DEBUG Created or updated TeamSession record: conv_1762652905706                 
+web    | 2025-11-09 07:22:02.319 | DEBUG **** Team Run End: 2195045d-a01f-49fd-a347-9035f2188bff ****              
+web    | 2025-11-09 07:22:02.319 | DEBUG **** Team Run End: 2195045d-a01f-49fd-a347-9035f2188bff ****              

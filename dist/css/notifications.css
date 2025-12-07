@@ -1,0 +1,301 @@
+/* notifications.css - Minimalist Top-Center Notification System */
+
+/* Container */
+.unified-notification-container {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: 90vw;
+    width: auto;
+}
+
+/* Base Notification - Glassmorphism Style */
+.unified-notification {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 50px;
+    min-width: 200px;
+    max-width: 360px;
+    pointer-events: all;
+    overflow: hidden;
+
+    /* Light mode - Light dark glassmorphism */
+    background: rgba(50, 50, 50, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(80, 80, 80, 0.3);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+    /* Animation */
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode .unified-notification {
+    /* Dark mode - Cream white glassmorphism */
+    background: rgba(245, 245, 220, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 240, 0.3);
+    box-shadow: 0 4px 16px 0 rgba(245, 245, 220, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Show Animation */
+.unified-notification.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Hide Animation */
+.unified-notification.hide {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+}
+
+/* Hover Effect - Enhanced Glassmorphism */
+.unified-notification:hover {
+    transform: translateY(0) scale(1.02);
+    background: rgba(60, 60, 60, 0.85);
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.dark-mode .unified-notification:hover {
+    background: rgba(245, 245, 220, 0.95);
+    box-shadow: 0 6px 20px 0 rgba(245, 245, 220, 0.4),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Icon - Minimalist compact */
+.notification-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Content - Compact */
+.notification-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.notification-message {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 500;
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark-mode .notification-message {
+    color: rgba(30, 30, 30, 0.95);
+}
+
+/* Close Button - Minimalist */
+.notification-close {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    padding: 0;
+    margin-left: 4px;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.dark-mode .notification-close {
+    color: rgba(30, 30, 30, 0.6);
+}
+
+.dark-mode .notification-close:hover {
+    background: rgba(30, 30, 30, 0.1);
+    color: rgba(30, 30, 30, 0.95);
+}
+
+/* Progress Bar - Removed */
+.notification-progress {
+    display: none;
+}
+
+@keyframes progress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* Type Variants - No colored borders, unified icons */
+.notification-success .notification-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-mode .notification-success .notification-icon {
+    color: rgba(30, 30, 30, 0.9);
+}
+
+.notification-error .notification-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-mode .notification-error .notification-icon {
+    color: rgba(30, 30, 30, 0.9);
+}
+
+.notification-warning .notification-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-mode .notification-warning .notification-icon {
+    color: rgba(30, 30, 30, 0.9);
+}
+
+.notification-info .notification-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-mode .notification-info .notification-icon {
+    color: rgba(30, 30, 30, 0.9);
+}
+
+.notification-connection .notification-icon {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dark-mode .notification-connection .notification-icon {
+    color: rgba(30, 30, 30, 0.9);
+}
+
+/* Retry Button */
+.notification-retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-retry-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.dark-mode .notification-retry-btn {
+    background: rgba(30, 30, 30, 0.15);
+    border: 1px solid rgba(30, 30, 30, 0.25);
+    color: rgba(30, 30, 30, 0.95);
+}
+
+.dark-mode .notification-retry-btn:hover {
+    background: rgba(30, 30, 30, 0.25);
+}
+
+/* Responsive Design - Mobile optimized */
+@media (max-width: 768px) {
+    .unified-notification-container {
+        top: 12px;
+        max-width: calc(100vw - 32px);
+    }
+
+    .unified-notification {
+        min-width: 180px;
+        max-width: 340px;
+        padding: 9px 14px;
+    }
+    
+    .notification-message {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .unified-notification {
+        min-width: 160px;
+        max-width: 300px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .unified-notification {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+
+    .unified-notification.show {
+        transform: none;
+    }
+
+    .unified-notification.hide {
+        transform: none;
+    }
+
+    .unified-notification:hover {
+        transform: none;
+    }
+
+    .notification-progress {
+        animation: none !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .unified-notification {
+        border: 2px solid currentColor;
+        background: var(--window-bg);
+        backdrop-filter: none;
+    }
+}
+
+/* Accessibility - Focus Styles */
+.notification-close:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.notification-retry-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}

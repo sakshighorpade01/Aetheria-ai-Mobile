@@ -1,0 +1,146 @@
+/* =================================================================
+ * CHAT-SPECIFIC THEME & COLOR VARIABLES
+ * ================================================================= */
+
+/*
+ * This module defines all CSS custom properties used throughout the chat interface.
+ * It serves as the foundation for the entire chat styling system.
+ * 
+ * Dependencies: None (foundation module)
+ * Used by: All other chat modules
+ * 
+ * Key Features:
+ * - Light and dark theme definitions
+ * - Animation timing and easing functions
+ * - Layout dimensions and constraints
+ * - Z-index management for proper layering
+ */
+
+:root {
+    /* Window & Background Colors */
+    --window-bg: #ffffff;
+    --taskbar-bg: #f8f9fa;
+    --elevated-bg: #ffffff;
+    --input-bg: #ffffff;
+    --hover-bg: #f1f5f9;
+
+    /* Text Colors */
+    --text-color: #1a1a1a;
+    --text-secondary: #666666;
+    --file-name-color: #1a1a1a;
+
+    /* Border & Divider Colors */
+    --border-color: #e2e8f0;
+
+    /* Shadow Colors */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    /* Accent & Interactive Colors */
+    --accent-color: #374151;
+    --accent-hover: #1f2937;
+    --accent-color-rgb: 55, 65, 81;
+    --accent-muted: rgba(55, 65, 81, 0.1);
+    --icon-color: #64748b;
+
+    /* Link Colors */
+    --link-color: #374151;
+    --link-hover: #1f2937;
+
+    /* Code & Syntax Colors */
+    --code-bg: #f8fafc;
+    --code-header-bg: #f1f5f9;
+    --code-border: #e2e8f0;
+    --code-language-color: #64748b;
+
+    /* Table Colors */
+    --table-border: #e2e8f0;
+    --table-header-bg: #f8fafc;
+    --table-stripe-bg: #f9fafb;
+
+    /* Message Colors */
+    --message-user-bg: #1f2937;
+    --message-bot-bg: #f8fafc;
+
+    /* Animation Variables */
+    --anim-fast: 0.2s;
+    --anim-normal: 0.3s;
+    --anim-slow: 0.4s;
+    --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Chat-Specific Layout Variables */
+    --chat-container-width: 55%;
+    --chat-container-left: 52.5%;
+    --chat-max-width: 800px;
+    --input-container-max-width: 800px;
+    --input-bottom-offset: 56px;
+    --message-max-width: 85%;
+    --input-min-height: 70px;
+    --input-max-height: 200px;
+
+    /* Z-Index Management */
+    --z-chat-container: 999;
+    --z-input-container: 999;
+    --z-context-window: 1001;
+    --z-dropdown-menu: 1000;
+    --z-selected-context-viewer: 1000;
+    --z-welcome-message: 1002;
+}
+
+/* Dark Mode Theme Overrides */
+.dark-mode {
+    /* Window & Background Colors */
+    --window-bg: #1a1a1a;
+    --taskbar-bg: #242424;
+    --elevated-bg: #242424;
+    --input-bg: #242424;
+    --hover-bg: #2e2e2e;
+
+    /* Text Colors */
+    --text-color: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --file-name-color: #e2e8f0;
+
+    /* Border & Divider Colors */
+    --border-color: #3a3a3a;
+
+    /* Shadow Colors */
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+
+    /* Accent & Interactive Colors */
+    --accent-color: #d1d5db;
+    --accent-hover: #f3f4f6;
+    --accent-color-rgb: 209, 213, 219;
+    --accent-muted: rgba(209, 213, 219, 0.15);
+    --icon-color: #94a3b8;
+
+    /* Link Colors */
+    --link-color: #d1d5db;
+    --link-hover: #f3f4f6;
+
+    /* Code & Syntax Colors */
+    --code-bg: #242424;
+    --code-header-bg: #2e2e2e;
+    --code-border: #3a3a3a;
+    --code-language-color: #94a3b8;
+
+    /* Table Colors */
+    --table-border: #3a3a3a;
+    --table-header-bg: #242424;
+    --table-stripe-bg: #2e2e2e;
+
+    /* Message Colors */
+    --message-user-bg: #e5e7eb;
+    --message-bot-bg: #242424;
+
+    /* Animation Variables (same for both themes) */
+    --anim-fast: 0.2s;
+    --anim-normal: 0.3s;
+    --anim-slow: 0.4s;
+    --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}

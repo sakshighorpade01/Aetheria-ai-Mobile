@@ -1,0 +1,119 @@
+/* =================================================================
+ * CHAT LAYOUT & CORE CONTAINERS
+ * ================================================================= */
+
+/*
+ * This module handles the core structural layout of the chat interface.
+ * It defines the main containers and their positioning behavior.
+ * 
+ * Dependencies: chat-variables.css
+ * Used by: Main chat interface
+ * 
+ * Key Components:
+ * - .chat-container: Main chat interface wrapper
+ * - .chat-window: Structural container for messages
+ * - .chat-messages: Scrollable conversation area
+ * - .context-active-indicator: Context status display
+ */
+
+:root {
+    /* Improved layout variables */
+    --chat-container-width: 52%; /* Increased from 55% */
+    --chat-container-left: 50%; /* Centered from 52.5% */
+    --chat-max-width: 900px; /* Increased from 800px */
+    --message-max-width: 95%; /* Increased from 85% */
+    --input-container-max-width: 900px; /* Increased from 800px */
+}
+
+/* --- Main Chat Container --- */
+.chat-container {
+    position: fixed;
+    top: 5px;
+    left: var(--chat-container-left);
+    width: var(--chat-container-width);
+    transform: translateX(-50%) scale(1);
+    height: calc(100% - 100px);
+    padding: 10px;
+    z-index: var(--z-chat-container);
+    transition: opacity var(--anim-fast) var(--easing-standard), transform var(--anim-fast) var(--easing-standard), visibility 0s 0s;
+    opacity: 1;
+    visibility: visible;
+}
+
+.chat-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) scale(0.95);
+    transition: opacity var(--anim-fast) var(--easing-standard), transform var(--anim-fast) var(--easing-standard), visibility 0s var(--anim-fast);
+}
+
+/* --- Invisible Chat Window (Structural) --- */
+.chat-window {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+/* --- Centered Conversation Area --- */
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    max-width: var(--chat-max-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 0;
+    pointer-events: auto;
+    /* Smooth scroll anchoring - prevents jumpy scroll when content loads */
+    overflow-anchor: auto;
+}
+
+/* --- Context Active Indicator --- */
+.context-active-indicator {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.4rem 0.8rem;
+    background-color: var(--accent-muted);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: var(--font-medium);
+    color: var(--accent-color);
+    margin-right: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.context-active-indicator.visible {
+    display: flex;
+}
+
+.context-active-indicator:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.context-active-indicator i {
+    font-size: 0.8rem;
+}
+
+.context-badge {
+    display: none;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 0.7rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.context-badge.visible {
+    display: flex;
+}

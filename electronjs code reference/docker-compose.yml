@@ -1,0 +1,55 @@
+# docker-compose.yml (Final Recommended Version)
+
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:7.2-alpine"
+    container_name: aios-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aios-web
+    ports:
+      - "8765:8765"
+    env_file:
+      - ./python-backend/.env
+    volumes:
+      - ./python-backend:/app
+    depends_on:
+      - redis
+      - sandbox-manager
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aios-flower
+    # The -A flag now targets the centralized Celery app defined in `celery_app.py`.
+    command: ["celery", "-A", "celery_app:celery_app", "flower"]
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./python-backend/.env
+    depends_on:
+      - redis
+      - web
+
+  sandbox-manager:
+    build:
+      context: .
+      dockerfile: sandbox_manager/Dockerfile
+    container_name: aios-sandbox-manager
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  redis_data:

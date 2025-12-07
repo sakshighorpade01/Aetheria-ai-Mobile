@@ -1,0 +1,22 @@
+# Gradle Properties Example
+# Copy this file to gradle.properties and fill in your actual values
+# NEVER commit gradle.properties to version control!
+
+# Android SDK location (optional, Android Studio usually sets this)
+# sdk.dir=/path/to/Android/sdk
+
+# Signing configuration for release builds
+# Generate keystore with: keytool -genkey -v -keystore aetheria-release-key.keystore -alias aetheria-key -keyalg RSA -keysize 2048 -validity 10000
+RELEASE_STORE_FILE=../aetheria-release-key.keystore
+RELEASE_STORE_PASSWORD=your_keystore_password_here
+RELEASE_KEY_ALIAS=aetheria-key
+RELEASE_KEY_PASSWORD=your_key_password_here
+
+# Gradle daemon settings (optional optimizations)
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+org.gradle.parallel=true
+org.gradle.caching=true
+
+# AndroidX migration flags
+android.useAndroidX=true
+android.enableJetifier=true

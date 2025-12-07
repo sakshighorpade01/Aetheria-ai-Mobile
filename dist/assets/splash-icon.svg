@@ -1,0 +1,105 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121622" />
+      <stop offset="45%" stop-color="#0f1116" />
+      <stop offset="100%" stop-color="#07080d" />
+    </linearGradient>
+
+    <!-- Radial highlight behind core logo -->
+    <radialGradient id="coreGlow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="rgba(144, 157, 255, 0.45)" />
+      <stop offset="55%" stop-color="rgba(144, 157, 255, 0.12)" />
+      <stop offset="100%" stop-color="rgba(144, 157, 255, 0)" />
+    </radialGradient>
+
+    <!-- Peripheral ring glow -->
+    <radialGradient id="ringGlow" cx="50%" cy="40%" r="70%">
+      <stop offset="60%" stop-color="rgba(76, 147, 255, 0)" />
+      <stop offset="93%" stop-color="rgba(76, 147, 255, 0.22)" />
+      <stop offset="100%" stop-color="rgba(76, 147, 255, 0)" />
+    </radialGradient>
+
+    <!-- Accent gradient for logo mark -->
+    <linearGradient id="markGradient" x1="35%" y1="0%" x2="65%" y2="100%">
+      <stop offset="0%" stop-color="#dfe3ff" />
+      <stop offset="50%" stop-color="#9aa9ff" />
+      <stop offset="100%" stop-color="#6f7bff" />
+    </linearGradient>
+
+    <!-- Network line glow -->
+    <linearGradient id="lineGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(122, 139, 255, 0)" />
+      <stop offset="50%" stop-color="rgba(122, 139, 255, 0.45)" />
+      <stop offset="100%" stop-color="rgba(122, 139, 255, 0)" />
+    </linearGradient>
+  </defs>
+
+  <!-- Gradient background -->
+  <rect width="512" height="512" fill="url(#bgGradient)" />
+
+  <!-- Soft vignette -->
+  <rect width="512" height="512" fill="rgba(5, 6, 9, 0.35)" />
+
+  <!-- Radial glow core -->
+  <circle cx="256" cy="210" r="200" fill="url(#coreGlow)" />
+  <circle cx="256" cy="210" r="220" fill="url(#ringGlow)" />
+
+  <!-- Concentric orbit lines -->
+  <g opacity="0.38" stroke="url(#lineGlow)" stroke-width="1.5" fill="none">
+    <path d="M84 220c52-96 208-148 344-70" />
+    <path d="M100 250c44-118 230-182 330-84" opacity="0.7" />
+    <path d="M116 190c60-78 214-124 310-40" opacity="0.5" />
+  </g>
+
+  <!-- Particle nodes -->
+  <g fill="#9aa9ff" opacity="0.55">
+    <circle cx="138" cy="244" r="4" />
+    <circle cx="186" cy="196" r="3" />
+    <circle cx="208" cy="264" r="3.5" />
+    <circle cx="274" cy="168" r="4" />
+    <circle cx="324" cy="208" r="3" />
+    <circle cx="356" cy="256" r="4" />
+    <circle cx="298" cy="290" r="3" />
+    <circle cx="228" cy="154" r="2.5" />
+    <circle cx="168" cy="296" r="2.5" />
+  </g>
+
+  <!-- Logo container -->
+  <g transform="translate(156 150)">
+    <rect x="54" y="34" width="192" height="192" rx="52" fill="rgba(12, 14, 21, 0.75)" stroke="rgba(158, 172, 255, 0.35)" stroke-width="2" />
+    <rect x="74" y="54" width="152" height="152" rx="44" fill="rgba(22, 26, 40, 0.95)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" />
+
+    <!-- Triangular mark -->
+    <path d="M150 84 L202 188 H98 Z" fill="url(#markGradient)" />
+    <path d="M150 128 L170 168 H130 Z" fill="#0f1116" opacity="0.75" />
+
+    <!-- Inner pulse highlight -->
+    <circle cx="150" cy="152" r="54" fill="rgba(160, 174, 255, 0.07)" />
+    <circle cx="150" cy="152" r="34" fill="rgba(160, 174, 255, 0.06)" />
+  </g>
+
+  <!-- Bottom separator line -->
+  <path d="M140 372h232" stroke="rgba(138, 152, 255, 0.25)" stroke-width="1" stroke-linecap="round" />
+
+  <!-- Branding text -->
+  <text x="256" y="404"
+        font-family="'Segoe UI', 'Roboto', 'SF Pro Display', sans-serif"
+        font-size="18"
+        font-weight="600"
+        letter-spacing="4"
+        fill="#a6b0ff"
+        text-anchor="middle">
+    AETHERIA AI
+  </text>
+  <text x="256" y="432"
+        font-family="'Segoe UI', 'Roboto', 'SF Pro Display', sans-serif"
+        font-size="12"
+        font-weight="500"
+        letter-spacing="6"
+        fill="rgba(166, 176, 255, 0.65)"
+        text-anchor="middle">
+    INTELLIGENT OS
+  </text>
+</svg>

@@ -452,7 +452,7 @@ def get_llm_os(
     if coding_assistant:
         dev_team = Agent(
             name="dev_team",
-            model=OpenRouter(id="x-ai/grok-4.1-fast:free"),
+            model=OpenRouter(id="qwen/qwen3-coder:free"),
             role="does Any coding related task",
             tools=[SandboxTools(session_info=session_info), SupabaseTools(user_id=user_id), VercelTools(user_id=user_id)] if session_info else [],
             instructions=[

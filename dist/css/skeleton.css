@@ -1,0 +1,514 @@
+/* =================================================================
+ * SKELETON LOADING SCREENS
+ * ================================================================= */
+
+/*
+ * This module provides skeleton loading states for all major components.
+ * Skeletons improve perceived performance by showing content placeholders
+ * during loading states.
+ * 
+ * Dependencies: design-system.css
+ * Used by: All components with loading states
+ */
+
+/* --- Base Skeleton Styles --- */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--skeleton-base) 0%,
+        var(--skeleton-highlight) 50%,
+        var(--skeleton-base) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Light mode skeleton colors */
+:root {
+    --skeleton-base: rgba(0, 0, 0, 0.06);
+    --skeleton-highlight: rgba(0, 0, 0, 0.12);
+}
+
+/* Dark mode skeleton colors */
+.dark-mode {
+    --skeleton-base: rgba(255, 255, 255, 0.06);
+    --skeleton-highlight: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+        background: var(--skeleton-base);
+    }
+}
+
+/* --- Skeleton Variants --- */
+.skeleton-text {
+    height: 1em;
+    margin-bottom: 0.5em;
+    border-radius: 4px;
+}
+
+.skeleton-text:last-child {
+    margin-bottom: 0;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+.skeleton-text.medium {
+    width: 80%;
+}
+
+.skeleton-text.long {
+    width: 100%;
+}
+
+.skeleton-heading {
+    height: 1.5em;
+    width: 40%;
+    margin-bottom: 1em;
+    border-radius: 6px;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-avatar.large {
+    width: 60px;
+    height: 60px;
+}
+
+.skeleton-avatar.small {
+    width: 32px;
+    height: 32px;
+}
+
+.skeleton-button {
+    height: 40px;
+    width: 100px;
+    border-radius: 8px;
+}
+
+.skeleton-input {
+    height: 52px;
+    border-radius: 26px;
+}
+
+.skeleton-card {
+    height: 120px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.skeleton-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+/* --- Message Skeleton --- */
+.skeleton-message {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.skeleton-message-user {
+    align-items: flex-end;
+}
+
+.skeleton-message-bot {
+    align-items: flex-start;
+}
+
+.skeleton-message-bubble {
+    max-width: 85%;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--skeleton-base);
+}
+
+.skeleton-message-user .skeleton-message-bubble {
+    background: linear-gradient(
+        90deg,
+        rgba(31, 41, 55, 0.1) 0%,
+        rgba(31, 41, 55, 0.2) 50%,
+        rgba(31, 41, 55, 0.1) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.dark-mode .skeleton-message-user .skeleton-message-bubble {
+    background: linear-gradient(
+        90deg,
+        rgba(229, 231, 235, 0.1) 0%,
+        rgba(229, 231, 235, 0.2) 50%,
+        rgba(229, 231, 235, 0.1) 100%
+    );
+    background-size: 200% 100%;
+}
+
+.skeleton-message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* --- Chat Loading Skeleton --- */
+.skeleton-chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    height: 100%;
+}
+
+/* --- Profile Dropdown Skeleton --- */
+.skeleton-profile-dropdown {
+    padding: 0.875rem;
+}
+
+.skeleton-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton-profile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.skeleton-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.625rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+}
+
+.skeleton-menu-item:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Context Window Skeleton --- */
+.skeleton-context-window {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+    padding: 10px;
+}
+
+.skeleton-session-item {
+    height: 60px;
+    border-radius: 8px;
+}
+
+/* --- Settings Panel Skeleton --- */
+.skeleton-settings-panel {
+    padding: 1rem 1.25rem;
+}
+
+.skeleton-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.skeleton-label {
+    height: 1em;
+    width: 30%;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeleton-input-field {
+    height: 42px;
+    border-radius: 10px;
+}
+
+/* --- Task List Skeleton --- */
+.skeleton-task-list {
+    padding: 1rem;
+}
+
+.skeleton-task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    background: var(--skeleton-base);
+}
+
+.skeleton-task-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.skeleton-task-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* --- File Preview Skeleton --- */
+.skeleton-file-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--skeleton-base);
+    margin-bottom: 8px;
+}
+
+.skeleton-file-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.skeleton-file-name {
+    flex: 1;
+    height: 1em;
+    border-radius: 4px;
+}
+
+/* --- Notification Skeleton --- */
+.skeleton-notification {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 50px;
+    min-width: 200px;
+    max-width: 360px;
+    background: var(--skeleton-base);
+}
+
+.skeleton-notification-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}
+
+.skeleton-notification-text {
+    flex: 1;
+    height: 1em;
+    border-radius: 4px;
+}
+
+/* --- Code Block Skeleton --- */
+.skeleton-code-block {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.skeleton-code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--skeleton-base);
+}
+
+.skeleton-code-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.skeleton-code-content {
+    height: 120px;
+    background: var(--skeleton-highlight);
+}
+
+/* --- Mermaid Diagram Skeleton --- */
+.skeleton-mermaid-block {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.skeleton-mermaid-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--skeleton-base);
+}
+
+.skeleton-mermaid-content {
+    height: 200px;
+    background: var(--skeleton-highlight);
+}
+
+/* --- Artifact Skeleton --- */
+.skeleton-artifact {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.skeleton-artifact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--skeleton-base);
+}
+
+.skeleton-artifact-content {
+    height: 300px;
+    background: var(--skeleton-highlight);
+}
+
+/* --- Welcome Screen Skeleton --- */
+.skeleton-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.skeleton-welcome-heading {
+    height: 3rem;
+    width: 60%;
+    border-radius: 8px;
+}
+
+.skeleton-welcome-subheading {
+    height: 1.5rem;
+    width: 40%;
+    border-radius: 6px;
+}
+
+/* --- Container Classes --- */
+.skeleton-container {
+    position: relative;
+    min-height: 100px;
+}
+
+.skeleton-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-color);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hide skeleton when content is loaded */
+.skeleton-container.loaded .skeleton-overlay {
+    display: none;
+}
+
+/* --- Utility Classes --- */
+.skeleton-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.skeleton-fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .skeleton-message-bubble {
+        max-width: 95%;
+    }
+    
+    .skeleton-context-window {
+        grid-template-columns: 1fr;
+    }
+    
+    .skeleton-welcome-heading {
+        width: 80%;
+    }
+    
+    .skeleton-welcome-subheading {
+        width: 60%;
+    }
+}
+
+/* --- Accessibility --- */
+.skeleton[aria-busy="true"] {
+    pointer-events: none;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Screen reader only text */
+.skeleton-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

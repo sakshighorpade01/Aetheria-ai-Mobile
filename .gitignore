@@ -1,1 +1,5 @@
+.env
+python-backend/.env
+electronjs code reference/python-backend/.env
 node_modules
+__pycache__

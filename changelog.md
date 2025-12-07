@@ -1,107 +1,215 @@
-# Migration Changelog
+# Changelog
 
-> Ongoing record of the PWA migration effort. Each entry captures the work completed, open follow‑ups, and key references for deeper context.
+All notable changes to AI-OS will be documented in this file.
 
-## 2025-11-01
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### ✅ Completed
-- **Session preloading fix**
-  - Fixed missing `contextHandler.preloadSessions()` call in `chat.js` initialization that prevented background loading of previous chat sessions.
-  - Sessions now load automatically 2.5 seconds after app start, making context window display instant when user opens it.
-  - Resolves issue where previous chat sessions weren't appearing in the context window.
-- **Session data structure fix (Critical)**
-  - Fixed schema mismatch between backend and frontend session data structures.
-  - Backend returns `session.runs` but frontend expected `session.memory.runs`, causing crashes when viewing session details.
-  - Updated `context-handler.js` to support both formats: `session.runs` (actual Supabase schema) and `session.memory.runs` (legacy format).
-  - Now properly extracts user/assistant messages from `run.input.input_content` and `run.content` fields.
-  - Filters top-level runs only (excludes child runs with `parent_run_id`).
-  - Session list now shows actual message counts instead of "0 messages".
-  - Session titles now extracted from first user message in runs.
-- **Context session transmission fix (Critical - Data Loss)**
-  - **Root Cause**: PWA was sending `payload.context = JSON.stringify(selectedSessions)` (full session objects)
-  - **Backend Expects**: `payload.context_session_ids` (array of session IDs)
-  - **Impact**: Backend couldn't process context, causing data loss in multi-turn conversations
-  - **Fix**: Changed to `payload.context_session_ids = selectedSessions.map(s => s.session_id)`
-  - Backend now properly queries Supabase for historical context using session IDs
-- **Session selection format fix (Critical)**
-  - Changed `getSelectedSessionsData()` to return full session objects instead of interactions
-  - Matches Electron implementation where backend needs `session_id` to query full data
-  - Fixes context not being included in agent requests
-- **Session chips UI implementation**
-  - Added `renderSessionChips()` to display selected sessions as chips in context files bar
-  - Added `createSessionChip()` to create individual session chips with remove buttons
-  - Added `removeSelectedSession()` to handle chip removal
-  - Added `updateContextFilesBarVisibility()` to show/hide context bar based on content
-  - Session chips now show first 25 characters of first user message
-  - Integrated with "Use Selected" button and `clearSelectedContext()`
-- **Cache invalidation implementation**
-  - Added `invalidateCache()` method to context handler
-  - Called on new conversation start to ensure fresh session data
-  - Prevents stale session list when user creates new conversations
-  - Matches Electron behavior for cache management
+---
 
-### ⏭️ Next Up
-1. **Test session loading**
-   - Verify sessions load in background and appear in context window
-   - Test session selection and replay functionality
-2. **Continue migration implementation**
-   - Proceed with remaining Phase 3 tasks from MIGRATION_PLAN.md
-   - Focus on inline artifact rendering and enhanced message formatting
+## [Unreleased]
 
-## 2025-10-31
+### Added - Hybrid File Persistence System
 
-### ✅ Completed
-- **Local backend integration (Task 3.7 continuation)**
-  - Enabled Flask CORS for `/api/*` so the PWA can hit the Docker backend from `localhost`/`192.168.*` origins without browser rejections.
-  - Realigned the PWA `chatConfig` tool flags (`enable_browser`, `enable_supabase`, etc.) with Electron’s payload to satisfy `get_llm_os()` parameters.
-  - Smoke-tested socket + REST flows against `http://localhost:8765` with Supabase-authenticated requests.
-- **Section 1 groundwork (previous session)**
-  - Auth/back-end dependency audit captured in `task.md` Section 1.1.
-  - Feature parity notes consolidated in `FEATURE_COMPARISON.md` for high-level tracking.
-- **Baseline documentation**
-  - Created `baseline_checklist.md` to log environment, UI, console/network state before large refactors.
-- **CSS foundations port (Section 2.1)**
-  - Copied modular chat styles from `AI-OS/css/` into `css/`: `chat-variables.css`, `chat-layout.css`, `chat-messages.css`, `chat-context.css`, `chat-input.css`, `notifications.css`, `welcome-message.css`.
-  - Updated `index.html` to load modular CSS before existing consolidated sheets for predictable cascade.
-  - Added missing `id="floating-input-container"` hook so new JS utilities can locate the element reliably.
-- **Shared JS utilities (start of Section 2.2)**
-  - Reimplemented `ConversationStateManager` as a browser-friendly module in `js/conversation-state-manager.js`.
-  - Began wiring plan for `FloatingWindowManager`, `NotificationService`, `WelcomeDisplay`, and `UserProfileService` (sourced from Electron) with mobile-safe shims.
-- **Utility integrations (Section 2.2 / 7.1 / 7.3)**
-  - Ported `floating-window-manager.js`, `notification-service.js`, `welcome-display.js`, and `user-profile-service.js` into the PWA build with Supabase/localStorage fallbacks.
-  - Updated `chat.js` to initialize the new services, dispatch `messageAdded` / `conversationCleared` events, and register floating windows for context/tasks panes.
-  - Swapped `context-handler.js` and `to-do-list.js` toast usage over to the shared `NotificationService` and registered their floating windows for welcome-screen awareness.
-- **Chat controller parity (Section 3.2 & 3.4)**
-  - Ported the Electron `ShuffleMenuController`, wiring memory/tasks toggles and DeepSearch/AI-OS agent selection to the new chat configuration store.
-  - Synced bottom navigation, tasks modal, and shuffle menu states via shared events and API (`setTasksVisibility`, `setMemoryEnabled`, `setAgentType`).
-  - Added DOM-backed `extractConversationHistory()` and enhanced `handleSendMessage()` to retry with prior messages after socket errors, mirroring desktop error recovery.
-- **Conversation lifecycle & connection handling (Section 3.3 & 3.4.c)**
-  - Implemented `startNewConversation()` parity: clears UI, resets context/file caches, re-centers the input, and emits lifecycle events for welcome display + conversation state manager.
-  - Introduced socket connection state tracking with notification feedback, reconnection messaging, and guarded sends when offline.
-- **Chat rendering + ancillary integrations (Section 3.5–3.7)**
-  - Added `renderTurnFromEvents()` for historical turn replay and exposed it globally for context handler reuse.
-  - Initialized `FloatingWindowManager`, `WelcomeDisplay`, `ConversationStateManager`, and `UnifiedPreviewHandler` within the PWA chat bootstrap; registered context/tasks/AIOS floating panes.
-  - Wired backend `status`/sandbox events into the UI with styled log output; deferred browser automation execution on mobile (surface instructions only).
-- **Backend architecture survey (2025-10-31 PM)**
-  - Documented Flask/Socket.IO + Redis + Supabase stack in `CODEBASE_ANALYSIS.md`, highlighting session management, agent streaming, and OAuth flows.
-  - Updated `task.md`, `FEATURE_COMPARISON.md`, and `baseline_checklist.md` to reflect Redis-backed session handling, Supabase JWT refresh requirements, and backend status expectations.
-- **Structural prep**
-  - Ensured welcome container markup exists in `index.html` for `WelcomeDisplay` integration.
-  - Documented PWA environment differences (lack of native notifications) in conversation.
+#### 🎯 Overview
+Implemented a comprehensive hybrid file persistence architecture that provides permanent local storage for all file attachments while maintaining cloud processing capabilities. This ensures user data ownership, long-term durability, and the ability to access historical attachments across sessions.
 
-### ⏭️ Next Up
-1. **Chat controller parity**
-   - Integrate shuffle menu + task/memory toggles, and finish refactoring `handleSendMessage()` error recovery with conversation history support.
-   - Wire new events into downstream modules (context replay, welcome display, notifications) for full parity with Electron.
-2. **Notification strategy (later phase)**
-   - Decide between Web Notifications API + SW push or keeping the in-app toast system—per user request, defer until migrations complete.
-3. **Documentation & tracking**
-   - Keep `task.md` Section 2/7 progress markers in sync with implementation milestones.
-   - Capture baseline before/after screenshots in `/assets/baseline/` when ready for regression testing.
+#### 🏗️ Architecture
+- **Decoupled Metadata Model**: Frontend manages file lifecycle, backend remains stateless
+- **Dual-Storage Strategy**: Local filesystem (permanent) + Supabase Storage (temporary processing)
+- **Database Layer**: New `attachment` table with Row Level Security (RLS) policies
 
-### 📚 References
-- `task.md` – authoritative migration plan with subtask details.
-- `baseline_checklist.md` – environment & behaviour logging template.
-- `FEATURE_COMPARISON.md` – Electron vs PWA feature parity matrix.
-- `AI-OS/css/` & `AI-OS/js/` – source files for parity checks during ports.
-- `index.html`, `chat.html`, `css/chat-*.css`, `js/chat.js` – current PWA integration points.
+#### ✨ Features
+
+##### 1. Local File Archive Service (`js/preload.js`)
+- **`saveFile(file)`**: Saves files to `userData/attachments` with unique UUID directories
+- **`resolvePath(relativePath)`**: Converts relative paths to absolute system paths
+- **`readFile(relativePath)`**: Reads file contents from local archive
+- **`fileExists(relativePath)`**: Checks file availability in local storage
+- **`openFile(relativePath)`**: Opens files with system default application
+
+##### 2. Dual-Storage File Handling (`js/add-files.js`)
+- All files now save to local archive first (permanent copy)
+- Media files upload to Supabase for AI processing (temporary)
+- Text files read content locally for immediate use
+- Each file receives unique `file_id` and `relativePath` for tracking
+- Status indicators: `archiving` → `uploading`/`reading` → `completed`
+
+##### 3. Smart Metadata Persistence (`js/chat.js`)
+- Metadata stored temporarily during message sending
+- **Persists to database only after successful AI response completion**
+- Handles edge cases:
+  - ✅ User clicks "New Chat" before AI responds
+  - ✅ Session terminated for any reason
+  - ✅ Window closed or app quit
+  - ✅ Page refresh or navigation
+- `persistAttachmentMetadata()` function with error handling
+- Non-blocking operation (won't prevent message sending on failure)
+
+##### 4. Enhanced Session Management (`js/auth-service.js`)
+- **`fetchSessionTitles()`**: Now checks for attachments and adds `has_attachments` flag
+- **`fetchSessionAttachments(sessionId)`**: Retrieves attachment metadata for specific session
+- **`insertAttachments(records)`**: Secure method to persist attachment metadata via RLS
+
+##### 5. Context Re-use System (`js/context-handler.js`)
+- **Automatic File Re-attachment**: When selecting previous sessions as context
+  1. Fetches attachment metadata from database
+  2. Checks local file availability
+  3. Reads files from local storage
+  4. Creates File objects from buffer data
+  5. Programmatically triggers attachment flow
+  6. Re-uploads to Supabase for new AI run
+  7. Saves new metadata for current session
+- **`reattachSessionFiles(sessions)`**: Orchestrates the re-attachment process
+- **`programmaticallyAttachFile(file)`**: Simulates user file selection
+- Visual feedback with success notifications
+
+##### 6. Rich UI Enhancements (`css/attachments.css`, `js/context-handler.js`)
+- **Session List**: Paperclip icons (📎) indicate sessions with attachments
+- **Session Details View**:
+  - Dedicated attachments section with file count
+  - File cards showing name, size, and status
+  - Status indicators:
+    - ✅ Green checkmark: Available locally
+    - ⚠️ Warning icon: File not found
+  - "Open" buttons to launch files with system default app
+- **Responsive Design**: Mobile-friendly layout with animations
+- **Dark Mode Support**: Consistent theming across all attachment UI
+
+##### 7. Database Schema (`supabase_migration_attachment_table.sql`)
+```sql
+CREATE TABLE attachment (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    session_id TEXT NOT NULL,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    metadata JSONB NOT NULL
+);
+```
+
+**Metadata Structure**:
+```json
+{
+  "file_id": "uuid-v4",
+  "name": "document.pdf",
+  "type": "application/pdf",
+  "size": 1024000,
+  "relativePath": "attachments/uuid/document.pdf",
+  "supabasePath": "user-id/uuid/document.pdf",
+  "isMedia": true,
+  "isText": false
+}
+```
+
+**Security**:
+- Row Level Security (RLS) enabled
+- Policies ensure users can only access their own attachments
+- SELECT, INSERT, UPDATE, DELETE policies based on `auth.uid() = user_id`
+
+**Indexes**:
+- `idx_attachment_session_id`: Fast session-based queries
+- `idx_attachment_user_id`: User-specific filtering
+- `idx_attachment_created_at`: Chronological sorting
+
+#### 🔧 Technical Implementation
+
+##### Flow Diagram
+```
+User Attaches File
+    ↓
+[1] Save to Local Archive (userData/attachments/uuid/)
+    ↓
+[2] Upload to Supabase Storage (for AI processing)
+    ↓
+[3] Store metadata temporarily in memory
+    ↓
+User Sends Message → AI Processes → Response Completes
+    ↓
+[4] Persist metadata to attachment table
+    ↓
+✅ File permanently archived locally
+✅ Metadata saved in database
+✅ Available for future context re-use
+```
+
+##### Key Design Decisions
+1. **No Backend Modifications**: Python agent logic remains unchanged
+2. **Frontend-Managed Metadata**: Direct Supabase client calls with RLS security
+3. **Deferred Cleanup**: No automated orphan detection (future enhancement)
+4. **Accepted Trade-off**: Re-upload files when re-using context (simplicity over efficiency)
+5. **Non-Blocking Persistence**: Metadata save failures don't prevent messaging
+
+#### 📊 Benefits
+
+**For Users**:
+- 🏠 **Data Ownership**: Files stored on your machine, not just in cloud
+- 🔒 **Privacy**: Local-first approach with optional cloud processing
+- 📂 **Permanent Access**: View and open attachments from any past conversation
+- 🔄 **Context Continuity**: Automatically re-attach files when referencing old sessions
+- 💾 **Redundancy**: Dual storage provides backup protection
+
+**For Developers**:
+- 🧩 **Clean Architecture**: Separation of concerns (frontend = archive, backend = processor)
+- 🔐 **Secure by Default**: RLS policies prevent unauthorized access
+- 🚀 **Scalable**: JSONB metadata allows schema evolution without migrations
+- 🛡️ **Resilient**: Handles edge cases and failures gracefully
+- 📝 **Maintainable**: Well-documented with clear phase separation
+
+#### 🐛 Bug Fixes
+- Fixed Supabase client exposure across context bridge
+- Added notification service fallback for error handling
+- Resolved race conditions in file processing status updates
+
+#### 🔄 Modified Files
+- `js/preload.js` - Added file archive service methods
+- `js/add-files.js` - Implemented dual-storage file handling
+- `js/chat.js` - Added metadata persistence with edge case handling
+- `js/auth-service.js` - Extended with attachment-related methods
+- `js/context-handler.js` - Implemented context re-use and file re-attachment
+- `css/attachments.css` - New stylesheet for attachment UI components
+- `index.html` - Linked attachments.css
+
+#### 📦 New Files
+- `css/attachments.css` - Comprehensive styling for attachment system
+- `supabase_migration_attachment_table.sql` - Database schema and RLS policies
+
+#### 🔮 Future Enhancements
+- Orphaned metadata cleanup when sessions are deleted
+- Cross-device file sync via cloud storage
+- Attachment search and filtering
+- Bulk file operations (download all, delete all)
+- File versioning and conflict resolution
+- Attachment size analytics and storage management
+
+---
+
+## [1.1.4] - Previous Release
+
+### Features
+- Core chat functionality with AI agent integration
+- Session management and history
+- File attachment support (cloud-only)
+- Context window for previous conversations
+- Dark mode support
+- Electron desktop application
+
+---
+
+## Contributing
+
+When adding entries to this changelog:
+1. Group changes by type: Added, Changed, Deprecated, Removed, Fixed, Security
+2. Include technical details for developers
+3. Explain user-facing benefits
+4. Reference issue/PR numbers when applicable
+5. Keep entries concise but comprehensive
+
+---
+
+**Legend**:
+- 🎯 Major Feature
+- ✨ Enhancement
+- 🐛 Bug Fix
+- 🔒 Security
+- 📝 Documentation
+- 🔧 Technical Change

@@ -1,0 +1,213 @@
+<div id="chat-container" class="chat-container hidden">
+    <div class="chat-window">
+        <div class="chat-messages" id="chat-messages">
+        </div>
+        <div class="context-active-indicator">
+            <i class="fas fa-layer-group"></i>
+            <span class="context-label">Context</span>
+            <span class="context-badge"></span>
+        </div>
+        <!-- The .chat-tools div has been removed from here -->
+    </div>
+</div>
+
+<!-- MODIFIED: Restructured floating input container -->
+<div id="floating-input-container" class="floating-input-container hidden">
+    <!-- NEW: Horizontal context and files bar -->
+    <div id="context-files-bar" class="context-files-bar hidden">
+        <div class="context-files-content">
+            <!-- Session and file chips will be dynamically added here -->
+        </div>
+    </div>
+    
+    <!-- The textarea is now the first and only direct child at the top -->
+    <textarea 
+        id="floating-input" 
+        class="floating-input" 
+        placeholder="Ask anything"
+        rows="1"
+    ></textarea>
+
+    <!-- NEW: A dedicated toolbar for all buttons -->
+    <div class="input-toolbar">
+        <div class="toolbar-left">
+            <button class="add-btn">
+                <i class="fas fa-plus"></i>
+            </button>
+            <input type="file" id="file-input" multiple />
+            <button id="attach-file-btn" class="attach-btn">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <!-- NEW: Shuffle button with dropdown menu -->
+            <div class="shuffle-btn tool-btn" data-tool="shuffle" role="button" tabindex="0" aria-label="Open shuffle menu" aria-expanded="false" aria-haspopup="true">
+                <i class="fas fa-random" aria-hidden="true"></i>
+                <div class="shuffle-menu" role="menu" aria-label="Shuffle menu options">
+                    <div class="shuffle-item" data-action="memory" role="menuitem" tabindex="-1" aria-label="Toggle memory">
+                        <i class="fa-solid fa-brain" aria-hidden="true"></i>
+                        <span>Memory</span>
+                    </div>
+                    <div class="shuffle-item" data-action="tools" role="menuitem" tabindex="-1" aria-label="Open tools submenu" aria-haspopup="true">
+                        <i class="fas fa-wrench" aria-hidden="true"></i>
+                        <span>Tools</span>
+                        <i class="fas fa-chevron-right submenu-indicator" aria-hidden="true"></i>
+                        <!-- Tools submenu will be dynamically positioned -->
+                        <div class="tools-menu" role="menu" aria-label="Tools options">
+                            <div class="tool-item" role="menuitem">
+                                <input type="checkbox" id="ai_os" aria-describedby="ai_os_desc" />
+                                <label for="ai_os">
+                                    <i class="fa-solid fa-atom" aria-hidden="true"></i>
+                                    AI-OS
+                                </label>
+                                <span id="ai_os_desc" class="sr-only">Enable all AI-OS tools</span>
+                            </div>
+                            <div class="tool-item" role="menuitem">
+                                <input type="checkbox" id="deep_search" aria-describedby="deep_search_desc" />
+                                <label for="deep_search">
+                                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                    DeepSearch
+                                </label>
+                                <span id="deep_search_desc" class="sr-only">Enable deep search functionality</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="shuffle-item" data-action="tasks" role="menuitem" tabindex="-1" aria-label="Toggle tasks">
+                        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                        <span>Tasks</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Context button moved to left side as requested -->
+            <button class="tool-btn" data-tool="context">
+                <i class="fa-solid fa-comments"></i>
+            </button>
+        </div>
+        <div class="toolbar-center">
+            <!-- Empty center section -->
+        </div>
+        <div class="toolbar-right">
+            <button id="send-message" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- END MODIFICATION -->
+
+
+<div id="context-window" class="context-window hidden">
+    <div class="context-header">
+        <div class="header-left">
+            <h2>Chat Sessions</h2>
+            <button class="sync-context-btn" title="Refresh Sessions">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+        <div class="header-right">
+            <button class="close-context-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="context-content">
+    </div>
+</div>
+
+<div id="selected-context-viewer" class="selected-context-viewer">
+    <div class="context-viewer-header">
+        <h3>Selected Context</h3>
+        <button class="close-viewer-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="context-viewer-tabs">
+        <button class="viewer-tab active" data-tab="context">
+            <i class="fas fa-comments"></i>
+            <span>Sessions</span>
+        </button>
+        <button class="viewer-tab" data-tab="files">
+            <i class="fas fa-paperclip"></i>
+            <span>Files</span>
+        </button>
+    </div>
+    <div class="context-viewer-content">
+        <div class="tab-content active" id="context-tab">
+            <div class="context-preview-content"></div>
+        </div>
+        <div class="tab-content" id="files-tab">
+            <div class="files-preview-content"></div>
+        </div>
+    </div>
+</div>
+
+<template id="session-detail-template">
+    <div class="session-details-view">
+        <div class="session-header">
+            <button class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back
+            </button>
+            <h3></h3>
+        </div>
+        <div class="conversation-history">
+            <div class="conversation-header">
+                <h3>Conversation History</h3>
+            </div>
+            <div class="conversation-messages">
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="session-item-template">
+    <div class="session-item">
+        <div class="session-select">
+            <input type="checkbox" class="session-checkbox" />
+        </div>
+        <div class="session-content">
+            <h3></h3>
+            <div class="session-meta">
+                <div class="meta-item">
+                    <i class="far fa-clock"></i>
+                    <span class="session-date"></span>
+                </div>
+                <div class="meta-item">
+                    <i class="far fa-comments"></i>
+                    <span class="message-count"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="selection-controls-template">
+    <div class="selection-controls">
+        <div class="selection-actions hidden">
+            <span class="selected-count">0 selected</span>
+            <button class="use-selected-btn">Use Selected</button>
+            <button class="clear-selection-btn">Clear</button>
+        </div>
+    </div>
+</template>
+
+<div id="file-preview-sidebar" class="file-preview-sidebar hidden">
+    <div class="file-preview-header">
+        <div class="file-preview-title">
+            Attached Files <span class="file-count">0</span>
+        </div>
+        <button class="close-preview-btn preview-toggle">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="file-preview-content">
+        <!-- File preview items will be dynamically added here -->
+    </div>
+</div>
+
+<script>
+// Initialize conversation state manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.conversationStateManager) {
+        window.conversationStateManager.init();
+    }
+});
+</script>

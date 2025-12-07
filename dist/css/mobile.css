@@ -1,0 +1,699 @@
+/* css/mobile.css (Updated for seamless background and no borders) */
+
+/* --- Base Layout --- */
+body, html {
+    overflow: hidden;
+    height: 100%;
+    background-color: var(--bg-color);
+    font-family: var(--font-sans);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* --- Top Bar (Fixed Header) --- */
+.top-bar {
+    flex-shrink: 0;
+    height: 60px;
+    width: 100%;
+    background-color: var(--elevated-bg);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    border-bottom: none;
+}
+
+.top-bar-action {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.top-bar-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease, color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.top-bar-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+}
+
+/* Profile Photo Styling */
+.profile-photo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.profile-photo.hidden {
+    display: none;
+}
+
+/* Hide default icon when photo is shown */
+.profile-btn:has(.profile-photo:not(.hidden)) #profile-icon-default {
+    display: none;
+}
+
+.top-bar-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    padding: 0.5rem 0;
+    border-radius: 12px;
+    background: var(--window-bg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    z-index: 1500;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item i {
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+/* Light mode - dark icons */
+body:not(.dark-mode) .dropdown-item i {
+    color: #1a1a1a;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
+    background: var(--hover-bg);
+    color: var(--text-color);
+}
+
+/* --- Sidebar Removed - Now Using Profile Dropdown --- */
+/* Legacy sidebar elements hidden */
+#sidebar-container,
+#sidebar-overlay {
+    display: none;
+}
+
+/* --- Main Content (The Scrollable Area) --- */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--elevated-bg);
+    /* Smooth scroll anchoring */
+    overflow-anchor: auto;
+}
+
+/* --- Chat Messages Container --- */
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem 1rem;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+/* --- Bottom UI Area (Fixed Footer) --- */
+#bottom-ui-container {
+    flex-shrink: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: var(--elevated-bg);
+    border-top: none;
+    /* THIS IS THE CRITICAL ANCHOR FOR THE POPUP MENU */
+    position: relative; 
+}
+
+/* --- Floating Input --- */
+.floating-input-wrapper {
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    transition: padding 0.3s ease;
+}
+
+/* Mobile-specific input container styling */
+@media (max-width: 768px) {
+    .floating-input-container {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .floating-input-container.welcome-mode,
+    .floating-input-container.chat-mode,
+    .floating-input-container.centered {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+.input-action-menu {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 8px;
+    min-width: 190px;
+    padding: 0.4rem 0;
+    border-radius: 12px;
+    background: var(--window-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    z-index: 1400;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-action-menu::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 18px;
+    width: 12px;
+    height: 12px;
+    background: var(--window-bg);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.floating-input-container .input-action-menu.hidden {
+    display: none;
+}
+
+.input-field {
+    position: relative;
+}
+
+.input-action-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.9rem;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.input-action-menu-item i {
+    font-size: 0.95rem;
+    width: 18px;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Light mode - dark icons */
+body:not(.dark-mode) .input-action-menu-item i {
+    color: #1a1a1a;
+}
+
+.input-action-menu-item:hover,
+.input-action-menu-item:focus-visible {
+    background: var(--hover-bg);
+}
+
+.input-action-menu-item.active {
+    background: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .floating-input {
+        flex: 1;
+        min-height: 40px;
+        max-height: 200px;
+        border-radius: 20px;
+        background-color: transparent;
+        border: none;
+        padding: 10px 14px;
+        font-size: 1rem;
+        color: var(--text-color);
+        resize: none;
+        line-height: 1.5;
+        transition: none;
+        will-change: height;
+    }
+
+    .floating-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Ensure input field has proper structure on mobile */
+    .input-field {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        padding: 4px;
+        margin: 0;
+        border-radius: 26px;
+        background: transparent;
+        border: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        min-height: 52px;
+        width: 100%;
+        contain: layout;
+    }
+    
+    /* Buttons should be visible and properly sized */
+    .input-action-btn.circular-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        flex-shrink: 0;
+        margin-bottom: 0;
+        overflow: hidden;
+    }
+
+    #attach-file-btn {
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    #attach-file-btn:hover,
+    #attach-file-btn:active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    #send-message {
+        background: #ffffff;
+        color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    #send-message:hover,
+    #send-message:active {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        background: #f5f5f5;
+    }
+
+    #send-message:active {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        background: #e8e8e8;
+    }
+
+    /* Light mode - dark button with white icon */
+    body:not(.dark-mode) #send-message {
+        background: #1a1a1a;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    body:not(.dark-mode) #send-message:hover,
+    body:not(.dark-mode) #send-message:active {
+        background: #2e2e2e;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    body:not(.dark-mode) #send-message:active {
+        background: #3a3a3a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* --- Mobile Attachment Strip --- */
+@media (max-width: 768px) {
+    .attachment-strip {
+        border-radius: 26px 26px 0 0;
+        padding: 12px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .attachment-strip:not(.hidden) {
+        padding: 12px;
+    }
+    
+    .attachment-strip.hidden {
+        padding: 0 12px;
+    }
+    
+    .input-field.with-attachments {
+        border-radius: 0 0 26px 26px;
+    }
+    
+    /* Ensure scroll container works on mobile */
+    .attachments-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+        scroll-behavior: smooth;
+        width: 100%;
+        position: relative;
+    }
+    
+    /* Ensure file chips don't shrink */
+    .file-preview-chip {
+        flex-shrink: 0;
+        min-width: 120px;
+        max-width: 120px;
+    }
+}
+
+/* --- File Previews --- */
+#file-previews-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px 8px 8px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.file-preview-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--elevated-bg);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.file-preview-item .file-name {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-secondary);
+}
+
+.file-preview-item .file-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.file-preview-item .preview-file-btn,
+.file-preview-item .remove-file-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.file-preview-item .preview-file-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+.file-preview-item .remove-file-btn {
+    font-size: 1.5rem;
+}
+
+.file-preview-item .remove-file-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--error-500);
+}
+
+.file-preview-item .file-status {
+    width: 20px;
+    text-align: center;
+}
+
+.file-preview-item .file-status .success-icon {
+    color: var(--success-500);
+}
+
+.file-preview-item .file-status .error-icon {
+    color: var(--error-500);
+}
+
+/* --- Mobile Message Styling Fixes --- */
+@media (max-width: 768px) {
+    /* Increase user message width on mobile */
+    .message {
+        max-width: 95%;
+        word-break: normal !important;
+        overflow-wrap: anywhere;
+    }
+    
+    /* User messages should use more space and not break prematurely */
+    .user-message {
+        max-width: 95%;
+        word-break: normal !important;
+        white-space: pre-wrap;
+        min-width: fit-content;
+    }
+    
+    /* Better word wrapping for user messages */
+    .user-message-text {
+        word-break: normal !important;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+        display: inline-block;
+        max-width: 100%;
+    }
+    
+    /* Ensure user message container uses available space */
+    .user-message-container {
+        max-width: 95%;
+        width: fit-content;
+        min-width: 0;
+    }
+    
+    /* User message wrapper should allow full width */
+    .user-message-wrapper {
+        max-width: 95%;
+        width: fit-content;
+        align-self: flex-end;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+    }
+    
+    /* Context button mobile optimization */
+    .user-message-context-button {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        border-radius: 14px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .user-message-context-button:active {
+        transform: scale(0.94);
+        color: #f59e0b;
+    }
+    
+    .dark-mode .user-message-context-button:active {
+        color: #fbbf24;
+    }
+}
+
+/* --- File Preview Modal --- */
+#file-preview-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.preview-modal-content {
+    position: relative;
+    background-color: var(--elevated-bg);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-xl);
+    padding: 1rem;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.close-preview-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: white;
+    color: black;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#preview-content-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#preview-content-area img,
+#preview-content-area video {
+    max-width: 85vw;
+    max-height: 80vh;
+    border-radius: 0.5rem;
+    object-fit: contain;
+}
+
+#preview-content-area audio {
+    width: 100%;
+    min-width: 300px;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Voice Input Button Mobile Styles --- */
+@media (max-width: 768px) {
+    .voice-input-btn {
+        background-color: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        -webkit-tap-highlight-color: transparent;
+        order: 2; /* Ensure proper order: plus(0), textarea(1), mic(2), send(3) */
+    }
+
+    .voice-input-btn:hover,
+    .voice-input-btn:active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Light mode voice button mobile */
+    body:not(.dark-mode) .voice-input-btn {
+        color: rgba(26, 26, 26, 0.6);
+    }
+
+    body:not(.dark-mode) .voice-input-btn:hover,
+    body:not(.dark-mode) .voice-input-btn:active {
+        background-color: rgba(26, 26, 26, 0.1);
+        color: rgba(26, 26, 26, 0.9);
+    }
+
+    /* Voice button listening state mobile */
+    .voice-input-btn.listening {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+    }
+
+    .voice-input-btn.listening:active {
+        background-color: var(--accent-hover);
+        transform: scale(0.95);
+    }
+
+    /* Waveform mobile optimization */
+    .voice-input-btn.listening .waveform-container {
+        height: 18px;
+        width: 18px;
+        gap: 1.5px;
+    }
+
+    .waveform-bar {
+        width: 2px;
+    }
+    
+    /* Ensure proper flex order for input field elements */
+    .input-field #attach-file-btn {
+        order: 0;
+    }
+    
+    .input-field .floating-input {
+        order: 1;
+    }
+    
+    .input-field #voice-input-btn {
+        order: 2;
+    }
+    
+    .input-field #send-message {
+        order: 3;
+    }
+}
