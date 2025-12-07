@@ -7,7 +7,7 @@ import skeletonLoader from './skeleton-loader.js';
 // Backend URL for OAuth integrations - Production (Render)
 const OAUTH_BACKEND_URL = 'https://aios-web.onrender.com';
 // Backend URL for API calls - Production (Railway)
-const API_BACKEND_URL = 'https://aios-web-production.up.railway.app';
+const API_BACKEND_URL = 'https://aios-web-production-39ef.up.railway.app';
 
 export class AIOS {
     constructor() {

@@ -4,7 +4,7 @@ import { supabase } from './supabase-client.js';
 import { chatModule } from './chat.js';
 
 // Backend URL for file upload API - Production
-const API_PROXY_URL = 'https://aios-web-production.up.railway.app';
+const API_PROXY_URL = 'aios-web-production-39ef.up.railway.app';
 
 class FileAttachmentHandler {
   constructor() {
@@ -122,7 +122,7 @@ class FileAttachmentHandler {
 
       const fileIndex = this.attachedFiles.length;
       const ext = file.name.split('.').pop().toLowerCase();
-      
+
       // Map extensions to backend-accepted MIME types
       const mimeTypeMap = {
         'pdf': 'application/pdf',
@@ -137,7 +137,7 @@ class FileAttachmentHandler {
         'xml': 'text/xml',
         'rtf': 'text/rtf'
       };
-      
+
       // Backend-supported MIME types (excluding text/md as it's not supported)
       const backendSupportedMimeTypes = [
         'application/pdf',
@@ -152,17 +152,17 @@ class FileAttachmentHandler {
         'text/xml',
         'text/rtf'
       ];
-      
+
       // Text file extensions that can be read as text
       const textExtensions = ['txt', 'md', 'csv', 'json', 'xml', 'html', 'css', 'js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'h', 'cs', 'php', 'rb', 'go', 'rs', 'swift', 'kt', 'scala', 'sh', 'bat', 'ps1', 'yaml', 'yml', 'sql', 'rtf'];
       const isText = file.type.startsWith('text/') || textExtensions.includes(ext) || this.supportedFileTypes[ext]?.startsWith('text/');
-      
+
       // Get the correct MIME type for backend
       let backendMimeType = file.type;
       if (mimeTypeMap[ext]) {
         backendMimeType = mimeTypeMap[ext];
       }
-      
+
       // Check if backend supports this MIME type
       const isBackendSupported = backendSupportedMimeTypes.includes(backendMimeType);
 
@@ -317,7 +317,7 @@ class FileAttachmentHandler {
       previewElement.appendChild(thumbnailDiv);
       previewElement.appendChild(nameSpan);
       previewElement.appendChild(removeButton);
-      
+
       // Add indicator for unsupported files
       if (fileObject.isText && !fileObject.isBackendSupported && fileObject.status === 'completed') {
         const indicator = document.createElement('div');

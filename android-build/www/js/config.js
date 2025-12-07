@@ -5,7 +5,7 @@ export const config = {
     // Backend connection settings
     backend: {
         // URL for the Python backend - Production
-        url: 'https://aios-web-production.up.railway.app',
+        url: 'https://aios-web-production-39ef.up.railway.app',
         
         // Maximum number of reconnection attempts
         maxReconnectAttempts: 50,

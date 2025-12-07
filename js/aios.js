@@ -7,7 +7,7 @@ import skeletonLoader from './skeleton-loader.js';
 // Backend URL for OAuth integrations - Production (Render)
 const OAUTH_BACKEND_URL = 'https://aios-web.onrender.com';
 // Backend URL for API calls - Production (Railway)
-const API_BACKEND_URL = 'https://aios-web-production.up.railway.app';
+const API_BACKEND_URL = 'https://aios-web-production-39ef.up.railway.app';
 
 export class AIOS {
     constructor() {
@@ -96,7 +96,7 @@ export class AIOS {
             // Handle OAuth callback message
             if (event.data && event.data.type === 'oauth-callback') {
                 console.log('Received OAuth callback message from popup:', event.data);
-                
+
                 if (event.data.success) {
                     this.showNotification(`Successfully connected to ${event.data.provider}!`, 'success');
                     // Refresh integration status
@@ -666,7 +666,7 @@ export class AIOS {
             // If we're in a popup (opened by window.open), notify the parent and close
             if (window.opener && !window.opener.closed) {
                 console.log('OAuth callback detected in popup, notifying parent window');
-                
+
                 // Send message to parent window
                 window.opener.postMessage({
                     type: 'oauth-callback',
