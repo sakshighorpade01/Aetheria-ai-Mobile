@@ -8,7 +8,7 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
-def generate_and_save_title(conversation_id: str, user_id: str, first_message: str):
+def generate_and_save_title(conversation_id: str, user_id: str, first_message: str, session_created_at: int = None):
     """
     Generates a 3-4 word title for a conversation based on the first message
     and saves it to the session_titles table in Supabase.
@@ -59,7 +59,8 @@ def generate_and_save_title(conversation_id: str, user_id: str, first_message: s
         data = {
             "session_id": session_uuid,
             "user_id": user_id,
-            "tittle": title  # Note: using 'tittle' as per the schema
+            "tittle": title,  # Note: using 'tittle' as per the schema
+            "session_created_at": session_created_at
         }
         
         # Insert into Supabase

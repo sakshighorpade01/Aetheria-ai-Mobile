@@ -103,7 +103,9 @@ def on_send_message(data: str):
             # --- Title Generation for New Sessions ---
             user_msg_content = data.get("message", "")
             if user_msg_content:
-                eventlet.spawn(generate_and_save_title, conversation_id, str(user.id), user_msg_content)
+                import time
+                current_ts = int(time.time())
+                eventlet.spawn(generate_and_save_title, conversation_id, str(user.id), user_msg_content, current_ts)
 
         turn_data = {"user_message": data.get("message", ""), "files": data.get("files", [])}
         context_session_ids = data.get("context_session_ids", [])
