@@ -38,6 +38,7 @@ class ConnectionManager:
             redis_client (RedisClient): An initialized Redis client.
         """
         self.redis_client = redis_client
+        self.http_session = requests.Session()
 
     def create_session(self, conversation_id: str, user_id: str, agent_config: dict) -> dict:
         """
@@ -103,7 +104,7 @@ class ConnectionManager:
             if sandbox_ids:
                 for sandbox_id in sandbox_ids:
                     try:
-                        requests.delete(
+                        self.http_session.delete(
                             f"{config.SANDBOX_API_URL}/sessions/{sandbox_id}", 
                             timeout=10
                         )
@@ -191,7 +192,7 @@ class ConnectionManager:
             return
             
         try:
-            requests.delete(
+            self.http_session.delete(
                 f"{config.SANDBOX_API_URL}/sessions/{sandbox_id}", 
                 timeout=5
             )

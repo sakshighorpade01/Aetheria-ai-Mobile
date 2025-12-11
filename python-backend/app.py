@@ -1,9 +1,12 @@
 # python-backend/app.py
+import eventlet
+eventlet.monkey_patch()
+
 import os
 import logging
 from logging_config import setup_logging
 from factory import create_app
-from extensions import socketio
+from extensions import socketio, celery
 
 # Setup clean logging
 logger = setup_logging()
