@@ -7,12 +7,16 @@ import logging
 from logging_config import setup_logging
 from factory import create_app
 from extensions import socketio, celery
+from assistant import warmup_backend
 
 # Setup clean logging
 logger = setup_logging()
 
 # Create the application instance using the factory
 app = create_app()
+
+# Initialize shared resources
+warmup_backend()
 
 # This block is for local development and debugging.
 if __name__ == "__main__":
