@@ -69,61 +69,18 @@ def get_llm_os(
     """
     direct_tools: List[Union[Toolkit, callable]] = []
 
-# --- Singleton for PostgresDb ---
-_db_instance: Optional[PostgresDb] = None
+    db_url_full = os.getenv("DATABASE_URL")
+    if not db_url_full:
+        raise ValueError("DATABASE_URL environment variable is not set.")
+    db_url_sqlalchemy = db_url_full.replace("postgresql://", "postgresql+psycopg2://")
 
-def _get_db_instance() -> PostgresDb:
-    global _db_instance
-    if _db_instance is None:
-        db_url_full = os.getenv("DATABASE_URL")
-        if not db_url_full:
-            raise ValueError("DATABASE_URL environment variable is not set.")
-        db_url_sqlalchemy = db_url_full.replace("postgresql://", "postgresql+psycopg2://")
-        
-        # This PostgresDb object is now the single source of truth for persistence.
-        # We reuse the instance to maintain the connection pool.
-        _db_instance = PostgresDb(
-            db_url=db_url_sqlalchemy,
-            db_schema="public"
-        )
-    return _db_instance  
+    # This PostgresDb object is now the single source of truth for persistence.
+    # The Team will use it automatically to save runs and memories to Supabase.
+    db = PostgresDb(
+        db_url=db_url_sqlalchemy,
+        db_schema="public"
 
-def warmup_backend():
-    """
-    Initializes shared resources (like the DB connection) to reduce latency
-    on the first request.
-    """
-    try:
-        _get_db_instance()
-        logger.info("Backend warmed up: DB connection initialized.")
-    except Exception as e:
-        logger.warning(f"Backend warmup failed: {e}")
-
-def get_llm_os(
-    user_id: Optional[str] = None,
-    session_info: Optional[Dict[str, Any]] = None,
-    internet_search: bool = False,
-    coding_assistant: bool = False,
-    World_Agent: bool = False,
-    Planner_Agent: bool = True,
-    enable_supabase: bool = False,
-    use_memory: bool = False,
-    debug_mode: bool = True,
-    enable_github: bool = False,
-    enable_vercel: bool = False,
-    enable_google_email: bool = False,
-    enable_google_drive: bool = False,
-    enable_browser: bool = False,
-    browser_tools_config: Optional[Dict[str, Any]] = None,
-    custom_tool_config: Optional[Dict[str, Any]] = None,
-) -> Team:
-    """
-    Constructs the hierarchical Aetheria AI multi-agent system with integrated planner.
-    """
-    direct_tools: List[Union[Toolkit, callable]] = []
-
-    # Use the singleton DB instance
-    db = _get_db_instance()
+    )
 
     if enable_github and user_id:
         direct_tools.append(GitHubTools(user_id=user_id))
@@ -270,6 +227,7 @@ def get_llm_os(
                 "  </logic>",
                 "</scenario>",
                 "",
+
                 "<scenario name=\"api_integration\">",
                 "  <trigger>call API, fetch from endpoint, webhook, REST</trigger>",
                 "  <logic>",
@@ -400,6 +358,7 @@ def get_llm_os(
                 "  </methods>",
                 "</tool>",
                 "",
+
                 "</tools>",
                 "",
                 "---",
@@ -559,7 +518,13 @@ def get_llm_os(
         "• NEVER delegate tasks requiring these tools to other agents - you must execute them directly."
         "• Handle all (Github, Vercel, Supabase, Browser Automation, Mails , Drive, image)"
         "Coding assistant has Sandbox",
-        "", "RESPONSE STYLE:",
+        "",
+        "AGENT DELEGATION:",
+        "• Task-related requests → Delegate to 'Task_Manager' agent (background autonomous execution)",
+        "• Task operations: create, list, update, delete, search, mark complete",
+        "• Task_Manager handles all task CRUD operations and natural language task management",
+        "",
+        "RESPONSE STYLE:",
         "• Deliver results as if you personally completed the task",
         "• Use personalized responses when user data is available",
         "• Provide direct, clear answers without explaining internal processes",
@@ -573,7 +538,7 @@ def get_llm_os(
     # This allows the `db` object to automatically handle session persistence.
     llm_os_team = Team(
         name="Aetheria_AI",
-        model=Gemini(id="gemini-2.5-flash"),
+        model=Gemini(id="gemini-2.5-flash"), # Gemini(id="gemini-2.5-flash"), Groq(id="moonshotai/kimi-k2-instruct-0905"),
         members=main_team_members,
         tools=direct_tools,
         instructions=aetheria_instructions,

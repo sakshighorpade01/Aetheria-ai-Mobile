@@ -1,33 +1,37 @@
 # python-backend/app.py
-import eventlet
-eventlet.monkey_patch()
-
 import os
 import logging
-from logging_config import setup_logging
+import sys
 from factory import create_app
-from extensions import socketio, celery
-from assistant import warmup_backend
+from extensions import socketio
 
-# Setup clean logging
-logger = setup_logging()
+# Configure logging for production
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(name)s | %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+# Set specific loggers
+logging.getLogger('task_poller').setLevel(logging.INFO)
+logging.getLogger('task_executor').setLevel(logging.INFO)
+logging.getLogger('task_agent').setLevel(logging.INFO)
+
+logger = logging.getLogger(__name__)
+logger.info("🚀 Starting AI-OS Backend Application")
 
 # Create the application instance using the factory
 app = create_app()
 
-# Initialize shared resources
-warmup_backend()
-
 # This block is for local development and debugging.
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8765))
-    logger.info(f"🚀 Aetheria AI Backend starting on port {port}")
-    
     # Use socketio.run to correctly handle both Flask and SocketIO requests
     socketio.run(
         app,
         host="0.0.0.0",
-        port=port,
+        port=int(os.environ.get("PORT", 8765)),
         debug=os.environ.get("DEBUG", "False").lower() == "true",
         use_reloader=os.environ.get("DEBUG", "False").lower() == "true"
     )

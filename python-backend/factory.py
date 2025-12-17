@@ -2,7 +2,6 @@
 
 import logging
 from flask import Flask
-from flask_cors import CORS
 
 # --- Local Module Imports ---
 import config
@@ -29,25 +28,6 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = config.FLASK_SECRET_KEY
 
-    # --- CORS Configuration ---
-    # Allow requests from production frontend and local development
-    CORS(
-        app,
-        resources={
-            r"/api/*": {
-                "origins": [
-                    "https://aetheria-ai-mobile.vercel.app",
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:5500",
-                    "http://192.168.1.34:3000",  # Local network IP
-                ]
-            }
-        },
-        supports_credentials=True,
-        allow_headers=["Authorization", "Content-Type"],
-    )
-
     # --- 1. Initialize Extensions ---
     socketio.init_app(app, message_queue=config.REDIS_URL)
     oauth.init_app(app)
@@ -61,12 +41,16 @@ def create_app():
     sockets.set_dependencies(manager=connection_manager, redis_client=redis_client)
 
     # --- 4. Register OAuth Providers ---
+    # (This section is unchanged)
     if config.GITHUB_CLIENT_ID and config.GITHUB_CLIENT_SECRET:
         oauth.register(
             name='github', client_id=config.GITHUB_CLIENT_ID, client_secret=config.GITHUB_CLIENT_SECRET,
             access_token_url='https://github.com/login/oauth/access_token', authorize_url='https://github.com/login/oauth/authorize',
             api_base_url='https://api.github.com/', client_kwargs={'scope': 'repo user:email'}
         )
+        logger.info("GitHub OAuth provider registered.")
+    else:
+        logger.warning("GitHub OAuth credentials not set. GitHub integration will be disabled.")
 
     if config.GOOGLE_CLIENT_ID and config.GOOGLE_CLIENT_SECRET:
         oauth.register(
@@ -75,6 +59,9 @@ def create_app():
             api_base_url='https://www.googleapis.com/oauth2/v1/',
             client_kwargs={'scope': 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/drive', 'access_type': 'offline', 'prompt': 'consent'}
         )
+        logger.info("Google OAuth provider registered.")
+    else:
+        logger.warning("Google OAuth credentials not set. Google integration will be disabled.")
 
     if config.VERCEL_CLIENT_ID and config.VERCEL_CLIENT_SECRET:
         oauth.register(
@@ -82,6 +69,9 @@ def create_app():
             access_token_url='https://api.vercel.com/v2/oauth/access_token', authorize_url='https://vercel.com/oauth/authorize',
             api_base_url='https://api.vercel.com/', client_kwargs={'scope': 'users:read teams:read projects:read deployments:read'}
         )
+        logger.info("Vercel OAuth provider registered.")
+    else:
+        logger.warning("Vercel OAuth credentials not set. Vercel integration will be disabled.")
 
     if config.SUPABASE_CLIENT_ID and config.SUPABASE_CLIENT_SECRET:
         oauth.register(
@@ -89,9 +79,17 @@ def create_app():
             access_token_url='https://api.supabase.com/v1/oauth/token', authorize_url='https://api.supabase.com/v1/oauth/authorize',
             api_base_url='https://api.supabase.com/v1/', client_kwargs={'scope': 'organizations:read projects:read'}
         )
+        logger.info("Supabase OAuth provider registered.")
+    else:
+        logger.warning("Supabase OAuth credentials not set. Supabase integration will be disabled.")
 
     # --- 5. Register Blueprints (HTTP Routes) ---
     app.register_blueprint(auth_bp)
     app.register_blueprint(api_bp)
+
+    # --- 6. Start Background Task Poller ---
+    from task_poller import start_task_poller
+    start_task_poller(poll_interval=43200)  # Check every 12 hours (43200 seconds)
+    logger.info("Task poller started (12 hour interval)")
 
     return app

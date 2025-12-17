@@ -47,6 +47,78 @@ def on_disconnect():
     logger.info(f"Client disconnected: {request.sid}")
 
 
+@socketio.on('save-user-context')
+def handle_save_user_context(data: Dict[str, Any]):
+    """
+    Saves user context to agno_memories table via UserContextTools
+    """
+    sid = request.sid
+    try:
+        logger.info(f"Received save-user-context request: {data.keys()}")
+        
+        access_token = data.get("accessToken")
+        if not access_token:
+            logger.error("Authentication token missing")
+            return socketio.emit("user-context-saved", {"success": False, "error": "Authentication token missing"}, room=sid)
+        
+        user = supabase_client.auth.get_user(jwt=access_token).user
+        if not user:
+            logger.error("User not authenticated")
+            return socketio.emit("user-context-saved", {"success": False, "error": "User not authenticated"}, room=sid)
+        
+        context_data = data.get('context')
+        if not context_data:
+            logger.error("Context data missing")
+            return socketio.emit("user-context-saved", {"success": False, "error": "Context data missing"}, room=sid)
+        
+        logger.info(f"Saving context for user {user.id}: {json.dumps(context_data, indent=2)}")
+        
+        # Import UserContextTools
+        from user_context_tools import UserContextTools
+        
+        # Save context
+        context_tools = UserContextTools(user_id=str(user.id))
+        result = context_tools.save_user_context(context_data)
+        
+        logger.info(f"Save result: {result}")
+        socketio.emit("user-context-saved", {"success": True, "result": result}, room=sid)
+        logger.info(f"User context saved successfully for user {user.id}")
+        
+    except Exception as e:
+        logger.error(f"Error saving user context: {e}\n{traceback.format_exc()}")
+        socketio.emit("user-context-saved", {"success": False, "error": str(e)}, room=sid)
+
+
+@socketio.on('get-user-context')
+def handle_get_user_context(data: Dict[str, Any]):
+    """
+    Retrieves user context from agno_memories table via UserContextTools
+    """
+    sid = request.sid
+    try:
+        access_token = data.get("accessToken")
+        if not access_token:
+            return socketio.emit("user-context-retrieved", {"success": False, "error": "Authentication token missing"}, room=sid)
+        
+        user = supabase_client.auth.get_user(jwt=access_token).user
+        if not user:
+            return socketio.emit("user-context-retrieved", {"success": False, "error": "User not authenticated"}, room=sid)
+        
+        # Import UserContextTools
+        from user_context_tools import UserContextTools
+        
+        # Get context
+        context_tools = UserContextTools(user_id=str(user.id))
+        context = context_tools.get_user_context()
+        
+        socketio.emit("user-context-retrieved", {"success": True, "context": context}, room=sid)
+        logger.info(f"User context retrieved for user {user.id}")
+        
+    except Exception as e:
+        logger.error(f"Error retrieving user context: {e}\n{traceback.format_exc()}")
+        socketio.emit("user-context-retrieved", {"success": False, "error": str(e)}, room=sid)
+
+
 @socketio.on('browser-command-result')
 def handle_browser_command_result(data: Dict[str, Any]):
     """
