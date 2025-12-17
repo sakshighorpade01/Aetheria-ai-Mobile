@@ -89,7 +89,7 @@ def create_app():
 
     # --- 6. Start Background Task Poller ---
     from task_poller import start_task_poller
-    start_task_poller(poll_interval=43200)  # Check every 12 hours (43200 seconds)
+    start_task_poller(poll_interval=60)  # Check every 12 hours (43200 seconds)
     logger.info("Task poller started (12 hour interval)")
 
     return app
