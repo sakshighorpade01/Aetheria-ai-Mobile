@@ -1,259 +1,231 @@
-# Aetheria AI - Intelligent Multi-Agent Desktop & Mobile Assistant
+# Aetheria AI (AI-OS)
 
-[![Version](https://img.shields.io/badge/version-1.0.5-blue.svg)](https://github.com/yourusername/aetheria-ai)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-orange.svg)](https://web.dev/progressive-web-apps/)
+Aetheria AI is a comprehensive **AI-Operating System (AI-OS)** designed to act as an intelligent, proactive assistant capable of executing complex tasks across web and mobile platforms. It integrates real-time chat, multi-modal capabilities (text, image, audio, video), and autonomous tool usage (browser automation, sandboxed code execution, GitHub integration) into a unified Progressive Web App (PWA) and mobile application.
 
-**Aetheria AI** is a powerful, extensible AI assistant that seamlessly bridges desktop and mobile experiences. Originally built as an Electron desktop application, it has evolved into a Progressive Web App (PWA) that brings advanced AI capabilities to any device with a web browser.
-
----
-
-## 🌟 Overview
-
-Aetheria AI is a sophisticated multi-agent system that combines:
-- **Hierarchical AI Architecture**: Coordinator agents delegate tasks to specialized sub-agents
-- **Multi-Modal Support**: Process text, images, PDFs, audio, video, and documents
-- **Real-Time Streaming**: See AI responses as they're generated
-- **Context Management**: Load previous conversations as context for new queries
-- **Tool Integration**: Web search, code execution, file operations, GitHub, Google services, and more
-- **Cross-Platform**: Desktop (Electron) and Mobile/Web (PWA) with shared backend
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
+![JavaScript](https://img.shields.io/badge/javascript-ES6+-yellow.svg)
+![Docker](https://img.shields.io/badge/docker-enabled-blue.svg)
 
 ---
 
-## 🏗️ Architecture
+## 📖 Table of Contents
+- [System Architecture](#-system-architecture)
+- [Key Features](#-key-features)
+- [Component Breakdown](#-component-breakdown)
+- [Execution Flow](#-execution-flow)
+- [Prerequisites & Setup](#-prerequisites--setup)
+- [Environment Configuration](#-environment-configuration)
+- [Running the Application](#-running-the-application)
+- [Deployment](#-deployment)
+- [Design Principles](#-design-principles)
+- [Limitations & Roadmap](#-limitations--roadmap)
 
-### System Overview
+---
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Frontend Layer                          │
-├─────────────────────────────────────────────────────────────┤
-│  Electron Desktop App          │    PWA (Mobile/Web)        │
-│  - Native OS integration        │    - Service Worker        │
-│  - File system access           │    - Offline support       │
-│  - Browser automation           │    - Installable           │
-└─────────────────────────────────────────────────────────────┘
-                            │
-    *   **DeepSearch:** Provides in-depth research capabilities, combining knowledge base search, web search (DuckDuckGo), and tool/assistant delegation. Powered by Gemini (`deepsearch.py`).
-    *   **Web Crawler:** Extracts and summarizes information from provided URLs (`assistant.py`, `Crawl4aiTools`).
-    *   **Investment Assistant:** Generates investment reports for given stock symbols using YFinanceTools (`assistant.py`).
-    *   **Python Assistant:** Writes and executes Python code, with support for installing pip packages (`assistant.py`, `PythonTools`).
-*   **Tool Integration:**
-    *   **Calculator:** Performs mathematical calculations.
-    *   **DuckDuckGo Search:** Retrieves information from the web.
-    *   **YFinanceTools:** Accesses financial data (stock prices, company info, news, analyst recommendations).
-    *   **Shell Tools:** Executes shell commands for file system and system operations.
-    *   **Crawl4aiTools:** Used by the Web Crawler for web content extraction.
-    *   **Python Tools:** Executes Python code.
-*   **Context Management:**
-    *   Load and utilize previous chat sessions as context (`context-handler.js`).
-    *   Select and combine multiple sessions to create a richer context.
-    *   View selected context (sessions and files) in a unified sidebar (`chat.js` - `UnifiedPreviewHandler`).
-    *   Automatic synchronization of chat sessions using `context_manager.py`.
-*   **File Attachments:**
-    *   Attach various file types (text, images, PDFs, documents, audio, video) (`add-files.js`).
-    *   Automatic text extraction from PDFs (using PDF.js).
-    *   OCR (Optical Character Recognition) for images (using Tesseract.js).
-    *   Preview attached files and extracted text in the unified context viewer.
-    *   Placeholder implementations for document, audio, and video transcription.
-*   **To-Do List:** Manage tasks directly within the application, with features for descriptions, priorities, deadlines, and tags (`to-do-list.js`, `to-do-list.html`, `to-do-list.css`).
-*   **User Context:** Customize AI-OS behavior with user preferences and system access settings (`to-do-list.js` - context modal).
-*   **AIOS Settings:** Manage profile information, account actions (logout, delete), view application info, and submit support requests (`aios.js`, `aios.html`, `aios.css`).
-*   **Long-Term Memory (Optional):**
-    *   Enable persistent memory using an SQLite database (`agent_memory.db`).
-    *   Includes memory classification and summarization (using Groq).
-    *   Searchable knowledge base (`search_knowledge_base` tool).
-*   **Streamed Responses:** See responses generated in real-time.
-*   **Code and Diagram Viewers:**
-    *   View code snippets with syntax highlighting (using highlight.js) (`artifact-handler.js`, `artifact-ui.css`).
-    *   Render Mermaid diagrams.
-    *   Copy code/diagrams to clipboard.
-    *   Download code/diagrams as files (using Electron IPC for save dialog).
-*   **Dark Mode:** A visually appealing dark theme is enabled by default (toggleable via window controls).
-*   **Error Handling & Reconnection:** Robust error handling for the Python backend connection (`python-bridge.js`).
-*   **Window Controls:** Standard minimize, maximize/restore, and close controls.
+## 🏗 System Architecture
 
-## Architecture
+Aetheria AI utilizes a modern, event-driven microservices architecture anchored by a Flask backend and a lightweight Vanilla JavaScript frontend.
 
-AI-OS utilizes a client-server architecture:
+### High-Level Overview
+1.  **Frontend (Client)**: A responsive PWA/Mobile app built with Vanilla JS, HTML5, and CSS3. It communicates with the backend via **WebSockets (Socket.IO)** for real-time interaction and **REST APIs** for static data/integrations. Wrapped with **Capacitor** for native Android/iOS deployment.
+2.  **Backend (Server)**: A Python Flask application serving as the central orchestrator. It manages authentication, session state, and dispatches AI tasks.
+3.  **Task Execution Engine**:
+    *   **Agent Runner**: Orchestrates AI agents (powered by **Agno/Phidata**) to plan and execute tasks.
+    *   **Celery & Redis**: Handles background task queues and inter-service messaging.
+    *   **Sandbox**: An isolated environment (Docker/Google Cloud) where the AI safely executes code.
+4.  **Persistence & Auth**: **Supabase** (PostgreSQL) is used for user authentication, database storage (chat history, user context), and file storage.
 
-*   **Frontend (Electron.js):** Built with HTML, CSS, and JavaScript. Provides the user interface, manages application windows, handles user input, displays formatted responses (Markdown, code, diagrams), and communicates with the backend.
-*   **Backend (Python):** A Flask-SocketIO server (`app.py`) manages agent sessions (`assistant.py`, `deepsearch.py`), handles LLM interactions (using `phi-agent`, Gemini, Groq), executes tools, and manages optional memory.
-*   **Communication:** Real-time, bidirectional communication between the frontend and backend is handled via Socket.IO, managed by `python-bridge.js` in the Electron main process.
+---
 
-## Prerequisites
+## 🌟 Key Features
 
-*   **Python 3.7+:** Required for the backend server and agents.
-*   **Node.js and npm:** Required for the Electron.js frontend and JavaScript dependencies.
-*   **pip:** Python's package installer.
+*   **Real-Time IA Streaming**: Instant responses streamed token-by-token via Socket.IO.
+*   **Multi-Modal Input**: Supports text, voice (audio), images, video, and general file uploads.
+*   **Autonomous Tool Use**:
+    *   **Web Browsing**: The AI can browse the web to gather info (migrating to server-side Playwright).
+    *   **Sandboxed Code Execution**: Safely writes and runs code (Python/Shell) in isolated containers.
+    *   **GitHub Integration**: Can read/write to repositories.
+    *   **Google Drive/Email**: Access to user documents and mail.
+*   **Memory & Context**: Persists user context ("Agno Memories") to provide personalized assistance over time.
+*   **Cross-Platform**: Works as a web app, PWA, and native Android/iOS app.
 
-## Installation
+---
 
-1.  **Clone the repository:**
+## 🧩 Component Breakdown
+
+### 1. Frontend (`/js`, `/css`, `*.html`)
+*   **`aios.js`**: Central controller for the UI, handling initialization, theme management, and module coordination.
+*   **`socket-service.js`**: Manages the bidirectional WebSocket connection. Handles events like `send_message`, `response`, `agent_step`.
+*   **`connection-manager.js`**: Handles session persistence and recovery.
+*   **`auth-service.js` & `supabase-client.js`**: Wrappers for Supabase Auth.
+*   **Mobile Wrapper**: `@capacitor/*` libraries provide native device bridges.
+
+### 2. Backend (`/python-backend`)
+*   **`app.py` & `factory.py`**: Application entry point. Initializes Flask, SocketIO, and extensions (OAuth, Redis).
+*   **`sockets.py`**: The WebSocket event gateway. Receives client messages, authenticates users, and spawns agent tasks.
+*   **`agent_runner.py`**: The core AI logic. It instantiates the `Team` or `Agent` (using Agno framework), loads tools, and streams the thought process/response back to the client.
+*   **`sandbox_tools.py`**: Provides the interface for the AI to execute code in the remote sandbox environment.
+*   **`browser_tools.py`**: Server-side browser automation tools.
+*   **`celery_app.py`**: Configuration for asynchronous background workers.
+
+### 3. Infrastructure
+*   **Redis**: Acts as the message broker for Celery and the Pub/Sub channel for real-time tool outputs (e.g., sending browser data back to the running agent).
+*   **Supabase**:
+    *   **Auth**: User management (Email/Password, OAuth).
+    *   **Database**: Tables for `agno_sessions` (chat history), `user_integrations`, `request_logs`.
+    *   **Storage**: Buckets for detailed media uploads.
+
+---
+
+## 🔄 Execution Flow
+
+1.  **User Action**: User types a message or uploads a file in the UI.
+2.  **Dispatch**: `aios.js` captures the input and emits a `send_message` event via Socket.IO.
+3.  **Reception**: `sockets.py` verifies the JWT token with Supabase and creates a session record.
+4.  **Agent Spawn**: An async Greenlet (via `eventlet`) is spawned calling `run_agent_and_stream`.
+5.  **Processing**:
+    *   `agent_runner.py` initializes the AI Agent with specific tools (Sandbox, Browser, etc.).
+    *   The Agent analyzes the request and may decide to call a tool.
+    *   **Tool Execution**: If a tool is called (e.g., `execute_python`), the backend contacts the specialized service (e.g., Sandbox Manager) and awaits the result.
+6.  **Streaming Response**: The Agent's reasoning and final answer are streamed back to the frontend in chunks via `socketio.emit`.
+7.  **Rendering**: The frontend parses the stream; markdown is rendered to HTML, and tool outputs are displayed in the "Agent Activity" logs.
+
+---
+
+## 🛠 Prerequisites & Setup
+
+### Requirements
+*   **Python**: 3.11+
+*   **Node.js**: 18+ (for frontend tooling/mobile build)
+*   **Docker**: For running Redis and local backend services.
+*   **Supabase Project**: You need a hosted Supabase project.
+
+### Installation
+
+1.  **Clone the Repository**
     ```bash
-    git clone <your_repository_url>
-    cd <repository_name>
+    git clone https://github.com/YourOrg/Aetheria-AI.git
+    cd Aetheria-AI
     ```
 
-2.  **Install Python dependencies:**
-    It's highly recommended to use a virtual environment:
+2.  **Backend Setup**
     ```bash
-    # Create and activate virtual environment (example for Linux/macOS)
-    python3 -m venv aios_env
-    source aios_env/bin/activate
-    # On Windows: aios_env\Scripts\activate
-
-    # Install dependencies
-    pip install -r requirements.txt # Ensure requirements.txt is in the root or adjust path
-    # Or if requirements are in python-backend:
-    # pip install -r python-backend/requirements.txt
+    cd python-backend
+    python -m venv venv
+    # Windows
+    venv\Scripts\activate
+    # Linux/Mac
+    source venv/bin/activate
+    
+    pip install -r requirements.txt
     ```
 
-3.  **Install Node.js dependencies:**
+3.  **frontend Setup**
     ```bash
     npm install
     ```
 
-4.  **Create necessary directories (if they don't exist):**
-    The application might require specific directories at runtime. Based on the code, ensure the following exist in the project root:
-    ```bash
-    mkdir -p tmp/agent_sessions_json
-    mkdir -p context
-    mkdir -p userData # Used by aios.js
-    ```
-    *(Adjust paths based on actual implementation if needed)*
+---
 
-## Usage
+## ⚙ Environment Configuration
 
-### Starting the Application
+Create a `.env` file in `python-backend/`.
 
-```bash
-npm start
+**Core Configuration:**
+```env
+FLASK_SECRET_KEY=your_random_secret_string
+# Database & Auth
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Infrastructure
+REDIS_URL=redis://localhost:6379/0
+
+# LLM Provider (Example: OpenAI)
+OPENAI_API_KEY=sk-...
 ```
 
-This command launches the Electron application. The Python backend server (`app.py`) should start automatically, managed by `python-bridge.js`.
+**Tool integrations (Optional but recommended):**
+```env
+# Sandbox
+SANDBOX_API_URL=https://your-sandbox-manager-url
 
-### Chat Interface
+# OAuth Providers
+GITHUB_CLIENT_ID=...
+GITHUB_CLIENT_SECRET=...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
 
-*   **Send Messages:** Type your message in the input field at the bottom and press Enter or click the send button.
-*   **New Chat:** Click the "+" button to start a new conversation, clearing history and resetting the agent state.
-*   **Minimize Chat:** Click the minimize button ("-") in the chat window header.
+# Browser Automation
+HEADLESS=true
+```
 
-### Tools and Capabilities
+---
 
-*   **Memory (Brain Icon):** Toggles the use of long-term memory (requires `use_memory=True` in agent configuration).
-*   **Context (Network Icon):** Opens the context management window.
-*   **Tasks (List Icon):** Toggles the inclusion of `user_context.txt` and `tasklist.txt` in the agent's context.
+## 🚀 Running the Application
 
-### Context Management
+### Local Development (Hybrid)
 
-1.  Click the "Context" icon in the chat tools area to open the session list.
-2.  **Sync Sessions:** Click the sync button (refresh icon) to process recent agent interactions (`tmp/agent_sessions_json`) into loadable context files (`context/`).
-3.  **Select Sessions:** Check the boxes next to the sessions you want to use as context.
-4.  **Use Selected:** Click "Use Selected". The chosen sessions will provide context for the *next* message sent in a *new* chat session.
-5.  **Clear Selection:** Click "Clear" to deselect all sessions.
-6.  **View Details:** Click on a session item to see the conversation history within that session.
-7.  **View Selected Context:** Click the "Context" indicator above the chat input (visible when context is selected) or use the unified viewer sidebar to see the content of selected sessions and files.
+1.  **Start Redis**:
+    ```bash
+    docker run -p 6379:6379 redis:7.2-alpine
+    ```
 
-### File Attachments
+2.  **Start Backend**:
+    ```bash
+    cd python-backend
+    # Activate venv first!
+    python app.py
+    ```
+    *Runs on http://localhost:8765*
 
-1.  Click the "Attach" button (paperclip icon) in the input area.
-2.  Select one or more files. Supported types include text, PDF, images, etc. (see `add-files.js` for details).
-3.  Text content is automatically extracted where possible (plain text, PDF text, image OCR).
-4.  Attached files and their extracted text (if any) are sent with the *next* message.
-5.  View attached files and previews in the "Files" tab of the unified context viewer sidebar.
+3.  **Start Frontend**:
+    ```bash
+    npm start
+    ```
+    *Runs on http://127.0.0.1:3000*
 
-### To-Do List
+### Docker (Full Stack)
+The project includes a `docker-compose.yml` for orchestrating the Web, Redis, and Flower services.
+```bash
+docker-compose up --build
+```
 
-1.  Click the "Tasks" icon (list icon) in the main taskbar to open the To-Do List window.
-2.  **Add Task:** Click the "+" button, fill in the details (name required, others optional) in the modal, and click "Add Task".
-3.  **Manage Tasks:** Check boxes to mark complete, click the trash icon to delete.
-4.  **User Context:** Click the user-cog icon to open the User Context modal. Fill in personal details, preferences, capabilities, goals, and system access settings. This data is saved to `user_context.txt` and can be used by the agent when the "Tasks" toggle is active.
+### Mobile Build (Android)
+See `ANDROID_BUILD_GUIDE.md` for detailed instructions.
+```bash
+npm run cap:sync
+npx cap open android
+```
 
-### AIOS Settings
+---
 
-1.  Click the "AIOS" icon (atom icon) in the main taskbar.
-2.  Navigate through the tabs (Profile, Account, About, Support) to manage settings, view information, or submit feedback.
-3.  Profile changes are saved locally (`userData/profile.json`).
-4.  Support submissions are saved locally (`userData/feedback.json`).
+## ☁ Deployment
 
-## Key Components
+*   **Frontend**: Static hosting (Vercel, Netlify, or AWS S3).
+*   **Backend**: Container service (Railway, Render, or AWS ECS). Requires persistent connection support (WebSockets).
+*   **Sandbox**: Must be deployed on a platform allowing Docker-in-Docker or extensive isolation (e.g., dedicated VM or specialized Google Cloud Run instance).
 
-*   **`main.js`:** Electron main process logic, window creation, IPC handling, BrowserView management.
-*   **`renderer.js`:** Frontend UI management, state handling (`StateManager`), module loading.
-*   **`python-bridge.js`:** Manages the Python backend process lifecycle and Socket.IO communication bridge.
-*   **`chat.js`:** Core chat UI logic, message sending/receiving, tool/context integration.
-*   **`add-files.js`:** File attachment handling, text extraction (PDF, OCR).
-*   **`context-handler.js`:** Logic for loading, selecting, and viewing chat session context.
-*   **`artifact-handler.js`:** Displays code and Mermaid diagrams in a dedicated viewer.
-*   **`to-do-list.js`:** Functionality for the To-Do list and User Context management.
-*   **`aios.js`:** Logic for the AIOS settings window.
-*   **`python-backend/app.py`:** Flask-SocketIO server, session management, agent interaction entry point.
-*   **`python-backend/assistant.py`:** Defines the main AI-OS agent, tools, and team configuration.
-*   **`python-backend/deepsearch.py`:** Defines the DeepSearch agent configuration.
-*   **`python-backend/context_manager.py`:** Utility script to process raw agent session logs into usable context files.
+---
 
-## Dependencies
+## 🎨 Design Principles
+1.  **Aesthetics First**: "Neo-Brutalist" design language — bold geometry, high contrast, and vivid accents to wow users.
+2.  **Responsiveness**: Mobile-first approach ensuring seamless experience across all devices.
+3.  **Transparency**: All AI actions (tool usage, reasoning) are visible to the user, building trust.
 
-### Frontend (Node.js / Electron)
+---
 
-*   **Electron:** Core framework for desktop application.
-*   **socket.io-client:** Real-time communication with the backend.
-*   **highlight.js / prismjs:** Syntax highlighting for code blocks.
-*   **mermaid:** Rendering Mermaid diagrams.
-*   **marked:** Markdown parsing.
-*   **DOMPurify:** HTML sanitization.
-*   **pdf.js (mozilla):** PDF parsing and text extraction.
-*   **tesseract.js:** OCR for images.
+## ⚠️ Limitations & Roadmap
 
-### Backend (Python)
+### Current Limitations
+*   **Sandbox Deployment**: The `sandbox-manager` is a separate, complex component that is not fully containerized in the main `docker-compose` setup due to security requirement (Docker socket access).
+*   **Mobile Browser Automation**: Client-side browser automation is limited on mobile; migration to server-side Playwright is in progress.
+*   **Single Region**: Currently optimized for a single deployment region; latency may vary globally.
 
-*   **Flask / Flask-SocketIO / eventlet:** Web server and real-time communication.
-*   **phi-agent:** Core AI agent library (likely custom or internal).
-*   **langchain-google-genai:** Google Gemini LLM integration.
-*   **groq:** Groq LLM integration.
-*   **browser-use:** Library for browser automation (used by `browser_agent.py`).
-*   **duckduckgo-search:** Tool for web search.
-*   **yfinance:** Tool for financial data.
-*   **python-dotenv:** Environment variable management.
-*   *(See `requirements.txt` for a full list)*
-
-## Contributing
-
-Contributions are welcome! Please follow standard Git workflow practices:
-
-1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
-
-## Troubleshooting
-
-*   **Python server fails to start:**
-    *   Ensure all Python dependencies (`requirements.txt`) are installed in the correct virtual environment.
-    *   Check console logs (`npm start` output) for specific Python errors.
-    *   Verify that port 8765 is not already in use.
-    *   Try running `python python-backend/app.py` directly to isolate backend issues.
-*   **Socket.IO connection issues:**
-    *   Confirm the Python server (`app.py`) is running.
-    *   Check for firewall issues blocking port 8765.
-    *   Look for "Connection error" messages in the UI or console. Use the "Retry Connection" button if it appears.
-
-*   **Context not loading:** Run the sync script (`python python-backend/context_manager.py`) to process session logs.
-*   **UI Glitches:** Use Electron's Developer Tools (Ctrl+Shift+I or Cmd+Option+I) to inspect elements and check the console for JavaScript errors.
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information. (Note: You need to add a LICENSE file).
-
-## Roadmap
-
-*   **Improved User Context Management:** UI for editing/deleting context files, keyword search within context.
-*   **Enhanced Task Management:** Subtasks, recurring tasks, potential calendar integration.
-*   **Agent Customization:** UI for users to define custom agents, tools, and prompts.
-*   **Plugin System:** Allow third-party extensions.
-*   **Voice Input/Output:** Integrate speech-to-text and text-to-speech.
-*   **Knowledge Base Editor:** UI for managing the agent's long-term memory/knowledge base.
-*   **Testing:** Implement comprehensive unit and integration tests.
-*   **Cloud Sync:** Option to sync tasks, settings, and context.
+### Future Improvements
+*   [ ] Complete server-side browser migration (remove legacy Electron dependencies).
+*   [ ] Implement voice output (TTS) for full voice conversation.
+*   [ ] Add "Team" agents for parallel task execution.
+*   [ ] Offline local-LLM support for edge devices.
