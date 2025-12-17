@@ -283,72 +283,121 @@ export class ToDoList {
             const isCompleted = task.status === 'completed';
             if (isCompleted) listItem.classList.add('completed');
 
-            // Tags
-            const tagsHTML = (task.tags && task.tags.length)
-                ? `<div class="task-tags">${task.tags.map(tag => `<span class="task-tag">${tag}</span>`).join('')}</div>`
-                : '';
+            // --- Header Row ---
+            const headerRow = document.createElement('div');
+            headerRow.className = 'task-header-row';
 
-            // Status Indicator logic
-            let statusHtml = '';
-            if (task.status === 'in_progress') {
-                statusHtml = `<div class="status-indicator status-in-progress"><i class="fas fa-circle-notch fa-spin"></i> Processing</div>`;
-            } else if (task.status === 'pending') {
-                // Optional: Show 'Pending' or nothing. Let's show nothing for cleaner UI unless specific requirement.
-                // statusHtml = `<div class="status-indicator status-pending">Pending</div>`;
-            }
-
-            // Task Work Button
-            let taskWorkBtnHtml = '';
-            // Show button if there is content in task_work
-            if (task.task_work && task.task_work.trim().length > 0) {
-                taskWorkBtnHtml = `
-                    <button class="view-work-btn" title="View Work">
-                        <i class="fas fa-file-alt"></i> View Work
-                    </button>
-                `;
-            }
-
-            listItem.innerHTML = `
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="task-${task.id}" ${isCompleted ? 'checked' : ''}>
-                    <label class="checkmark" for="task-${task.id}">
-                        <i class="fas fa-check"></i>
-                    </label>
-                </div>
-                <div class="task-details">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="task-text">${this.escapeHtml(task.text)}</span>
-                        ${statusHtml}
-                    </div>
-                    ${task.description ? `<div class="task-description">${this.escapeHtml(task.description)}</div>` : ''}
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
-                         ${task.deadline ? `<div class="task-deadline"><i class="fas fa-clock"></i> ${new Date(task.deadline).toLocaleString()}</div>` : ''}
-                         ${taskWorkBtnHtml} 
-                    </div>
-
-                    ${tagsHTML}
-                </div>
-                <div class="button-container" style="flex-direction:column;">
-                    <button class="delete-btn" title="Delete Task"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            `;
-
-            // Event Listeners
             // Checkbox
-            listItem.querySelector('input[type="checkbox"]')?.addEventListener('change', (e) => {
+            const checkboxWrapper = document.createElement('div');
+            checkboxWrapper.className = 'checkbox-wrapper';
+            checkboxWrapper.innerHTML = `
+                <input type="checkbox" id="task-${task.id}" ${isCompleted ? 'checked' : ''}>
+                <label class="checkmark" for="task-${task.id}">
+                    <i class="fas fa-check"></i>
+                </label>
+            `;
+            // Listener for checkbox
+            const checkbox = checkboxWrapper.querySelector('input');
+            checkbox.addEventListener('change', (e) => {
+                e.stopPropagation(); // Prevent toggling accordion
                 this.toggleTaskCompletion(task.id, e.target.checked);
             });
 
-            // Delete
-            listItem.querySelector('.delete-btn')?.addEventListener('click', () => {
-                this.deleteTask(task.id);
+            // Title
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'task-text';
+            titleSpan.textContent = this.escapeHtml(task.text);
+            // Click title to toggle
+            titleSpan.addEventListener('click', () => listItem.classList.toggle('expanded'));
+
+            // Toggle Button (Chevron)
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'task-toggle-btn';
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                listItem.classList.toggle('expanded');
             });
 
-            // View Work
-            listItem.querySelector('.view-work-btn')?.addEventListener('click', () => {
-                this.showTaskWorkModal(task.task_work);
+            headerRow.appendChild(checkboxWrapper);
+            headerRow.appendChild(titleSpan);
+            headerRow.appendChild(toggleBtn);
+
+            // --- Expanded Content Body ---
+            const expandedContent = document.createElement('div');
+            expandedContent.className = 'task-expanded-content';
+
+            // Description
+            if (task.description) {
+                const desc = document.createElement('div');
+                desc.className = 'task-description';
+                desc.textContent = task.description;
+                expandedContent.appendChild(desc);
+            }
+
+            // Tags
+            if (task.tags && task.tags.length > 0) {
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'task-tags';
+                tagsDiv.innerHTML = task.tags.map(tag => `<span class="task-tag">${this.escapeHtml(tag)}</span>`).join('');
+                expandedContent.appendChild(tagsDiv);
+            }
+
+            // Footer Row (Date, Status, Actions)
+            const footerRow = document.createElement('div');
+            footerRow.className = 'task-footer-row';
+
+            // Deadline / Date
+            const dateDiv = document.createElement('div');
+            if (task.deadline) {
+                dateDiv.className = 'task-deadline';
+                dateDiv.innerHTML = `<i class="fas fa-clock"></i> ${new Date(task.deadline).toLocaleString()}`;
+                footerRow.appendChild(dateDiv);
+            }
+
+            // Status Badge (if processing)
+            if (task.status === 'in_progress') {
+                const statusBadge = document.createElement('div');
+                statusBadge.className = 'status-indicator status-in-progress';
+                statusBadge.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing';
+                footerRow.appendChild(statusBadge);
+            }
+
+            // Actions Wrapper (Vertical Stack: View Work above Delete)
+            const actionsWrapper = document.createElement('div');
+            actionsWrapper.className = 'task-actions-wrapper';
+
+            // View Work Button (Icon Only)
+            if (task.task_work && task.task_work.trim().length > 0) {
+                const viewWorkBtn = document.createElement('button');
+                viewWorkBtn.className = 'view-work-btn';
+                viewWorkBtn.title = "View Work";
+                viewWorkBtn.innerHTML = '<i class="fas fa-file-alt"></i>'; // Icon only
+                viewWorkBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.showTaskWorkModal(task.task_work);
+                });
+                actionsWrapper.appendChild(viewWorkBtn);
+            }
+
+            // Delete Button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.title = "Delete Task";
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.deleteTask(task.id);
             });
+            actionsWrapper.appendChild(deleteBtn);
+
+            footerRow.appendChild(actionsWrapper);
+
+            expandedContent.appendChild(footerRow);
+
+            // Assemble List Item
+            listItem.appendChild(headerRow);
+            listItem.appendChild(expandedContent);
 
             this.elements.taskList.appendChild(listItem);
         });

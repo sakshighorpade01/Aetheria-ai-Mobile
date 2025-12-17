@@ -2,7 +2,7 @@
 <div id="to-do-list-container" class="modal-overlay hidden">
   <div class="to-do-list-panel">
     <div class="to-do-list-header">
-      <h2><i class="fas fa-list-check"></i> AI-OS Tasks</h2>
+      <h2><i class="fas fa-list-check"></i> Tasks</h2>
       <button class="close-btn" aria-label="Close To-Do List"> <i class="fas fa-times"></i> </button>
     </div>
     <div class="to-do-list-content">
@@ -10,7 +10,7 @@
     </div>
     <div class="to-do-list-input-area">
       <div class="button-container">
-        <button id="context-btn" aria-label="User Context"><i class="fas fa-user-cog"></i></button>
+        <button id="context-btn" aria-label="User Context"><i class="fi fi-tr-user-pen"></i></button>
         <button id="add-task-btn" aria-label="Add Task"><i class="fas fa-plus"></i></button>
       </div>
     </div>
@@ -20,35 +20,55 @@
 <!-- New Task Modal -->
 <div id="new-task-modal" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"> <h3>New Task</h3> </div>
-    <div class="modal-content">
-      <div class="form-group"> <label for="task-name">Task Name*</label> <input type="text" id="task-name" placeholder="Enter task name..." required> </div>
-      <div class="form-group"> <label for="task-description">Description (Optional)</label> <textarea id="task-description" placeholder="Enter task description..."></textarea> </div>
-      <div class="form-group"> <label for="task-priority">Priority</label> <select id="task-priority"> <option value="low">Low</option> <option value="medium" selected>Medium</option> <option value="high">High</option> </select> </div>
-      <div class="form-group"> <label for="task-deadline">Deadline</label> <input type="datetime-local" id="task-deadline"> </div>
-      <div class="form-group"> <label for="task-tags">Tags</label> <input type="text" id="task-tags" placeholder="Enter tags..."> </div>
+    <div class="modal-header">
+      <h3>New Task</h3>
     </div>
-    <div class="modal-footer"> <button class="btn btn-secondary" id="cancel-task-btn">Cancel</button> <button class="btn btn-primary" id="save-task-btn">Add Task</button> </div>
+    <div class="modal-content">
+      <div class="form-group"> <label for="task-name">Task Name*</label> <input type="text" id="task-name"
+          placeholder="Enter task name..." required> </div>
+      <div class="form-group"> <label for="task-description">Description (Optional)</label> <textarea
+          id="task-description" placeholder="Enter task description..."></textarea> </div>
+      <div class="form-group"> <label for="task-priority">Priority</label> <select id="task-priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select> </div>
+      <div class="form-group"> <label for="task-deadline">Deadline</label> <input type="datetime-local"
+          id="task-deadline"> </div>
+      <div class="form-group"> <label for="task-tags">Tags</label> <input type="text" id="task-tags"
+          placeholder="Enter tags..."> </div>
+    </div>
+    <div class="modal-footer"> <button class="btn btn-secondary" id="cancel-task-btn">Cancel</button> <button
+        class="btn btn-primary" id="save-task-btn">Add Task</button> </div>
   </div>
 </div>
 
 <!-- User Context Modal -->
 <div id="user-context-modal" class="modal-overlay hidden">
   <div class="modal">
-    <div class="modal-header"> <h3>User Context</h3> </div>
+    <div class="modal-header">
+      <h3>User Context</h3>
+    </div>
     <div class="modal-content">
       <h4>Personal Information</h4>
       <!-- FIX: Added ID attributes to all inputs to match their labels -->
-      <div class="form-group"><label for="user-name">Name</label><input type="text" id="user-name" placeholder="Enter your name..."></div>
-      <div class="form-group"><label for="user-email">Email</label><input type="email" id="user-email" placeholder="Enter your email..."></div>
-      <div class="form-group"><label for="user-location">Location</label><input type="text" id="user-location" placeholder="Enter your location..."></div>
-      <div class="form-group"><label for="user-timezone">Timezone</label><input type="text" id="user-timezone" placeholder="Enter your timezone..."></div>
-      <div class="form-group"><label for="user-language">Preferred Language</label><input type="text" id="user-language" placeholder="Enter your preferred language..."></div>
-      
+      <div class="form-group"><label for="user-name">Name</label><input type="text" id="user-name"
+          placeholder="Enter your name..."></div>
+      <div class="form-group"><label for="user-email">Email</label><input type="email" id="user-email"
+          placeholder="Enter your email..."></div>
+      <div class="form-group"><label for="user-location">Location</label><input type="text" id="user-location"
+          placeholder="Enter your location..."></div>
+      <div class="form-group"><label for="user-timezone">Timezone</label><input type="text" id="user-timezone"
+          placeholder="Enter your timezone..."></div>
+      <div class="form-group"><label for="user-language">Preferred Language</label><input type="text" id="user-language"
+          placeholder="Enter your preferred language..."></div>
+
       <h4>Preferences</h4>
-      <div class="form-group"><label for="working-hours">Working Hours</label><input type="text" id="working-hours" placeholder="e.g., 9am - 5pm"></div>
+      <div class="form-group"><label for="working-hours">Working Hours</label><input type="text" id="working-hours"
+          placeholder="e.g., 9am - 5pm"></div>
     </div>
-    <div class="modal-footer"> <button class="btn btn-secondary" id="cancel-context-btn">Cancel</button> <button class="btn btn-primary" id="save-context-btn">Save</button> </div>
+    <div class="modal-footer"> <button class="btn btn-secondary" id="cancel-context-btn">Cancel</button> <button
+        class="btn btn-primary" id="save-context-btn">Save</button> </div>
   </div>
 </div>
 </div>
